@@ -90,10 +90,11 @@ while playAgain == True:
             else:
                 print('Enter only "1" or "2"')
        
-        if total(dealerHand) > 16:
-            dealerIn = False
-        else:
-            dealCard(dealerHand)
+        if dealerIn == True:
+            if total(dealerHand) > 16 and total(dealerHand) >= total(playerHand):
+                dealerIn = False
+            else:
+                dealCard(dealerHand)
        
         if total(playerHand) > 21:
             break
