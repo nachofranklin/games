@@ -1,4 +1,5 @@
 import random
+import time
 
 # draw a card
 def dealCard(turn):
@@ -70,7 +71,9 @@ while playAgain == True:
 
     while playerIn or dealerIn:
         print(f'Dealer has {revealDealerHand()} and X')
+        time.sleep(1)
         print(f'You have {playerHand} for a total of {total(playerHand)}')
+        time.sleep(1)
 
         if total(dealerHand) == 21:
             break
@@ -95,11 +98,13 @@ while playAgain == True:
         if total(playerHand) > 21:
             break
 
+    time.sleep(1)
     print('')
     print(f'Your final hand is {playerHand}')
     print(f'Dealer\'s final hand is {dealerHand}')
     print('')
 
+    time.sleep(1)
     if total(dealerHand) == 21:
         if len(dealerHand) == 2:
             print('Dealer has Blackjack! You lose :(')
@@ -132,6 +137,7 @@ while playAgain == True:
     else:
         print('error deciding who won')
 
+    time.sleep(1)
     print('')
     oneMoreGame = input('Play again? Y/N - ').lower()
     print('')
