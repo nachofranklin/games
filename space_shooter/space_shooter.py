@@ -34,9 +34,12 @@ SPACE_IMAGE = pygame.image.load(os.path.join('images', 'space.png'))
 SPACE = pygame.transform.scale(SPACE_IMAGE, (WIN_WIDTH, WIN_HEIGHT))
 EXPLOSION_IMAGE = pygame.image.load(os.path.join('images', 'explosion.png'))
 EXPLOSION = pygame.transform.scale(EXPLOSION_IMAGE, (SPACESHIP_WIDTH*1.5, SPACESHIP_HEIGHT*1.5))
+METEOR_IMAGE = pygame.image.load(os.path.join('images', 'meteor.png'))
+METEOR = pygame.transform.scale(METEOR_IMAGE, (30, 30))
 
 EXPLOSION_SOUND = pygame.mixer.Sound(os.path.join('sound', 'explosion.wav'))
 LASER_SOUND = pygame.mixer.Sound(os.path.join('sound', 'laser.wav'))
+SHIP_EXPLODES_SOUND = pygame.mixer.Sound(os.path.join('sound', 'ship_explodes.wav'))
 
 def draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health):
     WIN.blit(SPACE, (0, 0))
@@ -95,6 +98,7 @@ def bullet_handling(blue_bullets, pink_bullets, blue, pink):
             pink_bullets.remove(bullet)
 
 def draw_winner(text):
+    SHIP_EXPLODES_SOUND.play()
     draw_text = WINNER_FONT.render(text, 1, WHITE)
     WIN.blit(draw_text, (WIN_WIDTH/2 - draw_text.get_width()/2, WIN_HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
