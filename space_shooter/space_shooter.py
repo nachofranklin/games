@@ -226,9 +226,6 @@ def main():
                     y_grad = -METEOR_VEL
                 meteors.append(meteorite)
                 meteor_grad.append((x_grad, y_grad))
-            
-            print(meteors)
-            print(meteor_grad)
 
         winner_text = ''
         if blue_health <= 0:
