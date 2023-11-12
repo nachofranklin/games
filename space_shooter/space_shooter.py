@@ -1,17 +1,21 @@
 import pygame
 import os
+import random
 pygame.font.init()
 pygame.mixer.init()
 
 WIN_WIDTH, WIN_HEIGHT = 1200, 700
 FPS = 60
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 80
+METEOR_WIDTH, METEOR_HEIGHT = 50, 50
 VEL = 7
 BULLET_VEL = 10
+METEOR_VEL = 2
 BORDER_WIDTH = 10
 BORDER = pygame.Rect(WIN_WIDTH/2 - BORDER_WIDTH/2, 0, BORDER_WIDTH, WIN_HEIGHT)
 BULLET_WIDTH, BULLET_HEIGHT = 24, 8
 MAX_BULLETS = 3
+MAX_METEORS = 1
 BLUE_HIT = pygame.USEREVENT + 1
 PINK_HIT = pygame.USEREVENT + 2
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
@@ -41,7 +45,7 @@ EXPLOSION_SOUND = pygame.mixer.Sound(os.path.join('sound', 'explosion.wav'))
 LASER_SOUND = pygame.mixer.Sound(os.path.join('sound', 'laser.wav'))
 SHIP_EXPLODES_SOUND = pygame.mixer.Sound(os.path.join('sound', 'ship_explodes.wav'))
 
-def draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health):
+def draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health, meteors):
     WIN.blit(SPACE, (0, 0))
     pygame.draw.rect(WIN, BLACK, BORDER) # draw the border
     blue_health_text = HEALTH_FONT.render(f'Health: {blue_health}', 1, WHITE)
@@ -55,6 +59,9 @@ def draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health
         pygame.draw.rect(WIN, LIGHT_BLUE, bullet) # draw blue bullets
     for bullet in pink_bullets:
         pygame.draw.rect(WIN, PINK, bullet) # draw pink bullets
+    
+    for meteor in meteors:
+        WIN.blit(METEOR, (meteor.x, meteor.y))
 
     pygame.display.update()
 
@@ -104,18 +111,54 @@ def draw_winner(text):
     pygame.display.update()
     pygame.time.delay(5000)
 
+def meteor_handling(meteors, meteor_grad, blue, pink):
+    for meteor in meteors:
+        for grad in meteor_grad:
+            meteor.x += grad[0]
+            meteor.y += grad[1]
+
+            if pink.colliderect(meteor):
+                pygame.event.post(pygame.event.Event(PINK_HIT))
+                pygame.event.post(pygame.event.Event(PINK_HIT))
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+                EXPLOSION_SOUND.play()
+
+            if blue.colliderect(meteor):
+                pygame.event.post(pygame.event.Event(BLUE_HIT))
+                pygame.event.post(pygame.event.Event(BLUE_HIT))
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+                EXPLOSION_SOUND.play()
+            
+            if meteor.x <= -1 - METEOR_WIDTH:
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+            if meteor.x >= WIN_WIDTH + 1 + METEOR_WIDTH:
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+            if meteor.y <= -1 - METEOR_HEIGHT:
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+            if meteor.y >= WIN_HEIGHT + 1 + METEOR_HEIGHT:
+                meteors.remove(meteor)
+                meteor_grad.remove(grad)
+
 def main():
     blue = pygame.Rect(WIN_WIDTH/4 - SPACESHIP_WIDTH/2, WIN_HEIGHT/2 - SPACESHIP_HEIGHT/2, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     pink = pygame.Rect(WIN_WIDTH*3/4 - SPACESHIP_WIDTH/2, WIN_HEIGHT/2 - SPACESHIP_HEIGHT/2, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
 
     blue_bullets = []
     pink_bullets = []
+    meteors = []
+    meteor_grad = []
     blue_health, pink_health = 10, 10
 
     clock = pygame.time.Clock() # creates a clock, learn more about this
     run = True
     while run:
         clock.tick(FPS) # sets the refresh rate (frames per second)
+        start_time = pygame.time.get_ticks()//1000
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -140,7 +183,52 @@ def main():
         blue_handling(keys_pressed, blue)
         pink_handling(keys_pressed, pink)
         bullet_handling(blue_bullets, pink_bullets, blue, pink)
-        draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health)
+        meteor_handling(meteors, meteor_grad, blue, pink)
+        draw_window(blue, pink, blue_bullets, pink_bullets, blue_health, pink_health, meteors)
+
+        if start_time % 5 == 0 and len(meteors) < MAX_METEORS:
+            meteor_x = random.randint(0, WIN_WIDTH)
+            meteor_y = random.randint(0, WIN_HEIGHT)
+            entry = random.randint(1, 4)
+            if entry == 1: # top
+                meteorite = pygame.Rect(meteor_x, 0 - METEOR_HEIGHT, METEOR_WIDTH, METEOR_HEIGHT)
+                if meteor_x < WIN_WIDTH/2:
+                    x_grad = METEOR_VEL
+                else:
+                    x_grad = -METEOR_VEL
+                y_grad = METEOR_VEL
+                meteors.append(meteorite)
+                meteor_grad.append((x_grad, y_grad))
+            elif entry == 2: # right
+                meteorite = pygame.Rect(WIN_WIDTH + METEOR_WIDTH, meteor_y, METEOR_WIDTH, METEOR_HEIGHT)
+                x_grad = -METEOR_VEL
+                if meteor_y < WIN_HEIGHT/2:
+                    y_grad = METEOR_VEL
+                else:
+                    y_grad = -METEOR_VEL
+                meteors.append(meteorite)
+                meteor_grad.append((x_grad, y_grad))
+            elif entry == 3: # bottom
+                meteorite = pygame.Rect(meteor_x, WIN_HEIGHT + METEOR_HEIGHT, METEOR_WIDTH, METEOR_HEIGHT)
+                if meteor_x < WIN_WIDTH/2:
+                    x_grad = METEOR_VEL
+                else:
+                    x_grad = -METEOR_VEL
+                y_grad = -METEOR_VEL
+                meteors.append(meteorite)
+                meteor_grad.append((x_grad, y_grad))
+            elif entry == 4: # left
+                meteorite = pygame.Rect(0 - METEOR_WIDTH, meteor_y, METEOR_WIDTH, METEOR_HEIGHT)
+                x_grad = METEOR_VEL
+                if meteor_y < WIN_HEIGHT/2:
+                    y_grad = METEOR_VEL
+                else:
+                    y_grad = -METEOR_VEL
+                meteors.append(meteorite)
+                meteor_grad.append((x_grad, y_grad))
+            
+            print(meteors)
+            print(meteor_grad)
 
         winner_text = ''
         if blue_health <= 0:
@@ -167,3 +255,5 @@ main()
 # add in meteorites that enter at a random co-ordinate and have a random gradient that can damage players
 # figure out how to edit the .wav sound clips, explosion.wav is too quiet and delayed
 # make the winner text flash
+# do a mini explosion on when a meteorite hits
+# reduce the hitbox of the meteor image
