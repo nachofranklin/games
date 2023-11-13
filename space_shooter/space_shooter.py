@@ -18,8 +18,8 @@ MAX_BULLETS = 3
 MAX_METEORS = 1
 BLUE_HIT = pygame.USEREVENT + 1
 PINK_HIT = pygame.USEREVENT + 2
-HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
-WINNER_FONT = pygame.font.SysFont('comicsans', 100)
+HEALTH_FONT = pygame.font.SysFont('comicsans', 60)
+WINNER_FONT = pygame.font.SysFont('comicsans', 200)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -104,12 +104,21 @@ def bullet_handling(blue_bullets, pink_bullets, blue, pink):
         elif bullet.x < 0:
             pink_bullets.remove(bullet)
 
-def draw_winner(text):
+def draw_winner(text, colour):
     SHIP_EXPLODES_SOUND.play()
-    draw_text = WINNER_FONT.render(text, 1, WHITE)
+    for i in range(2):
+        draw_text = WINNER_FONT.render(text, 1, colour)
+        WIN.blit(draw_text, (WIN_WIDTH/2 - draw_text.get_width()/2, WIN_HEIGHT/2 - draw_text.get_height()/2))
+        pygame.display.update()
+        pygame.time.delay(1000)
+        draw_text = WINNER_FONT.render(text, 1, WHITE)
+        WIN.blit(draw_text, (WIN_WIDTH/2 - draw_text.get_width()/2, WIN_HEIGHT/2 - draw_text.get_height()/2))
+        pygame.display.update()
+        pygame.time.delay(1000)
+    draw_text = WINNER_FONT.render(text, 1, colour)
     WIN.blit(draw_text, (WIN_WIDTH/2 - draw_text.get_width()/2, WIN_HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
-    pygame.time.delay(5000)
+    pygame.time.delay(1000)
 
 def meteor_handling(meteors, meteor_grad, blue, pink):
     for meteor in meteors:
@@ -230,14 +239,16 @@ def main():
         winner_text = ''
         if blue_health <= 0:
             winner_text = 'Pink Wins!'
+            colour = PINK
             WIN.blit(EXPLOSION, (blue.x + SPACESHIP_WIDTH/2 - EXPLOSION.get_width()/2, blue.y + SPACESHIP_HEIGHT/2 - EXPLOSION.get_height()/2))
             pygame.display.update()
         if pink_health <= 0:
             winner_text = 'Blue Wins!'
+            colour = LIGHT_BLUE
             WIN.blit(EXPLOSION, (pink.x + SPACESHIP_WIDTH/2 - EXPLOSION.get_width()/2, pink.y + SPACESHIP_HEIGHT/2 - EXPLOSION.get_height()/2))
             pygame.display.update()
         if winner_text != '': # someone won
-            draw_winner(winner_text)
+            draw_winner(winner_text, colour)
             run = False
 
     main()
@@ -247,10 +258,6 @@ main()
 # I can´t figure out how to stop bullets from queueing up during the winner text stage
 
 # ideas...
-# make the explosion get bigger with the tick speed
-# add a big explosion sound for when the ship gets to zero health
 # add in meteorites that enter at a random co-ordinate and have a random gradient that can damage players
 # figure out how to edit the .wav sound clips, explosion.wav is too quiet and delayed
-# make the winner text flash
 # do a mini explosion on when a meteorite hits
-# reduce the hitbox of the meteor image
