@@ -38,6 +38,7 @@ SPACE_IMAGE = pygame.image.load(os.path.join('images', 'space.png'))
 SPACE = pygame.transform.scale(SPACE_IMAGE, (WIN_WIDTH, WIN_HEIGHT))
 EXPLOSION_IMAGE = pygame.image.load(os.path.join('images', 'explosion.png'))
 EXPLOSION = pygame.transform.scale(EXPLOSION_IMAGE, (SPACESHIP_WIDTH*1.5, SPACESHIP_HEIGHT*1.5))
+EXPLOSION_MINI = pygame.transform.scale(EXPLOSION_IMAGE, (SPACESHIP_WIDTH*0.5, SPACESHIP_HEIGHT*0.5))
 METEOR_IMAGE = pygame.image.load(os.path.join('images', 'meteor.png'))
 METEOR = pygame.transform.scale(METEOR_IMAGE, (30, 30))
 
@@ -129,6 +130,8 @@ def meteor_handling(meteors, meteor_grad, blue, pink):
             if pink.colliderect(meteor):
                 pygame.event.post(pygame.event.Event(PINK_HIT))
                 pygame.event.post(pygame.event.Event(PINK_HIT))
+                WIN.blit(EXPLOSION_MINI, (meteor.x + METEOR_WIDTH/2 - EXPLOSION_MINI.get_width()/2, meteor.y + METEOR_HEIGHT/2 - EXPLOSION_MINI.get_height()/2))
+                pygame.display.update()
                 meteors.remove(meteor)
                 meteor_grad.remove(grad)
                 EXPLOSION_SOUND.play()
@@ -136,6 +139,8 @@ def meteor_handling(meteors, meteor_grad, blue, pink):
             if blue.colliderect(meteor):
                 pygame.event.post(pygame.event.Event(BLUE_HIT))
                 pygame.event.post(pygame.event.Event(BLUE_HIT))
+                WIN.blit(EXPLOSION_MINI, (meteor.x + METEOR_WIDTH/2 - EXPLOSION_MINI.get_width()/2, meteor.y + METEOR_HEIGHT/2 - EXPLOSION_MINI.get_height()/2))
+                pygame.display.update()
                 meteors.remove(meteor)
                 meteor_grad.remove(grad)
                 EXPLOSION_SOUND.play()
@@ -260,4 +265,4 @@ main()
 # ideas...
 # add in meteorites that enter at a random co-ordinate and have a random gradient that can damage players
 # figure out how to edit the .wav sound clips, explosion.wav is too quiet and delayed
-# do a mini explosion on when a meteorite hits
+# figure out how to make the mini explosion image on a meteor hit last a few seconds
