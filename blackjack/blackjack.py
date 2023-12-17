@@ -215,10 +215,11 @@ def blackjack(): # not needed anymore now that i've merged it with fireworks
     pygame.time.delay(1000)
 
 class Button:
-    def __init__(self, x, y, button_width, button_height, text, colour=WHITE, hover_colour=(200, 200, 200), text_colour=BLACK):
+    def __init__(self, x, y, button_width, button_height, text, button_colour=WHITE, hover_colour=(200, 200, 200), text_colour=BLACK):
         self.rect = pygame.Rect(x, y, button_width, button_height)
         self.text = text
-        self.colour = colour
+        self.colour = button_colour
+        self.button_colour = button_colour
         self.hover_colour = hover_colour
         self.text_colour = text_colour
         self.font = pygame.font.Font(None, 36)  # customize the font and size
@@ -237,9 +238,13 @@ class Button:
         return self.rect.collidepoint(pos)
 
 # Buttons
+buttons = []
 DRAW_CARD_BUTTON = Button(100, 100, BUTTON_WIDTH, BUTTON_HEIGHT, 'Draw Card')
 STICK_BUTTON = Button(100, 300, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stick')
 STOP_PLAYING_BUTTON = Button(100, 500, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stop Playing')
+buttons.append(DRAW_CARD_BUTTON)
+buttons.append(STICK_BUTTON)
+buttons.append(STOP_PLAYING_BUTTON)
 
 class Card:
     def __init__(self, suit, num, score):
@@ -408,6 +413,17 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 exit()
+            
+            elif event.type == pygame.MOUSEMOTION:
+                for b in buttons:
+                    if b.rect.collidepoint(event.pos):
+                        b.colour = b.hover_colour
+                        b.draw_button(WIN)
+                        pygame.display.update()
+                    else:
+                        b.colour = b.button_colour
+                        b.draw_button(WIN)
+                        pygame.display.update()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # logic for when the buttons are clicked
