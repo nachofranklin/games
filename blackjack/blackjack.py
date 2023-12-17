@@ -346,7 +346,6 @@ def main():
     stop_clicks = 0
     playerIn = True
     dealerIn = True
-    # blitted = []
 
     # Draw background and buttons
     WIN.blit(ROULETTE, (0, 0))
@@ -354,7 +353,6 @@ def main():
     STICK_BUTTON.draw_button(WIN)
     STOP_PLAYING_BUTTON.draw_button(WIN)
     pygame.display.update()
-    # blitted.append(WIN.blit(ROULETTE, (0, 0)), DRAW_CARD_BUTTON.draw_button(WIN), STICK_BUTTON.draw_button(WIN), STOP_PLAYING_BUTTON.draw_button(WIN))
 
     # Draw 2 cards for player and dealer (dealer's first card is face down)
     for i in range(2):
@@ -362,22 +360,21 @@ def main():
             nacho.draw(deck)
             nacho.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
             pygame.display.update()
-            # blitted.append(nacho.hand[0].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2))
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
             dealer.draw(deck)
             WIN.blit(CARD_BACK, (WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2))
-            pygame.display.update(WIN.blit(CARD_BACK, (WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)))
+            pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
         else:
             nacho.draw(deck)
-            WIN.blit(nacho.hand[i].img, (WIN_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2))
+            nacho.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
             pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
             dealer.draw(deck)
-            WIN.blit(dealer.hand[i].img, (WIN_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2))
+            dealer.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)
             pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
