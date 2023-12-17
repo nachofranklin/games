@@ -19,6 +19,7 @@ BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
 PINK = (255, 192, 203)
 LIGHT_BLUE = (173, 216, 230)
+GREY = (200, 200, 200)
 
 # Screen
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -215,7 +216,7 @@ def blackjack(): # not needed anymore now that i've merged it with fireworks
     pygame.time.delay(1000)
 
 class Button:
-    def __init__(self, x, y, button_width, button_height, text, colour=WHITE, hover_colour=(200, 200, 200), text_colour=BLACK):
+    def __init__(self, x, y, button_width, button_height, text, colour=WHITE, hover_colour=PINK, text_colour=BLACK):
         self.rect = pygame.Rect(x, y, button_width, button_height)
         self.text = text
         self.colour = colour
@@ -609,14 +610,9 @@ main()
 
 # notes
 # can double click on draw card to fuck it up
-# add in a confetti animation and a 21 image when someone gets 21
 # write in who the player/dealer are
 # write in your own name
 # do a play again button
-# change the colour of the buttons when you hover over them
-# get a sound for the hidden dealer card reveal
-# get a sound of money falling when you win
-# add in the blackjack logic for 5 cards
 # add in blackjack functionality of burning a 13, splitting a double etc
 # make it so that the player wins confetti screen still shows all the cards/totals/buttons etc
 # 5 card rule - Regardless of whether the dealer has a stronger hand or not, the player will win because they have reached the five-card goal without going bust. However, if a player manages to achieve a Five-Card Charlie, but the dealer has blackjack (a 10 and an ace,) the dealer will still win
