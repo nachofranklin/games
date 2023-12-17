@@ -215,18 +215,22 @@ def blackjack(): # not needed anymore now that i've merged it with fireworks
     pygame.time.delay(1000)
 
 class Button:
-    def __init__(self, x, y, button_width, button_height, text, button_colour=WHITE, hover_colour=(200, 200, 200), text_colour=BLACK):
+    def __init__(self, x, y, button_width, button_height, text, colour=WHITE, hover_colour=(200, 200, 200), text_colour=BLACK):
         self.rect = pygame.Rect(x, y, button_width, button_height)
         self.text = text
-        self.colour = button_colour
-        self.button_colour = button_colour
+        self.colour = colour
         self.hover_colour = hover_colour
         self.text_colour = text_colour
         self.font = pygame.font.Font(None, 36)  # customize the font and size
+        self.is_hovered = False
 
     def draw_button(self, screen):
-        pygame.draw.rect(screen, self.colour, self.rect)
-        pygame.draw.rect(screen, self.hover_colour, self.rect, 4)  # Border
+        if self.is_hovered:
+            pygame.draw.rect(screen, self.hover_colour, self.rect)
+            pygame.draw.rect(screen, self.colour, self.rect, 4)  # Border
+        else:
+            pygame.draw.rect(screen, self.colour, self.rect)
+            pygame.draw.rect(screen, self.hover_colour, self.rect, 4)  # Border
         self.draw_text(screen)
 
     def draw_text(self, screen):
@@ -416,12 +420,12 @@ def main():
             
             elif event.type == pygame.MOUSEMOTION:
                 for b in buttons:
-                    if b.rect.collidepoint(event.pos):
-                        b.colour = b.hover_colour
+                    if b.rect.collidepoint(event.pos) and b.is_hovered == False:
+                        b.is_hovered = True
                         b.draw_button(WIN)
                         pygame.display.update()
-                    else:
-                        b.colour = b.button_colour
+                    elif b.rect.collidepoint(event.pos) == False and b.is_hovered == True:
+                        b.is_hovered = False
                         b.draw_button(WIN)
                         pygame.display.update()
             
