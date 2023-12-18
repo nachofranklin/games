@@ -104,7 +104,7 @@ fireworks_frame_width_small = 192 * fireworks_scale_small
 fireworks_frame_height_small = 192 * fireworks_scale_small
 fireworks_rows_small = FIREWORKS_SCALED_SMALL.get_height() // fireworks_frame_height_small
 fireworks_columns_small = FIREWORKS_SCALED_SMALL.get_width() // fireworks_frame_width_small
-fireworks_frame_index = 0 # do i need to change this one or delete it?
+# fireworks_frame_index = 0 # do i need to change this one or delete it?
 
 for i in range(10):
     frame = pygame.Surface((fireworks_frame_width_small, fireworks_frame_height_small), pygame.SRCALPHA)
@@ -186,34 +186,9 @@ PLAYER_STICK = Text(WIN_WIDTH/2, WIN_HEIGHT*9/10, 0, 0, 'Stick', WHITE, 64)
 DEALER_STICK = Text(WIN_WIDTH/2, WIN_HEIGHT/10, 0, 0, 'Stick', WHITE, 64)
 PLAYER_BUST = Text(WIN_WIDTH/2, WIN_HEIGHT*9/10, 0, 0, 'Bust', WHITE, 64)
 
-def player_wins(): # don´t need this anymore now that iǘe combined it with the confetti
-    for i in range(2):
-        PLAYER_WINS_BLUE.blit_text(WIN)
-        pygame.display.update()
-        pygame.time.delay(1000)
-        PLAYER_WINS_PINK.blit_text(WIN)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    PLAYER_WINS_BLUE.blit_text(WIN)
-    pygame.display.update()
-    pygame.time.delay(1000)
-
 def dealer_wins():
     DEALER_WINS.blit_text(WIN)
     pygame.display.update()
-    pygame.time.delay(3000)
-
-def blackjack(): # not needed anymore now that i've merged it with fireworks
-    for i in range(2):
-        BLACKJACK_WHITE.blit_text(WIN)
-        pygame.display.update()
-        pygame.time.delay(1000)
-        BLACKJACK_BLACK.blit_text(WIN)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    BLACKJACK_WHITE.blit_text(WIN)
-    pygame.display.update()
-    pygame.time.delay(1000)
 
 class Button:
     def __init__(self, x, y, button_width, button_height, text, colour=WHITE, hover_colour=PINK, text_colour=BLACK):
@@ -244,11 +219,13 @@ class Button:
 
 # Buttons
 buttons = []
-DRAW_CARD_BUTTON = Button(100, 100, BUTTON_WIDTH, BUTTON_HEIGHT, 'Draw Card')
-STICK_BUTTON = Button(100, 300, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stick')
-STOP_PLAYING_BUTTON = Button(100, 500, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stop Playing')
+DRAW_CARD_BUTTON = Button((WIN_WIDTH - WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH)/2 - BUTTON_WIDTH/2, WIN_HEIGHT*1/5 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, 'Draw Card')
+STICK_BUTTON = Button((WIN_WIDTH - WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH)/2 - BUTTON_WIDTH/2, WIN_HEIGHT*2/5 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stick')
+PLAY_AGAIN_BUTTON = Button((WIN_WIDTH - WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH)/2 - BUTTON_WIDTH/2, WIN_HEIGHT*3/5 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, 'Play Again?')
+STOP_PLAYING_BUTTON = Button((WIN_WIDTH - WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH)/2 - BUTTON_WIDTH/2, WIN_HEIGHT*4/5 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, 'Stop Playing')
 buttons.append(DRAW_CARD_BUTTON)
 buttons.append(STICK_BUTTON)
+buttons.append(PLAY_AGAIN_BUTTON)
 buttons.append(STOP_PLAYING_BUTTON)
 
 class Card:
@@ -266,6 +243,7 @@ class Card:
     
     def blit_card(self, screen, x, y):
         screen.blit(self.img, (x, y))
+        pygame.display.update()
 
 class DeckOfCards:
     def __init__(self):
@@ -354,6 +332,7 @@ def main():
     global player_win_count
     player_drawn = 0 # could swap this to be len of player.hand
     stop_clicks = 0
+    victory_message = 0
     playerIn = True
     dealerIn = True
 
@@ -361,6 +340,7 @@ def main():
     WIN.blit(ROULETTE, (0, 0))
     DRAW_CARD_BUTTON.draw_button(WIN)
     STICK_BUTTON.draw_button(WIN)
+    PLAY_AGAIN_BUTTON.draw_button(WIN)
     STOP_PLAYING_BUTTON.draw_button(WIN)
     pygame.display.update()
 
@@ -369,7 +349,6 @@ def main():
         if i == 0:
             nacho.draw(deck)
             nacho.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
-            pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
             dealer.draw(deck)
@@ -380,38 +359,15 @@ def main():
         else:
             nacho.draw(deck)
             nacho.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
-            pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
             dealer.draw(deck)
             dealer.hand[i].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)
-            pygame.display.update()
             DRAW_CARD_SOUND.play()
             pygame.time.delay(800)
     
     run = True
     while run:
-
-        # if dealer has blackjack it stops the game
-        if len(dealer.hand) == 2 and dealer.total() == 21:
-            dealerIn = False
-            playerIn = False
-        # if either dealer or player gets 21 or over it stops them from drawing more cards
-        if nacho.total() == 21:
-            if len(nacho.hand) == 2: # if player has blackjack it stops the game
-                dealerIn = False
-                # playerIn = False # already happens regardless of if statement
-            elif len(nacho.hand) > 2:
-                PLAYER_STICK.blit_text(WIN)
-                pygame.display.update()
-            playerIn = False
-        if nacho.total() > 21:
-            PLAYER_BUST.blit_text(WIN)
-            FART_SOUND.play()
-            pygame.display.update()
-            playerIn = False
-        # if dealer.total() >= 21: # this might be a problem of dealer sticking too early when bust
-        #     dealerIn = False
 
         # event handling
         for event in pygame.event.get():
@@ -420,6 +376,7 @@ def main():
                 exit()
             
             elif event.type == pygame.MOUSEMOTION:
+                # changes the colour of the buttons when the mouse hovers over it
                 for b in buttons:
                     if b.rect.collidepoint(event.pos) and b.is_hovered == False:
                         b.is_hovered = True
@@ -442,6 +399,12 @@ def main():
                     playerIn = False
                     PLAYER_STICK.blit_text(WIN)
                     pygame.display.update()
+
+                if PLAY_AGAIN_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                    if playerIn == False and dealerIn == False:
+                        main()
+                    else:
+                        FART_SOUND.play()
                 
                 if STOP_PLAYING_BUTTON.is_clicked(pygame.mouse.get_pos()):
                     if stop_clicks == 0:
@@ -451,170 +414,175 @@ def main():
                         pygame.display.update()
                         stop_clicks += 1
                         break
-                    # this doesn´t really work because the button isn´t there anymore but can still be clicked (leave in until i've done the button hover colour change in case that makes a difference)
                     elif stop_clicks > 0:
                         run = False
                         exit()
 
-        # logic for when the dealer draws/sticks and positioning for blit-ing drawn cards
-        if playerIn and player_drawn == 1:
-            nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
-            pygame.display.update()
-            pygame.time.delay(1000)
+        if victory_message == 0:
 
-        if (player_drawn == 1 or playerIn == False) and len(dealer.hand) == 2:  # makes the dealer go after the player, says if player has had their go...
-            if dealer.total() >= 21 or nacho.total() > 21:  # if player or dealer is bust then dealer sticks
+            # if dealer has blackjack it stops the game
+            if len(dealer.hand) == 2 and dealer.total() == 21:
                 dealerIn = False
-                DEALER_STICK.blit_text(WIN)
+                playerIn = False
+            # if either dealer or player gets 21 or over it stops them from drawing more cards
+            if nacho.total() == 21:
+                if len(nacho.hand) == 2: # if player has blackjack it stops the game
+                    dealerIn = False
+                elif len(nacho.hand) > 2:
+                    PLAYER_STICK.blit_text(WIN)
+                    pygame.display.update()
+                playerIn = False
+            if nacho.total() > 21:
+                PLAYER_BUST.blit_text(WIN)
                 pygame.display.update()
-            else:
-                if dealerIn:  # if dealer is in and has 2 cards
-                    if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
-                        dealerIn = False
-                        DEALER_STICK.blit_text(WIN)
-                        pygame.display.update()
-                    else:
-                        dealer.draw(deck)
-                        dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, CARD_HEIGHT/2)
-                        pygame.display.update()
-                        DRAW_CARD_SOUND.play()
-                        pygame.time.delay(1000)
+                playerIn = False
 
-        if playerIn and player_drawn == 2:
-            nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
-            pygame.display.update()
-            pygame.time.delay(1000)
+            # logic for when the dealer draws/sticks and positioning for blit-ing drawn cards
+            if playerIn and player_drawn == 1:
+                nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+                pygame.time.delay(1000)
 
-        if (player_drawn == 2 or playerIn == False) and len(dealer.hand) == 3:  # makes the dealer go after the player
-            if dealer.total() >= 21 or nacho.total() > 21:  # if bust dealer is out (or if 21 they stick)
-                dealerIn = False
-                DEALER_STICK.blit_text(WIN)
-                pygame.display.update()
-            else:
-                if dealerIn:  # if dealer is in and has 3 cards
-                    if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
-                        dealerIn = False
-                        DEALER_STICK.blit_text(WIN)
-                        pygame.display.update()
-                    else:
-                        dealer.draw(deck)
-                        dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2, CARD_HEIGHT/2)
-                        pygame.display.update()
-                        DRAW_CARD_SOUND.play()
-                        pygame.time.delay(1000)
+            if (player_drawn == 1 or playerIn == False) and len(dealer.hand) == 2:  # makes the dealer go after the player, says if player has had their go...
+                if dealer.total() >= 21 or nacho.total() > 21:  # if player or dealer is bust then dealer sticks
+                    dealerIn = False
+                    DEALER_STICK.blit_text(WIN)
+                    pygame.display.update()
+                else:
+                    if dealerIn:  # if dealer is in and has 2 cards
+                        if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
+                            dealerIn = False
+                            DEALER_STICK.blit_text(WIN)
+                            pygame.display.update()
+                        else:
+                            dealer.draw(deck)
+                            dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, CARD_HEIGHT/2)
+                            DRAW_CARD_SOUND.play()
+                            pygame.time.delay(1000)
 
-        if playerIn and player_drawn == 3:
-            nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
-            pygame.display.update()
-            pygame.time.delay(1000)
-            playerIn = False  # after having 5 cards can´t draw more
+            if playerIn and player_drawn == 2:
+                nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+                pygame.time.delay(1000)
 
-        if (player_drawn == 3 or playerIn == False) and len(dealer.hand) == 4:  # makes the dealer go after the player
-            if dealer.total() >= 21 or nacho.total() > 21:  # if bust dealer is out (or if 21 they stick)
-                dealerIn = False
-                DEALER_STICK.blit_text(WIN)
-                pygame.display.update()
-            else:
-                if dealerIn:  # if dealer is in and has 4 cards
-                    if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
-                        dealerIn = False
-                        DEALER_STICK.blit_text(WIN)
-                        pygame.display.update()
-                    else:
-                        dealer.draw(deck)
-                        dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, CARD_HEIGHT/2)
-                        pygame.display.update()
-                        DRAW_CARD_SOUND.play()
-                        pygame.time.delay(1000)
-                        dealerIn = False  # after having 5 cards can´t draw more
-                        DEALER_STICK.blit_text(WIN)
-                        pygame.display.update()
-        
+            if (player_drawn == 2 or playerIn == False) and len(dealer.hand) == 3:  # makes the dealer go after the player
+                if dealer.total() >= 21 or nacho.total() > 21:  # if bust dealer is out (or if 21 they stick)
+                    dealerIn = False
+                    DEALER_STICK.blit_text(WIN)
+                    pygame.display.update()
+                else:
+                    if dealerIn:  # if dealer is in and has 3 cards
+                        if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
+                            dealerIn = False
+                            DEALER_STICK.blit_text(WIN)
+                            pygame.display.update()
+                        else:
+                            dealer.draw(deck)
+                            dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2, CARD_HEIGHT/2)
+                            DRAW_CARD_SOUND.play()
+                            pygame.time.delay(1000)
+
+            if playerIn and player_drawn == 3:
+                nacho.hand[-1].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+                pygame.time.delay(1000)
+                playerIn = False  # after having 5 cards can´t draw more
+
+            if (player_drawn == 3 or playerIn == False) and len(dealer.hand) == 4:  # makes the dealer go after the player
+                if dealer.total() >= 21 or nacho.total() > 21:  # if bust dealer is out (or if 21 they stick)
+                    dealerIn = False
+                    DEALER_STICK.blit_text(WIN)
+                    pygame.display.update()
+                else:
+                    if dealerIn:  # if dealer is in and has 4 cards
+                        if dealer.total() > 16 and dealer.total() >= nacho.total():  # dealer chooses to stick or twist
+                            dealerIn = False
+                            DEALER_STICK.blit_text(WIN)
+                            pygame.display.update()
+                        else:
+                            dealer.draw(deck)
+                            dealer.hand[-1].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, CARD_HEIGHT/2)
+                            DRAW_CARD_SOUND.play()
+                            pygame.time.delay(1000)
+                            dealerIn = False  # after having 5 cards can´t draw more
+                            DEALER_STICK.blit_text(WIN)
+                            pygame.display.update()
+            
         # both player and dealer have stuck/bust and so reveals the dealers full hand and the totals
-        if playerIn == False and dealerIn == False:
+        if playerIn == False and dealerIn == False and victory_message <= 1:
+            # blit everything again so that victory screens then show the cards after
+            DRAW_CARD_BUTTON.draw_button(WIN)
+            STICK_BUTTON.draw_button(WIN)
+            PLAY_AGAIN_BUTTON.draw_button(WIN)
+            STOP_PLAYING_BUTTON.draw_button(WIN)
             dealer.hand[0].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)
             dealer.hand[1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)
-            pygame.display.update()
             if len(dealer.hand) >= 3:
                 dealer.hand[2].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, CARD_HEIGHT/2)
-                pygame.display.update()
                 if len(dealer.hand) >= 4:
                     dealer.hand[3].blit_card(WIN, WIN_WIDTH/2, CARD_HEIGHT/2)
-                    pygame.display.update()
                     if len(dealer.hand) >= 5:
-                        dealer.hand[4].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2 - CARD_WIDTH, CARD_HEIGHT/2)
-                        pygame.display.update()
-            # could probably do one update here rather than the 4 done above
-            pygame.time.delay(1000)
+                        dealer.hand[4].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, CARD_HEIGHT/2)
+            nacho.hand[0].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+            nacho.hand[1].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+            if len(nacho.hand) >= 3:
+                nacho.hand[2].blit_card(WIN, WIN_WIDTH/2 - CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+                if len(nacho.hand) >= 4:
+                    nacho.hand[3].blit_card(WIN, WIN_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
+                    if len(nacho.hand) >= 5:
+                        nacho.hand[4].blit_card(WIN, WIN_WIDTH/2 + CARD_WIDTH/2, WIN_HEIGHT - CARD_HEIGHT - CARD_HEIGHT/2)
             player_score = Text(1000, 600, 0, 0, "Player\'s Total: " + str(nacho.total()))
             player_score.blit_text(WIN)
             dealer_score = Text(1000, 200, 0, 0, "Dealer\'s Total: " + str(dealer.total()))
             dealer_score.blit_text(WIN)
             pygame.display.update()
+            pygame.time.delay(2000)
+
+            victory_message += 1
 
             # works out who wins the game, does winning/losing messages
-            if dealer.total() == 21:
-                if len(dealer.hand) == 2:
+            if victory_message == 1:
+                if dealer.total() == 21 and len(dealer.hand) == 2: # dealer blackjack
                     print('Dealer has Blackjack! You lose :(')
                     dealer_win_count += 1
                     Text(WIN_WIDTH/2, WIN_HEIGHT/2, 0, 0, 'Dealer has Blackjack', WHITE, 120).blit_text(WIN)
                     pygame.display.update()
-                    pygame.time.delay(5000)
-            elif len(nacho.hand) == 5 and nacho.total() <= 21:
-                print(f'Five-Card Charlie! You drew 5 cards and your total of {nacho.total()} is less than or equal to 21. You win :D')
-                player_win_count += 1
-                confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
-            elif dealer.total() == 21:
-                if len(dealer.hand) > 2:
-                    print('Dealer has 21. You lose :(')
-                    dealer_win_count += 1
-                    dealer_wins()
-            elif nacho.total() == 21:
-                if len(nacho.hand) == 2:
+                elif nacho.total() == 21 and len(nacho.hand) == 2: # player blackjack
                     print('Blackjack!!! You win :D')
                     player_win_count += 1
                     fireworks_animation(WIN)
-                else:
+                elif len(nacho.hand) == 5 and nacho.total() <= 21: # player five-card charlie
+                    print(f'Five-Card Charlie! You drew 5 cards and your total of {nacho.total()} is less than or equal to 21. You win :D')
+                    player_win_count += 1
+                    confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
+                elif nacho.total() > 21: # player bust
+                    FART_SOUND.play()
+                    print('You\'ve gone bust. You lose! :(')
+                    dealer_win_count += 1
+                    dealer_wins()
+                elif dealer.total() > 21: # dealer bust
+                    print('Dealer is bust! You win :D')
+                    player_win_count += 1
+                    confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
+                elif nacho.total() > dealer.total(): # player beats dealer score
                     print(f'Your total of {nacho.total()} beats the dealers {dealer.total()}. You win :D')
                     player_win_count += 1
                     confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
-            elif nacho.total() > 21:
-                print('You\'ve gone bust. You lose! :(')
-                dealer_win_count += 1
-                dealer_wins()
-            elif dealer.total() > 21:
-                print('Dealer is bust! You win :D')
-                player_win_count += 1
-                confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
-            elif nacho.total() > dealer.total():
-                print(f'Your total of {nacho.total()} beats the dealers {dealer.total()}. You win :D')
-                player_win_count += 1
-                confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
-            elif nacho.total() == dealer.total():
-                print(f'You both have a total of {nacho.total()}. You lose :(')
-                dealer_win_count += 1
-                dealer_wins()
-            elif nacho.total() < dealer.total():
-                print(f'Your total of {nacho.total()} is less than the dealers {dealer.total()}. You lose :(')
-                dealer_win_count += 1
-                dealer_wins()
-            else:
-                print('error deciding who won')
-
-            # plays the game again (need to change this so there's a button to start a new game instead)
-            main()
+                elif nacho.total() == dealer.total(): # player and dealer get the same score
+                    print(f'You both have a total of {nacho.total()}. You lose :(')
+                    dealer_win_count += 1
+                    dealer_wins()
+                elif nacho.total() < dealer.total(): # dealer beats player score
+                    print(f'Your total of {nacho.total()} is less than the dealers {dealer.total()}. You lose :(')
+                    dealer_win_count += 1
+                    dealer_wins()
+                else:
+                    print('error deciding who won')
 
 # Start game
 main()
 
 
 # notes
-# can double click on draw card to fuck it up
+# can double click on draw card to mess it up
 # write in who the player/dealer are
 # write in your own name
-# do a play again button
 # add in blackjack functionality of burning a 13, splitting a double etc
-# make it so that the player wins confetti screen still shows all the cards/totals/buttons etc
-# 5 card rule - Regardless of whether the dealer has a stronger hand or not, the player will win because they have reached the five-card goal without going bust. However, if a player manages to achieve a Five-Card Charlie, but the dealer has blackjack (a 10 and an ace,) the dealer will still win
-# 5 card charlie doesn´t apply to the dealer, only the player benefits from it. So need to figure out logic for dealer (currently they'll stop after 5 cards no matter what)
-# check if the dealer gets 21 with 3+ cards if it stops the player from playing or not
+# bust is now taking too long to make the fart noise
