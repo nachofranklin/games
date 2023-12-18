@@ -433,6 +433,7 @@ def main():
                     pygame.display.update()
                 playerIn = False
             if nacho.total() > 21:
+                FART_SOUND.play()
                 PLAYER_BUST.blit_text(WIN)
                 pygame.display.update()
                 playerIn = False
@@ -533,7 +534,7 @@ def main():
             dealer_score = Text(1000, 200, 0, 0, "Dealer\'s Total: " + str(dealer.total()))
             dealer_score.blit_text(WIN)
             pygame.display.update()
-            pygame.time.delay(2000)
+            pygame.time.delay(1000)
 
             victory_message += 1
 
@@ -553,7 +554,7 @@ def main():
                     player_win_count += 1
                     confetti_animation(WIN, WIN_WIDTH//2 - frame_width//2, WIN_HEIGHT//2 - frame_height//2)
                 elif nacho.total() > 21: # player bust
-                    FART_SOUND.play()
+                    # FART_SOUND.play()
                     print('You\'ve gone bust. You lose! :(')
                     dealer_win_count += 1
                     dealer_wins()
