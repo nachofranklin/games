@@ -5,6 +5,8 @@ pygame.font.init()
 pygame.mixer.init()
 
 PATH = '/home/nacho/repos/games/connect4/'
+
+# variables used for pygame
 GRID_WIDTH = GRID_HEIGHT = 600
 SPACE = 100
 WIN_WIDTH, WIN_HEIGHT = GRID_WIDTH, GRID_HEIGHT + SPACE
@@ -16,6 +18,11 @@ UPPER_GAP = GRID_HEIGHT/13.7 # 44 pixels
 LOWER_GAP = GRID_HEIGHT/14.3 # 42 pixels
 X_GAP = GRID_WIDTH/6 - OUTER_GAP/3 - COUNTER_WIDTH*7/6
 Y_GAP = GRID_WIDTH/5 - UPPER_GAP/5 - LOWER_GAP/5 - COUNTER_HEIGHT*6/5
+
+# board used for logic
+BOARD_COLS, BOARD_ROWS = 7, 6
+for r in range(BOARD_ROWS):
+    board = [[0] * BOARD_COLS] * (r+1)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -36,35 +43,37 @@ NEON_CITY_CREST_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'neon_cit
 NEON_CITY_CREST = pygame.transform.scale(NEON_CITY_CREST_IMAGE, (COUNTER_WIDTH, COUNTER_HEIGHT))
 
 class Column:
-    def __init__(self, x):
+    def __init__(self, x, col):
         self.rect = pygame.Rect(x, 0, COUNTER_WIDTH, WIN_HEIGHT)
         self.x = x
+        self.col = col
+        self.row_counter = 5
         self.is_hovered = False
-        self.counter = 5
 
     def draw_hover_counter(self, screen, crest):
         pygame.draw.rect(WIN, BACKGROUND_COL, pygame.Rect(0, 0, WIN_WIDTH, SPACE)) # un-blits counter
         if self.is_hovered:
             screen.blit(crest, (self.x, SPACE - COUNTER_HEIGHT)) # blits the counter at the top
     
-    def draw_actual_counter(self, screen, crest):
+    def draw_actual_counter(self, screen, crest, player):
         self.is_hovered = False
-        pygame.draw.rect(WIN, BACKGROUND_COL, pygame.Rect(0, 0, WIN_WIDTH, SPACE)) # un-blits counter
-        screen.blit(crest, (self.x, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * self.counter))
+        pygame.draw.rect(WIN, BACKGROUND_COL, pygame.Rect(0, 0, WIN_WIDTH, SPACE)) # un-blits counter at the top
+        screen.blit(crest, (self.x, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * self.row_counter))
         pygame.display.update()
-        self.counter -= 1
+        board[self.row_counter][self.col] = player
+        self.row_counter -= 1
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
     
 columns = []
-column0 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 0)
-column1 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 1)
-column2 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 2)
-column3 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 3)
-column4 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 4)
-column5 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 5)
-column6 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 6)
+column0 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 0, 0)
+column1 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 1, 1)
+column2 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 2, 2)
+column3 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 3, 3)
+column4 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 4, 4)
+column5 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 5, 5)
+column6 = Column(OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 6, 6)
 columns.append(column0)
 columns.append(column1)
 columns.append(column2)
@@ -79,6 +88,42 @@ class Player:
 
     def winner(self):
         self.wins += 1
+
+# Function to check for a win
+def check_win(player):
+    # Check horizontal
+    for row in range(BOARD_ROWS):
+        for col in range(BOARD_COLS - 3):
+            if (
+                board[row][col] == board[row][col + 1] == board[row][col + 2] == board[row][col + 3] == player
+            ):
+                return True
+
+    # Check vertical
+    for col in range(BOARD_COLS):
+        for row in range(BOARD_ROWS - 3):
+            if (
+                board[row][col] == board[row + 1][col] == board[row + 2][col] == board[row + 3][col] == player
+            ):
+                return True
+
+    # Check diagonal (positive slope)
+    for row in range(BOARD_ROWS - 3):
+        for col in range(BOARD_COLS - 3):
+            if (
+                board[row][col] == board[row + 1][col + 1] == board[row + 2][col + 2] == board[row + 3][col + 3] == player
+            ):
+                return True
+
+    # Check diagonal (negative slope)
+    for row in range(3, BOARD_ROWS):
+        for col in range(BOARD_COLS - 3):
+            if (
+                board[row][col] == board[row - 1][col + 1] == board[row - 2][col + 2] == board[row - 3][col + 3] == player
+            ):
+                return True
+
+    return False
 
 # WIN.blit(NEON_CITY_CREST, (OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 0, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * 0))
 # WIN.blit(NORMAL_CITY_CREST, (OUTER_GAP + (COUNTER_WIDTH + X_GAP) * 6, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * 5))
@@ -121,12 +166,12 @@ def main():
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 for col in columns:
-                    if col.is_clicked(pygame.mouse.get_pos()) and col.counter > -1:
+                    if col.is_clicked(pygame.mouse.get_pos()) and col.row_counter > -1:
                         if p1_turn:
-                            col.draw_actual_counter(WIN, NORMAL_CITY_CREST)
+                            col.draw_actual_counter(WIN, NORMAL_CITY_CREST, 'p1')
                             p1_turn = False
                         elif p1_turn == False:
-                            col.draw_actual_counter(WIN, NEON_CITY_CREST)
+                            col.draw_actual_counter(WIN, NEON_CITY_CREST, 'p2')
                             p1_turn = True
 
 main()
