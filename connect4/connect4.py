@@ -356,6 +356,7 @@ def main():
     global won
     global stage
     won = False
+    clicked = False
     p1_turn = True
     difficulty = 0
     stage = 0 # 0 = 1p or 2p game, 1 = p1 selects counter, 2 = p2 selects counter, 3 = draw connect4 board, 4 = plays the game
@@ -412,12 +413,14 @@ def main():
                                 col.is_hovered = False
                             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if stage == 0:
+                if stage == 0 and clicked == False:
+                    clicked = True
                     if ONE_PLAYER_BUTTON.is_clicked(pygame.mouse.get_pos()):
                         stage = 6
                     elif TWO_PLAYER_BUTTON.is_clicked(pygame.mouse.get_pos()):
                         stage = 1
-                if stage == 6:
+                if stage == 6 and clicked == False:
+                    clicked = True
                     if EASY_BUTTON.is_clicked(pygame.mouse.get_pos()):
                         difficulty = EASY
                         stage = 7
@@ -448,7 +451,8 @@ def main():
                     else:
                         total_row = round(len(counter_list) / total_col)
 
-                    if stage == 1:
+                    if stage == 1 and clicked == False:
+                        clicked = True
                         for r in range(total_row):
                             for c in range(total_col):
                                 if counter_num < len(counter_list):
@@ -466,7 +470,8 @@ def main():
                                     counter_num += 1
                                 else:
                                     break
-                    if stage == 2:
+                    if stage == 2 and clicked == False:
+                        clicked = True
                         for r in range(total_row):
                             for c in range(total_col):
                                 if counter_num < len(counter_list):
@@ -480,7 +485,8 @@ def main():
                                 else:
                                     break
 
-                    if stage == 7:
+                    if stage == 7 and clicked == False:
+                        clicked = True
                         for r in range(total_row):
                             for c in range(total_col):
                                 if counter_num < len(counter_list):
@@ -493,7 +499,8 @@ def main():
                                     counter_num += 1
                                 else:
                                     break
-                    if stage == 8:
+                    if stage == 8 and clicked == False:
+                        clicked = True
                         for r in range(total_row):
                             for c in range(total_col):
                                 if counter_num < len(counter_list):
@@ -506,7 +513,8 @@ def main():
                                 else:
                                     break
 
-                if won == False and stage == 4:
+                if won == False and stage == 4 and clicked == False:
+                    clicked = True
                     for col in columns:
                         if col.is_clicked(pygame.mouse.get_pos()) and col.row_counter > -1:
                             if p1_turn:
@@ -517,6 +525,10 @@ def main():
                                 # NI_HAO_SOUND.play()
                                 col.draw_actual_counter(WIN, p2_counter, 'p2')
                                 p1_turn = True
+            
+            elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
+                clicked = False
+
         if stage == 0:
             WIN.fill(BACKGROUND_COL)
             ONE_PLAYER_BUTTON.draw_button(WIN)
@@ -588,6 +600,5 @@ main()
 # get a winning sound
 # add in a play again button when the game is won
 # create a cpu
-# add in a delay between buttons being able to be pressed so that there's no accidental clicking twice
 # finish doing the maximin coding, see https://www.youtube.com/watch?v=MMLtza3CZFM&ab_channel=KeithGalli
 # edit the neon city crest image
