@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 pygame.font.init()
 pygame.mixer.init()
@@ -10,20 +11,21 @@ PATH = '/home/nacho/repos/games/connect4/'
 GRID_WIDTH = GRID_HEIGHT = 800
 SPACE = GRID_HEIGHT/8
 WIN_WIDTH, WIN_HEIGHT = GRID_WIDTH, GRID_HEIGHT + SPACE
+BUTTON_WIDTH, BUTTON_HEIGHT, DIFFICULTY_BUTTON_HEIGHT = WIN_WIDTH/2, WIN_HEIGHT/4, WIN_HEIGHT/6
 FPS = 60
 SWIRL_SPEED = 100
 COUNTER_RATIO = 9 # 66.66 pixels
 COUNTER_WIDTH, COUNTER_HEIGHT = GRID_WIDTH/COUNTER_RATIO, GRID_HEIGHT/COUNTER_RATIO
-BUTTON_WIDTH = 200
-BUTTON_HEIGHT = 50
 OUTER_GAP = GRID_WIDTH/20.6 # 29 pixels
 UPPER_GAP = GRID_HEIGHT/13.7 # 44 pixels
 LOWER_GAP = GRID_HEIGHT/14.3 # 42 pixels
 X_GAP = GRID_WIDTH/6 - OUTER_GAP/3 - COUNTER_WIDTH*7/6
 Y_GAP = GRID_WIDTH/5 - UPPER_GAP/5 - LOWER_GAP/5 - COUNTER_HEIGHT*6/5
-won = False
-stage = 1
 counter_list = []
+EASY = 60
+MEDIUM = 70
+HARD = 90
+NATHAN = 100
 
 # board used for logic
 BOARD_COLS, BOARD_ROWS = 7, 6
@@ -138,8 +140,10 @@ class Text:
 
 P1_COUNTER_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'Player 1 select your counter', BLUE, int(GRID_HEIGHT/13))
 P2_COUNTER_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'Player 2 select your counter', WHITE, int(GRID_HEIGHT/13))
+CPU_COUNTER_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'Select CPU\'s counter', WHITE, int(GRID_HEIGHT/13))
 P1_WINS_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'Player 1 wins!', BLUE, int(GRID_HEIGHT/13))
 P2_WINS_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'Player 2 wins!', BLUE, int(GRID_HEIGHT/13))
+CPU_WINS_TEXT = Text(WIN_WIDTH/2, SPACE/2, 0, 0, 'CPU wins!', BLUE, int(GRID_HEIGHT/13))
 
 # blits all the counters on the screen based off of how many there are in total
 def draw_counters(screen):
@@ -294,16 +298,56 @@ def check_win(player, counter, screen = WIN):
     if won:
         if player == 'p1':
             P1_WINS_TEXT.blit_text(screen)
-            screen.blit(counter, (COUNTER_WIDTH*1.5, SPACE/2 - COUNTER_HEIGHT/2))
-            screen.blit(counter, (GRID_WIDTH - COUNTER_WIDTH*2.5, SPACE/2 - COUNTER_HEIGHT/2))
-            won = False
-            stage = 5
-        if player == 'p2':
+        elif player == 'p2':
             P2_WINS_TEXT.blit_text(screen)
-            screen.blit(counter, (COUNTER_WIDTH*1.5, SPACE/2 - COUNTER_HEIGHT/2))
-            screen.blit(counter, (GRID_WIDTH - COUNTER_WIDTH*2.5, SPACE/2 - COUNTER_HEIGHT/2))
-            won = False
-            stage = 5
+        elif player == 'cpu':
+            CPU_WINS_TEXT.blit_text(screen)
+        screen.blit(counter, (COUNTER_WIDTH*1.5, SPACE/2 - COUNTER_HEIGHT/2))
+        screen.blit(counter, (GRID_WIDTH - COUNTER_WIDTH*2.5, SPACE/2 - COUNTER_HEIGHT/2))
+        won = False
+        stage = 5
+
+class Button:
+    def __init__(self, x, y, button_width, button_height, text, text_size=36, colour=WHITE, hover_colour=PINK, text_colour=BLACK):
+        self.rect = pygame.Rect(x, y, button_width, button_height)
+        self.text = text
+        self.colour = colour
+        self.hover_colour = hover_colour
+        self.text_colour = text_colour
+        self.font = pygame.font.Font(None, text_size)  # customize the font and size
+        self.is_hovered = False
+
+    def draw_button(self, screen):
+        if self.is_hovered:
+            pygame.draw.rect(screen, self.hover_colour, self.rect)
+            pygame.draw.rect(screen, self.colour, self.rect, 10)  # Border
+        else:
+            pygame.draw.rect(screen, self.colour, self.rect)
+            pygame.draw.rect(screen, self.hover_colour, self.rect, 10)  # Border
+        self.draw_text(screen)
+
+    def draw_text(self, screen):
+        text_surface = self.font.render(self.text, True, self.text_colour)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
+
+ONE_PLAYER_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT/3 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, '1 Player Game', int(WIN_WIDTH/12))
+TWO_PLAYER_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT*2/3 - BUTTON_HEIGHT/2, BUTTON_WIDTH, BUTTON_HEIGHT, '2 Player Game', int(WIN_WIDTH/12))
+EASY_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT/5 - DIFFICULTY_BUTTON_HEIGHT/2, BUTTON_WIDTH, DIFFICULTY_BUTTON_HEIGHT, 'Easy', int(WIN_WIDTH/12), WHITE, LIGHT_BLUE)
+MEDIUM_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT*2/5 - DIFFICULTY_BUTTON_HEIGHT/2, BUTTON_WIDTH, DIFFICULTY_BUTTON_HEIGHT, 'Medium', int(WIN_WIDTH/12), WHITE, LIGHT_BLUE)
+HARD_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT*3/5 - DIFFICULTY_BUTTON_HEIGHT/2, BUTTON_WIDTH, DIFFICULTY_BUTTON_HEIGHT, 'Hard', int(WIN_WIDTH/12), WHITE, LIGHT_BLUE)
+NATHAN_BUTTON = Button(WIN_WIDTH/2 - BUTTON_WIDTH/2, WIN_HEIGHT*4/5 - DIFFICULTY_BUTTON_HEIGHT/2, BUTTON_WIDTH, DIFFICULTY_BUTTON_HEIGHT, 'Nathan', int(WIN_WIDTH/12), WHITE, LIGHT_BLUE)
+buttons = []
+buttons.append(ONE_PLAYER_BUTTON)
+buttons.append(TWO_PLAYER_BUTTON)
+difficulty_buttons = []
+difficulty_buttons.append(EASY_BUTTON)
+difficulty_buttons.append(MEDIUM_BUTTON)
+difficulty_buttons.append(HARD_BUTTON)
+difficulty_buttons.append(NATHAN_BUTTON)
 
 def main():
 
@@ -313,12 +357,9 @@ def main():
     global stage
     won = False
     p1_turn = True
-    stage = 1 # 1 = p1 selects counter, 2 = p2 selects counter, 3 = draw connect4 board, 4 = plays the game
-
-    WIN.fill(BACKGROUND_COL)
-    P1_COUNTER_TEXT.blit_text(WIN)
-    draw_counters(WIN)
-    pygame.display.update()
+    difficulty = 0
+    stage = 0 # 0 = 1p or 2p game, 1 = p1 selects counter, 2 = p2 selects counter, 3 = draw connect4 board, 4 = plays the game
+    # 5 = win message, 6 = cpu difficulty, 7 = player picks counter, 8 = cpu picks counter, 9 = randoms who goes first and draws connect4 board
 
     run = True
     while run:
@@ -330,6 +371,28 @@ def main():
                 exit()
 
             elif event.type == pygame.MOUSEMOTION:
+                # shows which button is being hovered over
+                if stage == 0:
+                    for b in buttons:
+                        if b.rect.collidepoint(event.pos) and b.is_hovered == False:
+                            b.is_hovered = True
+                            b.draw_button(WIN)
+                            pygame.display.update()
+                        elif b.rect.collidepoint(event.pos) == False and b.is_hovered == True:
+                            b.is_hovered = False
+                            b.draw_button(WIN)
+                            pygame.display.update()
+                if stage == 6:
+                    for b in difficulty_buttons:
+                        if b.rect.collidepoint(event.pos) and b.is_hovered == False:
+                            b.is_hovered = True
+                            b.draw_button(WIN)
+                            pygame.display.update()
+                        elif b.rect.collidepoint(event.pos) == False and b.is_hovered == True:
+                            b.is_hovered = False
+                            b.draw_button(WIN)
+                            pygame.display.update()
+
                 # hovers the counter over the top
                 if won == False and stage == 4:
                     for col in columns:
@@ -349,7 +412,27 @@ def main():
                                 col.is_hovered = False
                             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if stage <= 2:
+                if stage == 0:
+                    if ONE_PLAYER_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        stage = 6
+                    elif TWO_PLAYER_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        stage = 1
+                if stage == 6:
+                    if EASY_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        difficulty = EASY
+                        stage = 7
+                    elif MEDIUM_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        difficulty = MEDIUM
+                        stage = 7
+                    elif HARD_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        difficulty = HARD
+                        stage = 7
+                    elif NATHAN_BUTTON.is_clicked(pygame.mouse.get_pos()):
+                        difficulty = NATHAN
+                        stage = 7
+                
+                if stage == 1 or stage == 2 or stage == 7 or stage == 8:
+                    # figures out how to arrange the number of counters on screen
                     counter_num = 0
                     if len(counter_list) <= 25:
                         total_col = 5
@@ -359,12 +442,12 @@ def main():
                         total_col = 7
                     else:
                         print('too many counter options, can only have a max of 49')
-                    
                     # creates rects depending on how many counters there are and stores the selected counter
                     if len(counter_list) % total_col > 0 and len(counter_list) % total_col < total_col / 2:
                         total_row = round(len(counter_list) / total_col) + 1
                     else:
                         total_row = round(len(counter_list) / total_col)
+
                     if stage == 1:
                         for r in range(total_row):
                             for c in range(total_col):
@@ -397,6 +480,32 @@ def main():
                                 else:
                                     break
 
+                    if stage == 7:
+                        for r in range(total_row):
+                            for c in range(total_col):
+                                if counter_num < len(counter_list):
+                                    x = GRID_WIDTH * (c + 1) / (total_col + 1) - COUNTER_WIDTH / 2
+                                    y = GRID_HEIGHT * (r + 1) / (total_row + 1) - COUNTER_HEIGHT / 2 + SPACE
+                                    if pygame.Rect(x, y, COUNTER_WIDTH, COUNTER_HEIGHT).collidepoint(pygame.mouse.get_pos()):
+                                        p1_counter = counter_list[counter_num]
+                                        del counter_list[counter_num]
+                                        stage = 8
+                                    counter_num += 1
+                                else:
+                                    break
+                    if stage == 8:
+                        for r in range(total_row):
+                            for c in range(total_col):
+                                if counter_num < len(counter_list):
+                                    x = GRID_WIDTH * (c + 1) / (total_col + 1) - COUNTER_WIDTH / 2
+                                    y = GRID_HEIGHT * (r + 1) / (total_row + 1) - COUNTER_HEIGHT / 2 + SPACE
+                                    if pygame.Rect(x, y, COUNTER_WIDTH, COUNTER_HEIGHT).collidepoint(pygame.mouse.get_pos()):
+                                        p2_counter = counter_list[counter_num] # cpu counter = p2_counter
+                                        stage = 9
+                                    counter_num += 1
+                                else:
+                                    break
+
                 if won == False and stage == 4:
                     for col in columns:
                         if col.is_clicked(pygame.mouse.get_pos()) and col.row_counter > -1:
@@ -404,10 +513,21 @@ def main():
                                 # G_FART_SOUND.play()
                                 col.draw_actual_counter(WIN, p1_counter, 'p1')
                                 p1_turn = False
-                            elif p1_turn == False:
+                            elif p1_turn == False and difficulty == 0: # the 2 player version
                                 # NI_HAO_SOUND.play()
                                 col.draw_actual_counter(WIN, p2_counter, 'p2')
                                 p1_turn = True
+        if stage == 0:
+            WIN.fill(BACKGROUND_COL)
+            ONE_PLAYER_BUTTON.draw_button(WIN)
+            TWO_PLAYER_BUTTON.draw_button(WIN)
+            pygame.display.update()
+        
+        if stage == 1:
+            WIN.fill(BACKGROUND_COL)
+            P1_COUNTER_TEXT.blit_text(WIN)
+            draw_counters(WIN)
+            pygame.display.update()
 
         if stage == 3:
             WIN.fill(BACKGROUND_COL)
@@ -415,14 +535,59 @@ def main():
             pygame.display.update()
             stage += 1
         
-        if stage == 4 or stage == 5:
+        if (stage == 4 or stage == 5) and difficulty == 0: # 2 player game
             check_win('p1', p1_counter)
             check_win('p2', p2_counter)
             if frame_index >= len(swirls):
                 frame_index = 0
+        
+        if stage == 4 and difficulty != 0 and won == False: # vs cpu
+            check_win('p1', p1_counter)
+            check_win('cpu', p2_counter)
+            if p1_turn == False and stage == 4:
+                col = random.choice(columns)
+                col.draw_actual_counter(WIN, p2_counter, 'cpu')
+                p1_turn = True
+        
+        if stage == 5 and difficulty != 0: # vs cpu
+            check_win('p1', p1_counter)
+            check_win('cpu', p2_counter)
+            if frame_index >= len(swirls):
+                frame_index = 0
+        
+        if stage == 6:
+            WIN.fill(PINK)
+            EASY_BUTTON.draw_button(WIN)
+            MEDIUM_BUTTON.draw_button(WIN)
+            HARD_BUTTON.draw_button(WIN)
+            NATHAN_BUTTON.draw_button(WIN)
+            pygame.display.update()
+
+        if stage == 7:
+            WIN.fill(BACKGROUND_COL)
+            P1_COUNTER_TEXT.blit_text(WIN)
+            draw_counters(WIN)
+            pygame.display.update()
+        
+        if stage == 8:
+            WIN.fill(PINK)
+            CPU_COUNTER_TEXT.blit_text(WIN)
+            draw_counters(WIN)
+            pygame.display.update()
+        
+        if stage == 9:
+            WIN.fill(BACKGROUND_COL)
+            WIN.blit(GRID, (0, SPACE))
+            pygame.display.update()
+            p1_turn = random.choice([True, False]) # randomises who goes first
+            stage = 4
 
 main()
 
 # choose your counter and sound
 # get a winning sound
 # add in a play again button when the game is won
+# create a cpu
+# add in a delay between buttons being able to be pressed so that there's no accidental clicking twice
+# finish doing the maximin coding, see https://www.youtube.com/watch?v=MMLtza3CZFM&ab_channel=KeithGalli
+# edit the neon city crest image
