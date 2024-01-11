@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import numpy as np
 
 pygame.font.init()
 pygame.mixer.init()
@@ -27,9 +28,22 @@ MEDIUM = 70
 HARD = 90
 NATHAN = 100
 
+# cpu scoring variables
+FOUR_IN_A_ROW = 1000
+THREE_IN_A_ROW = 16
+TWO_IN_A_ROW = 4
+MIDDLE_COL = 3
+ONE_FROM_MIDDLE_COL = 2
+TWO_FROM_MIDDLE_COL = 1
+
 # board used for logic
 BOARD_COLS, BOARD_ROWS = 7, 6
-board = [['a' for c in range(BOARD_COLS)] for r in range(BOARD_ROWS)]
+EMPTY = 0
+PLAYER_1 = 1
+PLAYER_2 = 2
+CPU_OPP = 3
+# board = [[EMPTY for c in range(BOARD_COLS)] for r in range(BOARD_ROWS)]
+board = np.zeros((BOARD_ROWS, BOARD_COLS))
 
 # colours
 WHITE = (255, 255, 255)
@@ -222,6 +236,9 @@ def win_swirls_diagonal_neg(screen, row, col):
         pygame.time.delay(SWIRL_SPEED)
         frame_index += 1
 
+def is_valid_location(col):
+    return board[0][col] == EMPTY
+
 class Column:
     def __init__(self, x, col):
         self.rect = pygame.Rect(x, 0, COUNTER_WIDTH, WIN_HEIGHT)
@@ -236,12 +253,13 @@ class Column:
             screen.blit(crest, (self.x, SPACE - COUNTER_HEIGHT)) # blits the counter at the top
     
     def draw_actual_counter(self, screen, crest, player):
-        self.is_hovered = False
-        pygame.draw.rect(screen, BACKGROUND_COL, pygame.Rect(0, 0, WIN_WIDTH, SPACE)) # un-blits counter at the top
-        screen.blit(crest, (self.x, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * self.row_counter))
-        pygame.display.update()
-        board[self.row_counter][self.col] = player
-        self.row_counter -= 1
+        if is_valid_location(self.col):
+            self.is_hovered = False
+            pygame.draw.rect(screen, BACKGROUND_COL, pygame.Rect(0, 0, WIN_WIDTH, SPACE)) # un-blits counter at the top
+            screen.blit(crest, (self.x, SPACE + UPPER_GAP + (COUNTER_HEIGHT + Y_GAP) * self.row_counter))
+            pygame.display.update()
+            board[self.row_counter][self.col] = player
+            self.row_counter -= 1
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -296,11 +314,11 @@ def check_win(player, counter, screen = WIN):
                 won = True
 
     if won:
-        if player == 'p1':
+        if player == PLAYER_1:
             P1_WINS_TEXT.blit_text(screen)
-        elif player == 'p2':
+        elif player == PLAYER_2:
             P2_WINS_TEXT.blit_text(screen)
-        elif player == 'cpu':
+        elif player == CPU_OPP:
             CPU_WINS_TEXT.blit_text(screen)
         screen.blit(counter, (COUNTER_WIDTH*1.5, SPACE/2 - COUNTER_HEIGHT/2))
         screen.blit(counter, (GRID_WIDTH - COUNTER_WIDTH*2.5, SPACE/2 - COUNTER_HEIGHT/2))
@@ -349,12 +367,120 @@ difficulty_buttons.append(MEDIUM_BUTTON)
 difficulty_buttons.append(HARD_BUTTON)
 difficulty_buttons.append(NATHAN_BUTTON)
 
+def score_position(board, row, column, player=CPU_OPP):
+    score = 0
+
+    # score horizontal
+    row_list = list(board[row]) # a np list (so we can count) showing just the row in question
+
+    for col in range(BOARD_COLS - 3): # for col 0, 1, 2, 3
+        if column >= col and column <= col+3: # prevents it from scoring things that make no difference to you putting it there - 3>=0 and 3<=3 3>=3 and 3<=6, 0>=0 and 0<=3 0>=1 !and 0<=4, 6>=2 !and 6<=5 6>=3 and 6<=6
+            group_of_4 = row_list[col: col + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
+            if group_of_4.count(player) == 4:
+                score += FOUR_IN_A_ROW # 1000
+            elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
+                score += THREE_IN_A_ROW # 16
+            elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
+                score += TWO_IN_A_ROW # 4
+    
+    # score vertical
+    col_list = [] # vertical is definitely not adding anything to the score :(
+    for r in range(BOARD_ROWS-1, -1, -1):
+        col_list.append(board[r][column])
+    col_list = list(col_list)
+
+    for r in range(BOARD_ROWS - 3): # for row 0, 1, 2
+        group_of_4 = col_list[r: r + 4] # 3 lists = [row0, 1, 2, 3], [row1, 2, 3, 4], [row2, 3, 4, 5]
+        if group_of_4.count(player) == 4:
+            score += FOUR_IN_A_ROW # 1000
+        elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
+            score += THREE_IN_A_ROW # 16
+        elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
+            score += TWO_IN_A_ROW # 4
+
+    # score positive diagonal
+    pos_list = []
+    for i in range(4): # (inclusive of current pos) remember it starts at row = 5 and gets smaller, to increase in row i need to -1
+        if row+3 - i <= BOARD_ROWS-1 and column-3 + i >= 0: # gets values from the bottom left up, including the row_x, col_x
+            pos_list.append(board[row+3 - i][column-3 + i])
+    for i in range(3): # (exclusive of current pos)
+        if row-1 - i >= 0 and column+1 + i <= BOARD_COLS-1: # gets the three next values towards top right not including row_x, col_x
+            pos_list.append(board[row-1 - i][column+1 + i])
+
+    for i in range(len(pos_list)):
+        if len(pos_list) >= 4:
+            group_of_4 = pos_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
+            if group_of_4.count(player) == 4:
+                score += FOUR_IN_A_ROW # 1000
+            elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
+                score += THREE_IN_A_ROW # 16
+            elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
+                score += TWO_IN_A_ROW # 4
+      
+    # score negative diaganol
+    neg_list = []
+    for i in range(4): # (inclusive of current pos) remember it starts at row = 5 and gets smaller, to increase in row i need to -1
+        if row+3 - i <= BOARD_ROWS-1 and column+3 - i <= BOARD_COLS-1: # gets values from the bottom right up, including the row_x, col_x
+            neg_list.append(board[row+3 - i][column+3 - i])
+    for i in range(3): # (exclusive of current pos)
+        if row-1 - i >= 0 and column-1 - i >= 0: # gets the three next values towards top left not including row_x, col_x
+            neg_list.append(board[row-1 - i][column-1 - i])
+
+    for i in range(len(neg_list)):
+        if len(neg_list) >= 4:
+            group_of_4 = neg_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
+            if group_of_4.count(player) == 4:
+                score += FOUR_IN_A_ROW # 1000
+            elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
+                score += THREE_IN_A_ROW # 16
+            elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
+                score += TWO_IN_A_ROW # 4
+
+    return score
+
+def get_valid_locations():
+    valid_locations = []
+    for c in columns:
+        if is_valid_location(c.col):
+            valid_locations.append(c)
+    return valid_locations
+
+def cpu_turn(difficulty, crest, screen=WIN, player=CPU_OPP):
+    col_scores = []
+    choose = False
+    list_select = 0
+    for c in columns:
+        if is_valid_location(c.col):
+            row = c.row_counter
+            temp_board = board.copy()
+            temp_board[row][c.col] = player # this is saying if the cpu put it in this col...
+            score = score_position(temp_board, row, c.col, player) # what would the score be
+            col_scores.append({'column':c, 'score':score}) # change it to c.col if you want to print viewable figures
+            sorted_col_scores = sorted(col_scores, key=lambda x: x['score'], reverse=True)
+    # print(col_scores)
+    # print(sorted_col_scores)
+    # print(temp_board)
+
+    while choose == False:
+        ran_num = random.randint(1, 100)
+        if ran_num <= difficulty:
+            choose = True
+            chosen_col = sorted_col_scores[list_select]['column']
+        elif ran_num > difficulty and list_select < len(sorted_col_scores)-1: # stops counter going indefinitely
+            list_select += 1 # starts at the best move and goes to the next best every time it fails
+        else:
+            print('error with ran_num')
+    
+    # print(chosen_col)
+    chosen_col.draw_actual_counter(screen, crest, player)
+
 def main():
 
     clock = pygame.time.Clock()
     global frame_index
     global won
     global stage
+    global board
     won = False
     clicked = False
     p1_turn = True
@@ -516,14 +642,14 @@ def main():
                 if won == False and stage == 4 and clicked == False:
                     clicked = True
                     for col in columns:
-                        if col.is_clicked(pygame.mouse.get_pos()) and col.row_counter > -1:
+                        if col.is_clicked(pygame.mouse.get_pos()) and is_valid_location(col.col):
                             if p1_turn:
                                 # G_FART_SOUND.play()
-                                col.draw_actual_counter(WIN, p1_counter, 'p1')
+                                col.draw_actual_counter(WIN, p1_counter, PLAYER_1)
                                 p1_turn = False
                             elif p1_turn == False and difficulty == 0: # the 2 player version
                                 # NI_HAO_SOUND.play()
-                                col.draw_actual_counter(WIN, p2_counter, 'p2')
+                                col.draw_actual_counter(WIN, p2_counter, PLAYER_2)
                                 p1_turn = True
             
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
@@ -548,22 +674,23 @@ def main():
             stage += 1
         
         if (stage == 4 or stage == 5) and difficulty == 0: # 2 player game
-            check_win('p1', p1_counter)
-            check_win('p2', p2_counter)
+            check_win(PLAYER_1, p1_counter)
+            check_win(PLAYER_2, p2_counter)
             if frame_index >= len(swirls):
                 frame_index = 0
         
         if stage == 4 and difficulty != 0 and won == False: # vs cpu
-            check_win('p1', p1_counter)
-            check_win('cpu', p2_counter)
+            check_win(PLAYER_1, p1_counter)
+            check_win(CPU_OPP, p2_counter)
             if p1_turn == False and stage == 4:
-                col = random.choice(columns)
-                col.draw_actual_counter(WIN, p2_counter, 'cpu')
+                cpu_turn(difficulty, p2_counter) # need to add in logic to tell it to go to the middle and to block me and to look into the future
+                # col = random.choice(columns)
+                # col.draw_actual_counter(WIN, p2_counter, CPU_OPP)
                 p1_turn = True
         
         if stage == 5 and difficulty != 0: # vs cpu
-            check_win('p1', p1_counter)
-            check_win('cpu', p2_counter)
+            check_win(PLAYER_1, p1_counter)
+            check_win(CPU_OPP, p2_counter)
             if frame_index >= len(swirls):
                 frame_index = 0
         
@@ -602,3 +729,4 @@ main()
 # create a cpu
 # finish doing the maximin coding, see https://www.youtube.com/watch?v=MMLtza3CZFM&ab_channel=KeithGalli
 # edit the neon city crest image
+# also the cpu keeps going above the max row limit so need to stop that - probably fine now, need to check
