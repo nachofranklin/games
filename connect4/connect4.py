@@ -42,7 +42,6 @@ EMPTY = 0
 PLAYER_1 = 1
 PLAYER_2 = 2
 CPU_OPP = 3
-# board = [[EMPTY for c in range(BOARD_COLS)] for r in range(BOARD_ROWS)]
 board = np.zeros((BOARD_ROWS, BOARD_COLS))
 
 # colours
@@ -370,21 +369,21 @@ difficulty_buttons.append(NATHAN_BUTTON)
 def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
     score = 0
 
-    # score horizontal
+    # score horizontal - might be worth turning these into functions (need row, col, board, player, score)
     row_list = list(board[row]) # a np list (so we can count) showing just the row in question
 
     for col in range(BOARD_COLS - 3): # for col 0, 1, 2, 3
         if column >= col and column <= col+3: # prevents it from scoring things that make no difference to you putting it there - 3>=0 and 3<=3 3>=3 and 3<=6, 0>=0 and 0<=3 0>=1 !and 0<=4, 6>=2 !and 6<=5 6>=3 and 6<=6
             group_of_4 = row_list[col: col + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
             if group_of_4.count(cpu) == 4:
-                score += FOUR_IN_A_ROW # 1000
+                score += FOUR_IN_A_ROW
             elif group_of_4.count(cpu) == 3 and group_of_4.count(EMPTY) == 1:
-                score += THREE_IN_A_ROW # 16
+                score += THREE_IN_A_ROW
             elif group_of_4.count(cpu) == 2 and group_of_4.count(EMPTY) == 2:
-                score += TWO_IN_A_ROW # 4
+                score += TWO_IN_A_ROW
     
     # score vertical
-    col_list = [] # vertical is definitely not adding anything to the score :(
+    col_list = []
     for r in range(BOARD_ROWS-1, -1, -1):
         col_list.append(board[r][column])
     col_list = list(col_list)
@@ -392,11 +391,11 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
     for r in range(BOARD_ROWS - 3): # for row 0, 1, 2
         group_of_4 = col_list[r: r + 4] # 3 lists = [row0, 1, 2, 3], [row1, 2, 3, 4], [row2, 3, 4, 5]
         if group_of_4.count(cpu) == 4:
-            score += FOUR_IN_A_ROW # 1000
+            score += FOUR_IN_A_ROW
         elif group_of_4.count(cpu) == 3 and group_of_4.count(EMPTY) == 1:
-            score += THREE_IN_A_ROW # 16
+            score += THREE_IN_A_ROW
         elif group_of_4.count(cpu) == 2 and group_of_4.count(EMPTY) == 2:
-            score += TWO_IN_A_ROW # 4
+            score += TWO_IN_A_ROW
 
     # score positive diagonal
     pos_list = []
@@ -411,11 +410,11 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
         if len(pos_list) >= 4:
             group_of_4 = pos_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
             if group_of_4.count(cpu) == 4:
-                score += FOUR_IN_A_ROW # 1000
+                score += FOUR_IN_A_ROW
             elif group_of_4.count(cpu) == 3 and group_of_4.count(EMPTY) == 1:
-                score += THREE_IN_A_ROW # 16
+                score += THREE_IN_A_ROW
             elif group_of_4.count(cpu) == 2 and group_of_4.count(EMPTY) == 2:
-                score += TWO_IN_A_ROW # 4
+                score += TWO_IN_A_ROW
       
     # score negative diaganol
     neg_list = []
@@ -430,11 +429,11 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
         if len(neg_list) >= 4:
             group_of_4 = neg_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
             if group_of_4.count(cpu) == 4:
-                score += FOUR_IN_A_ROW # 1000
+                score += FOUR_IN_A_ROW
             elif group_of_4.count(cpu) == 3 and group_of_4.count(EMPTY) == 1:
-                score += THREE_IN_A_ROW # 16
+                score += THREE_IN_A_ROW
             elif group_of_4.count(cpu) == 2 and group_of_4.count(EMPTY) == 2:
-                score += TWO_IN_A_ROW # 4
+                score += TWO_IN_A_ROW
     
     # scoring central columns
     if column == 3:
@@ -457,21 +456,20 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
             temp_board = board.copy() # this is essentially temp board 2 = temp board.copy (creating a new temp board based on the previous temp board)
             temp_board[p1_row][p1_col] = player # this is saying if p1 put it in this col...
 
-            # score horizontal - might be worth turning these into functions (need row, col, board, player, score)
+            # score horizontal (negative points)
             row_list = list(temp_board[p1_row]) # a np list (so we can count) showing just the row in question
 
             for col in range(BOARD_COLS - 3): # for col 0, 1, 2, 3
-                if column >= col and column <= col+3: # prevents it from scoring things that make no difference to you putting it there - 3>=0 and 3<=3 3>=3 and 3<=6, 0>=0 and 0<=3 0>=1 !and 0<=4, 6>=2 !and 6<=5 6>=3 and 6<=6
-                    group_of_4 = row_list[col: col + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
-                    if group_of_4.count(player) == 4:
-                        p1_score += FOUR_IN_A_ROW # 1000
-                    elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
-                        p1_score += THREE_IN_A_ROW # 16
-                    elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
-                        p1_score += TWO_IN_A_ROW # 4
+                group_of_4 = row_list[col: col + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
+                if group_of_4.count(player) == 4:
+                    p1_score += FOUR_IN_A_ROW
+                elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
+                    p1_score += THREE_IN_A_ROW
+                elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
+                    p1_score += TWO_IN_A_ROW
                         
-            # score vertical
-            col_list = [] # vertical is definitely not adding anything to the score :(
+            # score vertical (negative points)
+            col_list = []
             for r in range(BOARD_ROWS-1, -1, -1):
                 col_list.append(temp_board[r][p1_col])
             col_list = list(col_list)
@@ -479,13 +477,13 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
             for r in range(BOARD_ROWS - 3): # for row 0, 1, 2
                 group_of_4 = col_list[r: r + 4] # 3 lists = [row0, 1, 2, 3], [row1, 2, 3, 4], [row2, 3, 4, 5]
                 if group_of_4.count(player) == 4:
-                    p1_score += FOUR_IN_A_ROW # 1000
+                    p1_score += FOUR_IN_A_ROW
                 elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
-                    p1_score += THREE_IN_A_ROW # 16
+                    p1_score += THREE_IN_A_ROW
                 elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
-                    p1_score += TWO_IN_A_ROW # 4
+                    p1_score += TWO_IN_A_ROW
 
-            # score positive diagonal
+            # score positive diagonal (negative points)
             pos_list = []
             for i in range(4): # (inclusive of current pos) remember it starts at row = 5 and gets smaller, to increase in row i need to -1
                 if p1_row+3 - i <= BOARD_ROWS-1 and p1_col-3 + i >= 0: # gets values from the bottom left up, including the row_x, col_x
@@ -498,13 +496,13 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
                 if len(pos_list) >= 4:
                     group_of_4 = pos_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
                     if group_of_4.count(player) == 4:
-                        p1_score += FOUR_IN_A_ROW # 1000
+                        p1_score += FOUR_IN_A_ROW
                     elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
-                        p1_score += THREE_IN_A_ROW # 16
+                        p1_score += THREE_IN_A_ROW
                     elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
-                        p1_score += TWO_IN_A_ROW # 4
+                        p1_score += TWO_IN_A_ROW
             
-            # score negative diaganol
+            # score negative diaganol (negative points)
             neg_list = []
             for i in range(4): # (inclusive of current pos) remember it starts at row = 5 and gets smaller, to increase in row i need to -1
                 if p1_row+3 - i <= BOARD_ROWS-1 and p1_col+3 - i <= BOARD_COLS-1: # gets values from the bottom right up, including the row_x, col_x
@@ -517,11 +515,11 @@ def score_position(board, row, column, cpu=CPU_OPP, player=PLAYER_1):
                 if len(neg_list) >= 4:
                     group_of_4 = neg_list[i: i + 4] # 4 lists = [col0, 1, 2, 3], [col1, 2, 3, 4], [col2, 3, 4, 5], [col3, 4, 5, 6]
                     if group_of_4.count(player) == 4:
-                        p1_score += FOUR_IN_A_ROW # 1000
+                        p1_score += FOUR_IN_A_ROW
                     elif group_of_4.count(player) == 3 and group_of_4.count(EMPTY) == 1:
-                        p1_score += THREE_IN_A_ROW # 16
+                        p1_score += THREE_IN_A_ROW
                     elif group_of_4.count(player) == 2 and group_of_4.count(EMPTY) == 2:
-                        p1_score += TWO_IN_A_ROW # 4
+                        p1_score += TWO_IN_A_ROW
             
             if p1_score > max_p1_score:
                 max_p1_score = p1_score
@@ -544,7 +542,7 @@ def cpu_turn(difficulty, crest, cpu=CPU_OPP):
             temp_board[row][c.col] = cpu # this is saying if the cpu put it in this col...
             score = score_position(temp_board, row, c.col, cpu) # what would the score be
             col_scores.append({'column':c, 'score':score}) # change it to c.col if you want to print viewable figures
-            print({'column':c.col, 'score':score})
+            # print({'column':c.col, 'score':score})
     
     select_move(col_scores, difficulty, crest, screen=WIN, cpu=CPU_OPP)
 
@@ -774,9 +772,7 @@ def main():
             check_win(PLAYER_1, p1_counter)
             check_win(CPU_OPP, p2_counter)
             if p1_turn == False and stage == 4:
-                cpu_turn(difficulty, p2_counter) # need to add in logic to tell it to go to the middle and to block me and to look into the future
-                # col = random.choice(columns)
-                # col.draw_actual_counter(WIN, p2_counter, CPU_OPP)
+                cpu_turn(difficulty, p2_counter)
                 p1_turn = True
         
         if stage == 5 and difficulty != 0: # vs cpu
