@@ -69,9 +69,7 @@ class Tile_results:
         self.png = file_name + '.png'
         self.img_width = img_width
         self.img_height = img_height
-        # self.rect = pygame.Rect(col * TILE_WIDTH, row * TILE_HEIGHT + TOP_SECTION, TILE_WIDTH, TILE_HEIGHT)
         self.img = pygame.transform.scale(pygame.image.load(os.path.join(PATH, 'img', self.png)), (img_width, img_height))
-        # self.is_hovered = False
 
 flag = Tile_results('flag')
 flag_rect = pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT)
@@ -88,6 +86,7 @@ six = Tile_results('six')
 seven = Tile_results('seven')
 eight = Tile_results('eight')
 
+# randomises where the bombs are and counts the number of adjacent bombs in every tile
 def add_bombs():
     bomb_positions = random.sample(range(GRID_ROWS * GRID_COLS), no_of_bombs)
     for position in bomb_positions:
@@ -100,6 +99,7 @@ def add_bombs():
                 if 0 <= row + i < GRID_ROWS and 0 <= col + j < GRID_COLS and grid[row + i][col + j] != 8038:
                     grid[row + i][col + j] += 1
 
+# when a zero is clicked this will reveal all adjacent zeros and the next adjacent non zero values
 def reveal_zeros(grid, revealed, row, col):
     if revealed[row][col]:
         return
@@ -137,9 +137,7 @@ def main():
     WIN.fill(LIGHT_BLUE)
     for tile in tile_list:
         tile.draw_tile(WIN)
-    # flag_rect = pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT)
     WIN.blit(flag.img, flag_rect)
-    # pygame.draw.circle(WIN, GREEN, (GRID_WIDTH/2, TOP_SECTION/2), radius, circle_width)
     pygame.display.update()
     add_bombs()
     clicked = False
@@ -218,12 +216,12 @@ def main():
                                     pygame.display.update()
 
                     # clicking the flag at the top
-                    if pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT).collidepoint(event.pos) and flag_clicked == False and revealed[tile.row][tile.col] == 0:
+                    if pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT).collidepoint(event.pos) and flag_clicked == False:
                         flag_clicked = True
                         WIN.blit(flag.img, flag_rect)
                         pygame.draw.circle(WIN, GREEN, (GRID_WIDTH/2, TOP_SECTION/2), radius, circle_width)
                         pygame.display.update()
-                    elif pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT).collidepoint(event.pos) and flag_clicked == True and revealed[tile.row][tile.col] == 0:
+                    elif pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT/2, TILE_WIDTH, TILE_HEIGHT).collidepoint(event.pos) and flag_clicked == True:
                         flag_clicked = False
                         WIN.blit(flag.img, flag_rect)
                         pygame.display.update()
@@ -236,3 +234,4 @@ main()
 # need to add in a clock element to time it
 # need to add in win logic
 # need to add in loss logic
+# add in a number of flags / total bombs
