@@ -10,16 +10,17 @@ pygame.mixer.init()
 PATH = '/home/nacho/repos/games/minesweeper/'
 GRID_WIDTH = GRID_HEIGHT = 700
 GRID_ROWS = GRID_COLS = 10
+no_of_bombs = 17
+
 TOP_SECTION = GRID_HEIGHT / (GRID_ROWS - 2)
 WIN_WIDTH = GRID_WIDTH
 WIN_HEIGHT = GRID_HEIGHT + TOP_SECTION
-FPS = 60
-no_of_bombs = 17
-flag_counter = 0
-grid = np.zeros((GRID_ROWS, GRID_COLS))
-revealed = np.zeros((GRID_ROWS, GRID_COLS))
 TILE_WIDTH = GRID_WIDTH/GRID_COLS
 TILE_HEIGHT = GRID_HEIGHT/GRID_ROWS
+FPS = 60
+grid = np.zeros((GRID_ROWS, GRID_COLS))
+revealed = np.zeros((GRID_ROWS, GRID_COLS))
+flag_counter = 0
 
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Minesweeper')
