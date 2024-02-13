@@ -15,6 +15,7 @@ WIN_WIDTH = GRID_WIDTH
 WIN_HEIGHT = GRID_HEIGHT + TOP_SECTION
 FPS = 60
 no_of_bombs = 17
+flag_counter = 0
 grid = np.zeros((GRID_ROWS, GRID_COLS))
 revealed = np.zeros((GRID_ROWS, GRID_COLS))
 TILE_WIDTH = GRID_WIDTH/GRID_COLS
@@ -86,6 +87,21 @@ six = Tile_results('six')
 seven = Tile_results('seven')
 eight = Tile_results('eight')
 
+flag_text_pos = (WIN_WIDTH*3/4, TOP_SECTION/2)
+font_size = int(TOP_SECTION)
+# function will only work for showing flags / no of bombs
+def draw_text(text, position, colour = BLUE, font_size = font_size, screen = WIN):
+    font = pygame.font.Font(None, font_size)
+    max_text_surface = font.render('100 / 100', True, colour)
+    max_text_surface.fill(LIGHT_BLUE)
+    max_text_rect = max_text_surface.get_rect()
+    max_text_rect.center = position
+    text_surface = font.render(text, True, colour)
+    text_rect = text_surface.get_rect()
+    text_rect.center = position
+    screen.blit(max_text_surface, max_text_rect) # blits a blue surface of the length of 100 / 100
+    screen.blit(text_surface, text_rect) # blits the text we actually want
+
 # randomises where the bombs are and counts the number of adjacent bombs in every tile
 def add_bombs():
     bomb_positions = random.sample(range(GRID_ROWS * GRID_COLS), no_of_bombs)
@@ -134,10 +150,12 @@ def reveal_zeros(grid, revealed, row, col):
 def main():
 
     clock = pygame.time.Clock()
+    global flag_counter
     WIN.fill(LIGHT_BLUE)
     for tile in tile_list:
         tile.draw_tile(WIN)
     WIN.blit(flag.img, flag_rect)
+    draw_text(f'{flag_counter} / {no_of_bombs}', flag_text_pos)
     pygame.display.update()
     add_bombs()
     clicked = False
@@ -180,13 +198,16 @@ def main():
                     clicked = True
                     # clicking on any tile
                     for tile in tile_list:
-                        if tile.is_clicked(pygame.mouse.get_pos()):
+                        if tile.is_clicked(pygame.mouse.get_pos()) and revealed[tile.row][tile.col] == 0:
                             if flag_clicked:
                                 if tile.is_flagged == False:
                                     tile.is_flagged = True
+                                    flag_counter += 1
                                 elif tile.is_flagged == True:
                                     tile.is_flagged = False
+                                    flag_counter -= 1
                                 tile.draw_tile(WIN)
+                                draw_text(f'{flag_counter} / {no_of_bombs}', flag_text_pos)
                                 pygame.display.update()
                             elif flag_clicked == False:
                                 if tile.is_flagged == False:
@@ -234,4 +255,3 @@ main()
 # need to add in a clock element to time it
 # need to add in win logic
 # need to add in loss logic
-# add in a number of flags / total bombs
