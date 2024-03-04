@@ -102,10 +102,29 @@ PINK = (255, 192, 203)
 LIGHT_BLUE = (173, 216, 230)
 GREEN = (0, 255, 0)
 ORANGE = (255, 165, 0)
+YELLOW = (255, 255, 0)
 
 # images...
 
 # sounds...
+
+def draw_end_turn_button():
+    is_hovered = False
+    colour = PINK
+    hover_colour = WHITE
+    font = pygame.font.Font(None, int(CARD_WIDTH/4))
+    text_surface = font.render('End Turn', True, BLACK)
+    rect = pygame.Rect(WIN_WIDTH - text_surface.get_width()*2, WIN_HEIGHT*3/5 - text_surface.get_height(), CARD_WIDTH, CARD_HEIGHT/3)
+    
+    if is_hovered:
+        pygame.draw.rect(WIN, hover_colour, rect)
+        pygame.draw.rect(WIN, colour, rect, 4)  # Border
+    else:
+        pygame.draw.rect(WIN, colour, rect)
+        pygame.draw.rect(WIN, hover_colour, rect, 4)  # Border
+        
+    text_rect = text_surface.get_rect(center=rect.center)
+    WIN.blit(text_surface, text_rect)
 
 class Character:
     def __init__(self, hp):
@@ -133,6 +152,14 @@ class Player(Character):
     
     def draw_player(self):
         pygame.draw.rect(WIN, GREEN, self.rect)
+
+    def draw_energy(self):
+        ENERGY_COORDS = (WIN_WIDTH*1/10, WIN_HEIGHT*3/5)
+        pygame.draw.circle(WIN, YELLOW, ENERGY_COORDS, WIN_HEIGHT/20)
+        font = pygame.font.Font(None, int(CARD_WIDTH/3))
+        text_surface = font.render(str(self.energy), True, BLACK)
+        text_rect = text_surface.get_rect(center=ENERGY_COORDS)
+        WIN.blit(text_surface, text_rect)
 
 class Enemy(Character):
     def __init__(self, hp, x_pos, y_pos, width, height):
@@ -172,6 +199,11 @@ class Card:
     
     def draw_card(self, position, cards_in_hand):
         self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, WIN_HEIGHT*4/5 - CARD_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT)
+        if position == cards_in_hand: # if last card it has a bigger rect than the others
+            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, WIN_HEIGHT*4/5 - CARD_HEIGHT/2, CARD_WIDTH - 2, CARD_HEIGHT)
+        else:
+            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, WIN_HEIGHT*4/5 - CARD_HEIGHT/2, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
+        
         if self.is_hovered:
             pygame.draw.rect(WIN, self.hover_colour, self.rect)
             pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
@@ -202,13 +234,32 @@ class AttackCard(Card):
         self.enemy_select = enemy_select
 
 punch = AttackCard('Punch', 1, starter, select, enemy_hp, 5, 'Deal {num} dmg.', 'Punch for {num} base damage')
+punch2 = AttackCard('Punch', 1, starter, select, enemy_hp, 5, 'Deal {num} dmg.', 'Punch for {num} base damage')
+punch3 = AttackCard('Punch', 1, starter, select, enemy_hp, 5, 'Deal {num} dmg.', 'Punch for {num} base damage')
+punch4 = AttackCard('Punch', 1, starter, select, enemy_hp, 5, 'Deal {num} dmg.', 'Punch for {num} base damage')
+punch5 = AttackCard('Punch', 1, starter, select, enemy_hp, 5, 'Deal {num} dmg.', 'Punch for {num} base damage')
 parry = Card('Parry', 1, starter, skill, block, 4, 'Gain {num} block.', 'Gain {num} block')
+parry2 = Card('Parry', 1, starter, skill, block, 4, 'Gain {num} block.', 'Gain {num} block')
+parry3 = Card('Parry', 1, starter, skill, block, 4, 'Gain {num} block.', 'Gain {num} block')
+parry4 = Card('Parry', 1, starter, skill, block, 4, 'Gain {num} block.', 'Gain {num} block')
+parry5 = Card('Parry', 1, starter, skill, block, 4, 'Gain {num} block.', 'Gain {num} block')
 jab = AttackCard('Jab', 0, starter, select, enemy_hp, 3, 'Deal {num} dmg.\nApply {num2} vulnerable.', 'Jab for {num} base damage and apply {num2} vulnerable', None, enemy_vulnerable, 1)
 
 starter_deck = []
-starter_deck.extend([punch] * 5)
-starter_deck.extend([parry] * 5)
-starter_deck.extend([jab] * 1)
+# starter_deck.extend([punch] * 5)
+# starter_deck.extend([parry] * 5)
+# starter_deck.extend([jab] * 1)
+starter_deck.append(punch)
+starter_deck.append(punch2)
+starter_deck.append(punch3)
+starter_deck.append(punch4)
+starter_deck.append(punch5)
+starter_deck.append(parry)
+starter_deck.append(parry2)
+starter_deck.append(parry3)
+starter_deck.append(parry4)
+starter_deck.append(parry5)
+starter_deck.append(jab)
 
 p1 = Player(60, starter_deck)
 enemy1 = Enemy(20, WIN_WIDTH*5/9, WIN_HEIGHT/6, WIN_WIDTH*3/9, WIN_HEIGHT*2/6)
@@ -233,11 +284,11 @@ def main():
 
             elif event.type == pygame.MOUSEMOTION:
                 for card in p1.active_hand:
-                    if card.rect.collidepoint(event.pos) and card.is_hovered == False:
+                    if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False:
                         card.is_hovered = True
                         card.draw_description()
                         pygame.display.update()
-                    elif card.rect.collidepoint(event.pos) == False and card.is_hovered == True:
+                    elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered == True:
                         card.is_hovered = False
                         desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*10, CARD_HEIGHT/8)
                         pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
@@ -251,6 +302,9 @@ def main():
                 clicked = False
         
         if stage == 1:
+            p1.energy = 3
+            p1.draw_energy()
+            draw_end_turn_button()
             p1.draw_pile = p1.deck
             random.shuffle(p1.draw_pile)
             for i in range(5):
@@ -296,3 +350,4 @@ main()
 # problems
 
 # each card only has one instance, so three strike cards all count as the same card instance (problem when doing things like self.is_hovered)
+# because cards overlap, so do the rects, need to find a way to redraw the rects maybe?
