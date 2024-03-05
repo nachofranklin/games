@@ -128,7 +128,8 @@ def draw_end_turn_button():
 
 class Character:
     def __init__(self, hp):
-        self.hp = hp
+        self.max_hp = hp
+        self.hp = self.max_hp
         self.block = 0
         self.shield = 0
         self.strength = 0
@@ -137,6 +138,12 @@ class Character:
         self.vulnerable = 0
         self.poison = 0
         self.energy = 0
+
+    def draw_hp(self):
+        font = pygame.font.Font(None, int(CARD_WIDTH/3))
+        text_surface = font.render(f'{self.hp}/{self.max_hp}', True, BLACK)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        WIN.blit(text_surface, text_rect)
 
 class Player(Character):
     def __init__(self, hp, starter_deck):
@@ -196,6 +203,7 @@ class Card:
         self.text_colour = WHITE
         self.font = pygame.font.Font(None, int(CARD_WIDTH/6))  # customize the font and size
         self.is_hovered = False
+        self.is_selected = False
     
     def draw_card(self, position, cards_in_hand):
         self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, WIN_HEIGHT*4/5 - CARD_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT)
@@ -205,6 +213,13 @@ class Card:
             self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, WIN_HEIGHT*4/5 - CARD_HEIGHT/2, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
         
         if self.is_hovered:
+            pygame.draw.rect(WIN, self.hover_colour, self.rect)
+            pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
+        else:
+            pygame.draw.rect(WIN, self.colour, self.rect)
+            pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
+        
+        if self.is_selected:
             pygame.draw.rect(WIN, self.hover_colour, self.rect)
             pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
         else:
@@ -272,6 +287,8 @@ def main():
     enemy1.draw_enemy()
     pygame.display.update()
     clicked = False
+    a_card_selected = False
+    update = False
     stage = 1
     run = True
     while run:
@@ -288,20 +305,53 @@ def main():
                         card.is_hovered = True
                         card.draw_description()
                         pygame.display.update()
-                    elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered == True:
+                    elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered:
                         card.is_hovered = False
                         desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*10, CARD_HEIGHT/8)
                         pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
                         pygame.display.update()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if clicked == False:
-                    clicked = True
+                for card in p1.active_hand:
+                    if card.is_hovered and clicked == False: # clicking on a card
+                        clicked = True
+                        update = True
+                        if card.is_selected == False and a_card_selected == False: # if no card selected, then select it
+                            card.is_selected = True
+                            a_card_selected = True
+                        elif card.is_selected and a_card_selected: # if a card is selected, then unselect it
+                            card.is_selected = False
+                            a_card_selected = False
+                    
+                    if card.is_selected and card.impacts == enemy_hp and enemy1.rect.collidepoint(event.pos): # if attack card selected and selects enemy
+                        enemy1.hp -= card.num
+                        p1.energy -= card.energy
+                        card.is_selected = False
+                        a_card_selected = False
+                        p1.discard_pile.append(p1.active_hand.remove(card))
+                        update = True
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
-                clicked = False
+                if clicked == True:
+                    clicked = False
+
+        if update == True:
+            p1.draw_player()
+            enemy1.draw_enemy()
+            p1.draw_hp()
+            enemy1.draw_hp()
+            p1.draw_energy()
+            draw_end_turn_button()
+            card_pos = 1
+            for card in p1.active_hand:
+                card.draw_card(card_pos, len(p1.active_hand))
+                card_pos += 1
+            pygame.display.update()
+            update = False
         
         if stage == 1:
+            p1.draw_hp()
+            enemy1.draw_hp()
             p1.energy = 3
             p1.draw_energy()
             draw_end_turn_button()
@@ -309,10 +359,10 @@ def main():
             random.shuffle(p1.draw_pile)
             for i in range(5):
                 p1.active_hand.append(p1.draw_pile.pop())
-            j = 1
-            for i in p1.active_hand:
-                i.draw_card(j, len(p1.active_hand))
-                j += 1
+            card_pos = 1
+            for card in p1.active_hand:
+                card.draw_card(card_pos, len(p1.active_hand))
+                card_pos += 1
             pygame.display.update()
             stage = 2
 
@@ -351,3 +401,7 @@ main()
 
 # each card only has one instance, so three strike cards all count as the same card instance (problem when doing things like self.is_hovered)
 # because cards overlap, so do the rects, need to find a way to redraw the rects maybe?
+# can't figure out how to update the card colour when hovered
+# need to blit a rectangle for what 10 cards would look like with the background colour
+# the cards aren´t actually central when blit
+# need to come up with a better way for including all the things the cards could do
