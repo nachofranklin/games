@@ -7,12 +7,19 @@ pygame.font.init()
 pygame.mixer.init()
 
 # variables
-PATH = 'C:\\Users\\NathanFranklin\\Documents\\Nath\\Coding\\games\\deck_builder\\'
+PATH = '/home/nacho/repos/games/deck_builder/'
 
-WIN_WIDTH = 1000
-WIN_HEIGHT = 620
+WIN_WIDTH = 1200
+WIN_HEIGHT = 800
 CARD_WIDTH = WIN_WIDTH/8
 CARD_HEIGHT = WIN_HEIGHT/3
+CHARACTER_WIDTH = WIN_WIDTH/3
+CHARACTER_HEIGHT = WIN_HEIGHT/3
+EFFECTS_WIDTH = EFFECTS_HEIGHT = WIN_WIDTH/27
+P1_X = WIN_WIDTH/9
+P1_Y = ENEMY1_Y = WIN_HEIGHT/9
+ENEMY1_X = WIN_WIDTH*5/9
+EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
 FPS = 60
 MAX_CARDS_IN_HAND = 10
 card_id_counter = 1
@@ -61,6 +68,60 @@ ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 
 # images...
+BLOCK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'block.png'))
+BLOCK = pygame.transform.scale(BLOCK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+SHIELD_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'shield.png'))
+SHIELD = pygame.transform.scale(SHIELD_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+STRENGTH_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'strength.png'))
+STRENGTH = pygame.transform.scale(STRENGTH_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+DEXTERITY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'dexterity.png'))
+DEXTERITY = pygame.transform.scale(DEXTERITY_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+WEAK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'weak.png'))
+WEAK = pygame.transform.scale(WEAK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+VULNERABLE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'vulnerable.png'))
+VULNERABLE = pygame.transform.scale(VULNERABLE_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+POISON_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'poison.png'))
+POISON = pygame.transform.scale(POISON_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+THORNS_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'thorns.png'))
+THORNS = pygame.transform.scale(THORNS_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+ADDITIONAL_ENERGY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'energy.png'))
+ADDITIONAL_ENERGY = pygame.transform.scale(ADDITIONAL_ENERGY_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+
+def update_p1_status():
+    p1_status_effects = []
+    if p1.block != 0:
+        p1_status_effects.append({'image':BLOCK, 'number':p1.block})
+    if p1.shield != 0:
+        p1_status_effects.append({'image':SHIELD, 'number':p1.shield})
+    if p1.strength != 0:
+        p1_status_effects.append({'image':STRENGTH, 'number':p1.strength})
+    if p1.dexterity != 0:
+        p1_status_effects.append({'image':DEXTERITY, 'number':p1.dexterity})
+    if p1.weak != 0:
+        p1_status_effects.append({'image':WEAK, 'number':p1.weak})
+    if p1.vulnerable != 0:
+        p1_status_effects.append({'image':VULNERABLE, 'number':p1.vulnerable})
+    if p1.poison != 0:
+        p1_status_effects.append({'image':POISON, 'number':p1.poison})
+    if p1.thorns != 0:
+        p1_status_effects.append({'image':THORNS, 'number':p1.thorns})
+    if p1.additional_energy != 0:
+        p1_status_effects.append({'image':ADDITIONAL_ENERGY, 'number':p1.additional_energy})
+    
+    status_counter = 0
+    if len(p1_status_effects) > 0:
+        for status in p1_status_effects:
+            draw_p1_status(status['image'], status['number'], status_counter)
+            status_counter +=1
+
+def draw_p1_status(image, number, counter):
+    font = pygame.font.Font(None, int(EFFECTS_WIDTH))
+    text_surface = font.render(str(number), True, BLACK)
+    rect = pygame.Rect(P1_X + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+    text_rect = text_surface.get_rect(center=rect.center)
+
+    WIN.blit(image, (P1_X + EFFECTS_WIDTH*counter, EFFECTS_Y))
+    WIN.blit(text_surface, text_rect)
 
 # sounds...
 
@@ -93,7 +154,6 @@ class Character:
         self.weak = 0
         self.vulnerable = 0
         self.poison = 0
-        self.energy = 0
         self.thorns = 0
 
     def draw_hp(self):
@@ -106,13 +166,15 @@ class Player(Character):
     def __init__(self, hp, starter_deck):
         super().__init__(hp)
         self.gold = 50
+        self.additional_energy = 0
+        self.energy = 3 + self.additional_energy
         self.deck = starter_deck
         self.draw_pile = []
         self.active_hand = []
         self.discard_pile = []
         self.exhaust_pile = []
         self.floor_level = 1
-        self.rect = pygame.Rect(WIN_WIDTH/9, WIN_HEIGHT/6, WIN_WIDTH*3/9, WIN_HEIGHT*2/6)
+        self.rect = pygame.Rect(P1_X, P1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)
     
     def draw_player(self):
         pygame.draw.rect(WIN, GREEN, self.rect)
@@ -230,6 +292,7 @@ parry3 = Card('Parry', 1, starter, skill, 'Gain {num} block.', 'Gain {num} block
 parry4 = Card('Parry', 1, starter, skill, 'Gain {num} block.', 'Gain {num} block', block=4)
 parry5 = Card('Parry', 1, starter, skill, 'Gain {num} block.', 'Gain {num} block', block=4)
 jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {num} dmg.\nApply {num2} vulnerable.', 'Jab for {num} base damage and apply {num2} vulnerable', enemy_hp=3, enemy_vulnerable=2)
+test = Card('Test', 0, starter, power, 'test', 'test', player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
 
 starter_deck = []
 # starter_deck.extend([punch] * 5)
@@ -246,9 +309,10 @@ starter_deck.append(parry3)
 starter_deck.append(parry4)
 starter_deck.append(parry5)
 starter_deck.append(jab)
+starter_deck.append(test)
 
 p1 = Player(60, starter_deck)
-enemy1 = Enemy(20, WIN_WIDTH*5/9, WIN_HEIGHT/6, WIN_WIDTH*3/9, WIN_HEIGHT*2/6)
+enemy1 = Enemy(20, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)
 
 def card_played(card, player, enemy):
     player.energy -= card.energy
@@ -348,6 +412,7 @@ def main():
             enemy1.draw_hp()
             p1.draw_energy()
             draw_end_turn_button()
+            update_p1_status()
             card_pos = 1
             for card in p1.active_hand:
                 card.draw_card(card_pos, len(p1.active_hand))
@@ -399,14 +464,14 @@ main()
 # add in the same for an enemy
 # add in an end turn button (currently doesn't do anything)
 # add in something that shows what the enemy is about to do next
-# add in logic for what happens if a card is clicked and player is selected for skill and power cards
 # add in something to show all status effects
-# add logic that doesn't allow you to play a card if your energy will go below 0
 # add logic that kills an enemy when hp goes to 0 or below
 # add logic that kills the player when hp goes to 0 or below
 # add logic that makes things like vulnerable or weak have an impact
+# create set variables for width/height/x/y for end turn button and energy
+# then move them so that they're not getting obscured
 
 # problems
 
 # can't figure out how to update the card colour when hovered
-# the cards aren´t actually central when blit
+# the cards aren´t actually central when blit. Add 1/3 of a card width to the x
