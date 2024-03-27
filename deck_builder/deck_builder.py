@@ -9,6 +9,11 @@ pygame.mixer.init()
 # variables
 PATH = '/home/nacho/repos/games/deck_builder/'
 
+FPS = 60
+MAX_CARDS_IN_HAND = 10
+card_id_counter = 1
+
+# width and heights
 WIN_WIDTH = 1200
 WIN_HEIGHT = 800
 CARD_WIDTH = WIN_WIDTH/8
@@ -16,13 +21,23 @@ CARD_HEIGHT = WIN_HEIGHT/3
 CHARACTER_WIDTH = WIN_WIDTH/3
 CHARACTER_HEIGHT = WIN_HEIGHT/3
 EFFECTS_WIDTH = EFFECTS_HEIGHT = WIN_WIDTH/27
+END_TURN_WIDTH = CARD_WIDTH
+END_TURN_HEIGHT = CARD_HEIGHT/3
+ENERGY_WIDTH = ENERGY_HEIGHT = WIN_HEIGHT/20 # radius
+DESCRIPTION_WIDTH = WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1
+DESCRIPTION_HEIGHT = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
+
+# x and y co-ordinates
 P1_X = WIN_WIDTH/9
 P1_Y = ENEMY1_Y = WIN_HEIGHT/9
 ENEMY1_X = WIN_WIDTH*5/9
 EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
-FPS = 60
-MAX_CARDS_IN_HAND = 10
-card_id_counter = 1
+END_TURN_X = WIN_WIDTH - END_TURN_WIDTH*1.25
+END_TURN_Y = WIN_HEIGHT*3/5 - END_TURN_HEIGHT*1.25
+ENERGY_X = ENERGY_WIDTH*2
+ENERGY_Y = WIN_HEIGHT*3/5 - ENERGY_HEIGHT*1.5
+DESCRIPTION_X = CARD_WIDTH*2/3*10
+DESCRIPTION_Y = CARD_HEIGHT/8
 
 rarity_types = []
 common = 'common'
@@ -80,6 +95,8 @@ WEAK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'weak.png'))
 WEAK = pygame.transform.scale(WEAK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
 VULNERABLE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'vulnerable.png'))
 VULNERABLE = pygame.transform.scale(VULNERABLE_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
+FRAIL_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'frail.png'))
+FRAIL = pygame.transform.scale(FRAIL_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
 POISON_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'poison.png'))
 POISON = pygame.transform.scale(POISON_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
 THORNS_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'thorns.png'))
@@ -101,6 +118,8 @@ def update_p1_status():
         p1_status_effects.append({'image':WEAK, 'number':p1.weak})
     if p1.vulnerable != 0:
         p1_status_effects.append({'image':VULNERABLE, 'number':p1.vulnerable})
+    if p1.frail != 0:
+        p1_status_effects.append({'image':FRAIL, 'number':p1.frail})
     if p1.poison != 0:
         p1_status_effects.append({'image':POISON, 'number':p1.poison})
     if p1.thorns != 0:
@@ -111,16 +130,43 @@ def update_p1_status():
     status_counter = 0
     if len(p1_status_effects) > 0:
         for status in p1_status_effects:
-            draw_p1_status(status['image'], status['number'], status_counter)
+            draw_status(status['image'], status['number'], status_counter, P1_X)
             status_counter +=1
 
-def draw_p1_status(image, number, counter):
-    font = pygame.font.Font(None, int(EFFECTS_WIDTH))
+def update_enemy_status(enemy, enemy_x):
+    enemy_status_effects = []
+    if enemy.block != 0:
+        enemy_status_effects.append({'image':BLOCK, 'number':enemy.block})
+    if enemy.shield != 0:
+        enemy_status_effects.append({'image':SHIELD, 'number':enemy.shield})
+    if enemy.strength != 0:
+        enemy_status_effects.append({'image':STRENGTH, 'number':enemy.strength})
+    if enemy.dexterity != 0:
+        enemy_status_effects.append({'image':DEXTERITY, 'number':enemy.dexterity})
+    if enemy.weak != 0:
+        enemy_status_effects.append({'image':WEAK, 'number':enemy.weak})
+    if enemy.vulnerable != 0:
+        enemy_status_effects.append({'image':VULNERABLE, 'number':enemy.vulnerable})
+    if enemy.frail != 0:
+        enemy_status_effects.append({'image':FRAIL, 'number':enemy.frail})
+    if enemy.poison != 0:
+        enemy_status_effects.append({'image':POISON, 'number':enemy.poison})
+    if enemy.thorns != 0:
+        enemy_status_effects.append({'image':THORNS, 'number':enemy.thorns})
+    
+    status_counter = 0
+    if len(enemy_status_effects) > 0:
+        for status in enemy_status_effects:
+            draw_status(status['image'], status['number'], status_counter, enemy_x)
+            status_counter +=1
+
+def draw_status(image, number, counter, character_x):
+    font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
     text_surface = font.render(str(number), True, BLACK)
-    rect = pygame.Rect(P1_X + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+    rect = pygame.Rect(character_x + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
     text_rect = text_surface.get_rect(center=rect.center)
 
-    WIN.blit(image, (P1_X + EFFECTS_WIDTH*counter, EFFECTS_Y))
+    WIN.blit(image, (character_x + EFFECTS_WIDTH*counter, EFFECTS_Y))
     WIN.blit(text_surface, text_rect)
 
 # sounds...
@@ -131,8 +177,8 @@ def draw_end_turn_button():
     hover_colour = WHITE
     font = pygame.font.Font(None, int(CARD_WIDTH/4))
     text_surface = font.render('End Turn', True, BLACK)
-    rect = pygame.Rect(WIN_WIDTH - text_surface.get_width()*2, WIN_HEIGHT*3/5 - text_surface.get_height(), CARD_WIDTH, CARD_HEIGHT/3)
-    
+    rect = pygame.Rect(END_TURN_X, END_TURN_Y, END_TURN_WIDTH, END_TURN_HEIGHT)
+
     if is_hovered:
         pygame.draw.rect(WIN, hover_colour, rect)
         pygame.draw.rect(WIN, colour, rect, 4)  # Border
@@ -153,6 +199,7 @@ class Character:
         self.dexterity = 0
         self.weak = 0
         self.vulnerable = 0
+        self.frail = 0
         self.poison = 0
         self.thorns = 0
 
@@ -167,7 +214,11 @@ class Player(Character):
         super().__init__(hp)
         self.gold = 50
         self.additional_energy = 0
-        self.energy = 3 + self.additional_energy
+        self.temp_additional_energy = 0
+        self.energy = 3 + self.additional_energy + self.temp_additional_energy
+        self.new_turn_additional_draw = 0
+        self.temp_additional_draw = 0
+        self.new_turn_draw_cards = 5 + self.new_turn_additional_draw + self.temp_additional_draw
         self.deck = starter_deck
         self.draw_pile = []
         self.active_hand = []
@@ -180,27 +231,120 @@ class Player(Character):
         pygame.draw.rect(WIN, GREEN, self.rect)
 
     def draw_energy(self):
-        ENERGY_COORDS = (WIN_WIDTH*1/10, WIN_HEIGHT*3/5)
-        pygame.draw.circle(WIN, YELLOW, ENERGY_COORDS, WIN_HEIGHT/20)
+        ENERGY_COORDS = (ENERGY_X, ENERGY_Y)
+        pygame.draw.circle(WIN, YELLOW, ENERGY_COORDS, ENERGY_WIDTH)
         font = pygame.font.Font(None, int(CARD_WIDTH/3))
         text_surface = font.render(str(self.energy), True, BLACK)
         text_rect = text_surface.get_rect(center=ENERGY_COORDS)
         WIN.blit(text_surface, text_rect)
 
 class Enemy(Character):
-    def __init__(self, hp, x_pos, y_pos, width, height):
+    def __init__(self, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
         super().__init__(hp)
+        self.is_enemy_turn = False
+        self.enemy_turn = 1
+        self.block = starting_block
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.width = width
         self.height = height
         self.rect = pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
+        self.death_strength = death_strength # if true then when an enemy dies it will apply -2 str and self.death_str = False
     
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
+    
+    def enemy_dmg_dealt(self, base_dmg, confidence_multiplier=1):
+        if p1.vulnerable >= 1:
+            VULNERABLE_MULTIPLIER = 1.5
+        else:
+            VULNERABLE_MULTIPLIER = 1
+        if self.weak >= 1:
+            WEAK_MULTIPLIER = 0.75
+        else:
+            WEAK_MULTIPLIER = 1
+
+        if p1.block < round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier):
+            p1.hp -= round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier) - p1.block
+            p1.block = 0
+        else:
+            p1.block -= round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
+    
+    def enemy_block(self, base_block):
+        if self.frail >= 1:
+            FRAIL_MULTIPLIER = 0.75
+        else:
+            FRAIL_MULTIPLIER = 1
+        
+        self.block += round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
+    
+    def confidence_enemy_turns(self):
+        if self.hp > 0: # if still alive
+            if self.block == 0:
+                self.enemy_dmg_dealt(5, 0.5) # cowardice
+            elif self.block >= 1:
+                self.enemy_dmg_dealt(5, 2) # confidence
+            self.block = self.enemy_block(5)
+            self.is_enemy_turn = False
+    
+    def less_draw_enemy_turns(self):
+        if self.hp > 0:
+            if self.enemy_turn == 1:
+                p1.new_turn_additional_draw += -1
+            elif p1.new_turn_draw_cards > 4:
+                p1.new_turn_additional_draw += -1
+            else:
+                ran_num = random.randint(1, 100)
+                if ran_num <= 50:
+                    self.enemy_dmg_dealt(6) # 6 hp
+                    self.enemy_block(5) # 5 block
+                else:
+                    p1.temp_additional_draw += -1
+            self.enemy_turn += 1
+            self.is_enemy_turn = False
+
+    def less_energy_enemy_turns(self):
+        if self.hp > 0:
+            if self.enemy_turn == 1:
+                p1.additional_energy += -1
+            elif p1.energy > 2:
+                p1.additional_energy += -1
+            else:
+                ran_num = random.randint(1, 100)
+                if ran_num <= 50:
+                    self.enemy_dmg_dealt(6) # 6 hp
+                    self.enemy_block(5) # 5 block
+                else:
+                    p1.temp_additional_energy += -1
+            self.enemy_turn += 1
+            self.is_enemy_turn = False
+    
+    def weak_death_enemy_turns(self):
+        if self.hp > 0:
+            ran_num = random.randint(1, 100)
+            if ran_num <= 50:
+                self.enemy_dmg_dealt(7) # 7 hp
+            else:
+                p1.weak += 2
+
+    def vulnerable_death_enemy_turns(self):
+        if self.hp > 0:
+            ran_num = random.randint(1, 100)
+            if ran_num <= 50:
+                self.enemy_dmg_dealt(6) # 6 hp
+            else:
+                p1.vulnerable += 2
+
+    def frail_death_enemy_turns(self):
+        if self.hp > 0:
+            ran_num = random.randint(1, 100)
+            if ran_num <= 50:
+                self.enemy_dmg_dealt(5) # 5 hp
+            else:
+                p1.frail += 2
 
 class Card:
-    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
+    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
         global card_id_counter
         self.id = card_id_counter
         card_id_counter += 1
@@ -223,6 +367,8 @@ class Card:
         self.enemy_weak = enemy_weak
         self.player_vulnerable = player_vulnerable
         self.enemy_vulnerable = enemy_vulnerable
+        self.player_frail = player_frail
+        self.enemy_frail = enemy_frail
         self.player_poison = player_poison
         self.enemy_poison = enemy_poison
         self.draw_extra_card = draw_extra_card
@@ -276,8 +422,8 @@ class Card:
         WIN.blit(text_surface, text_rect)
 
 class AttackCard(Card):
-    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
-        super().__init__(name, energy, rarity, type, short_description, long_description, picture, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_poison, enemy_poison, draw_extra_card, discard, exhaust, thorns, locked, player_energy)
+    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
+        super().__init__(name, energy, rarity, type, short_description, long_description, picture, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust, thorns, locked, player_energy)
         self.type = attack
         self.enemy_select = enemy_select
 
@@ -312,13 +458,48 @@ starter_deck.append(jab)
 starter_deck.append(test)
 
 p1 = Player(60, starter_deck)
-enemy1 = Enemy(20, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)
+enemy1 = Enemy(20, 3, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)
+small_fights = []
+boss_fights = []
+main_boss_fights = []
+confidence_enemy_1 = Enemy(15, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_2 = Enemy(15, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_3 = Enemy(15, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+small_fights.append([confidence_enemy_1, confidence_enemy_2, confidence_enemy_3])
+less_draw_enemy = Enemy(25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
+less_energy_enemy = Enemy(25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
+small_fights.append([less_draw_enemy, less_energy_enemy])
+weak_death_enemy = Enemy(10, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+vulnerable_death_enemy = Enemy(15, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+frail_death_enemy = Enemy(20, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+small_fights.append([weak_death_enemy, vulnerable_death_enemy, frail_death_enemy])
 
-def card_played(card, player, enemy):
+def card_played(card, player, enemy): # do i need it to say player here or can i replace it with p1?
+    if enemy.vulnerable >= 1:
+        VULNERABLE_MULTIPLIER = 1.5
+    else:
+        VULNERABLE_MULTIPLIER = 1
+    if player.weak >= 1:
+        WEAK_MULTIPLIER = 0.75
+    else:
+        WEAK_MULTIPLIER = 1
+    if player.frail >= 1:
+        FRAIL_MULTIPLIER = 0.75
+    else:
+        FRAIL_MULTIPLIER = 1
+
     player.energy -= card.energy
     player.hp -= card.player_hp
-    enemy.hp -= card.enemy_hp
-    player.block += card.block
+
+    if card.enemy_hp >= 1:
+        if enemy.block < round((card.enemy_hp + player.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER):
+            enemy.hp -= round((card.enemy_hp + player.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER) - enemy.block
+            enemy.block = 0
+        else:
+            enemy.block -= round((card.enemy_hp + player.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER)
+    
+    if card.block >= 1:
+        player.block += round((card.block + player.dexterity) * FRAIL_MULTIPLIER)
     player.shield += card.shield
     player.strength += card.player_strength
     enemy.strength -= card.enemy_strength
@@ -343,7 +524,11 @@ def main():
     clock = pygame.time.Clock()
     WIN.fill(LIGHT_BLUE)
     p1.draw_player()
-    enemy1.draw_enemy()
+    current_enemies = []
+    for enemy in small_fights[2]:
+        current_enemies.append(enemy)
+    for enemy in current_enemies:
+        enemy.draw_enemy()
     pygame.display.update()
     clicked = False
     a_card_selected = False
@@ -366,7 +551,7 @@ def main():
                         pygame.display.update()
                     elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered:
                         card.is_hovered = False
-                        desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*10, CARD_HEIGHT/8)
+                        desc_rect = pygame.Rect(DESCRIPTION_X, DESCRIPTION_Y, DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT)
                         pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
                         pygame.display.update()
             
@@ -382,23 +567,24 @@ def main():
                             card.is_selected = False
                             a_card_selected = False
                     
-                    if card.is_selected and (enemy1.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
-                        if p1.energy - card.energy < 0:
-                            card.is_selected = False
-                            a_card_selected = False
-                            update = True
-                        else:
-                            if card.type == attack and enemy1.rect.collidepoint(event.pos): # if attack card selected and selects enemy
-                                card_played(card, p1, enemy1)
+                    for enemy in current_enemies:
+                        if card.is_selected and (enemy.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
+                            if p1.energy - card.energy < 0:
+                                card.is_selected = False
                                 a_card_selected = False
-                                p1.discard_pile.append(p1.active_hand.remove(card))
                                 update = True
-                            
-                            elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
-                                card_played(card, p1, enemy1)
-                                a_card_selected = False
-                                p1.discard_pile.append(p1.active_hand.remove(card))
-                                update = True
+                            else:
+                                if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
+                                    card_played(card, p1, enemy)
+                                    a_card_selected = False
+                                    p1.discard_pile.append(p1.active_hand.remove(card))
+                                    update = True
+                                
+                                elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
+                                    card_played(card, p1, enemy)
+                                    a_card_selected = False
+                                    p1.discard_pile.append(p1.active_hand.remove(card))
+                                    update = True
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
@@ -407,10 +593,15 @@ def main():
         if update == True:
             WIN.fill(LIGHT_BLUE)
             p1.draw_player()
-            enemy1.draw_enemy()
             p1.draw_hp()
-            enemy1.draw_hp()
             p1.draw_energy()
+            for enemy in current_enemies:
+                enemy.draw_enemy()
+                enemy.draw_hp()
+                update_enemy_status(enemy, enemy.x_pos)
+                if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
+                    p1.strength -= 2
+                    enemy.death_strength = False
             draw_end_turn_button()
             update_p1_status()
             card_pos = 1
@@ -422,13 +613,16 @@ def main():
         
         if stage == 1:
             p1.draw_hp()
-            enemy1.draw_hp()
+            for enemy in current_enemies:
+                enemy.draw_enemy()
+                enemy.draw_hp()
+                update_enemy_status(enemy, enemy.x_pos)
             p1.energy = 3
             p1.draw_energy()
             draw_end_turn_button()
             p1.draw_pile = p1.deck
             random.shuffle(p1.draw_pile)
-            for i in range(5):
+            for i in range(p1.new_turn_draw_cards):
                 p1.active_hand.append(p1.draw_pile.pop())
             card_pos = 1
             for card in p1.active_hand:
@@ -438,7 +632,6 @@ def main():
             stage = 2
 
 main()
-
 
 # the main deck needs...
 # a few decks shuffled together
@@ -467,11 +660,11 @@ main()
 # add in something to show all status effects
 # add logic that kills an enemy when hp goes to 0 or below
 # add logic that kills the player when hp goes to 0 or below
-# add logic that makes things like vulnerable or weak have an impact
 # create set variables for width/height/x/y for end turn button and energy
 # then move them so that they're not getting obscured
+# change the update status into the character class
 
 # problems
 
 # can't figure out how to update the card colour when hovered
-# the cards aren´t actually central when blit. Add 1/3 of a card width to the x
+# the cards aren´t actually central when blit. Add 1/3 of a card width to the x, but needs to stay as it is if there's only one card
