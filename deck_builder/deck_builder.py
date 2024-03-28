@@ -42,8 +42,6 @@ EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
 CARDS_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2
 END_TURN_X = WIN_WIDTH - END_TURN_WIDTH*1.25
 END_TURN_Y = WIN_HEIGHT*3/5 - END_TURN_HEIGHT*1.25
-ENERGY_X = ENERGY_WIDTH*2
-ENERGY_Y = WIN_HEIGHT*3/5 - ENERGY_HEIGHT*1.5
 DESCRIPTION_X = WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1
 DESCRIPTION_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
 LEFT_BUTTON_X = DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
@@ -94,7 +92,7 @@ GREEN = (0, 255, 0)
 ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 
-# images...
+# images
 BLOCK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'block.png'))
 BLOCK = pygame.transform.scale(BLOCK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
 SHIELD_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'shield.png'))
@@ -125,138 +123,132 @@ ENTIRE_DECK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'entire_deck.
 ENTIRE_DECK = pygame.transform.scale(ENTIRE_DECK_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
 ENERGY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'sun.png'))
 ENERGY = pygame.transform.scale(ENERGY_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
+PIRATE_BACKGROUND_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'pirate_background.png'))
+PIRATE_BACKGROUND = pygame.transform.scale(PIRATE_BACKGROUND_IMAGE, (WIN_WIDTH, WIN_HEIGHT))
 
-def update_p1_status():
-    p1_status_effects = []
-    if p1.block != 0:
-        p1_status_effects.append({'image':BLOCK, 'number':p1.block})
-    if p1.shield != 0:
-        p1_status_effects.append({'image':SHIELD, 'number':p1.shield})
-    if p1.strength != 0:
-        p1_status_effects.append({'image':STRENGTH, 'number':p1.strength})
-    if p1.dexterity != 0:
-        p1_status_effects.append({'image':DEXTERITY, 'number':p1.dexterity})
-    if p1.weak != 0:
-        p1_status_effects.append({'image':WEAK, 'number':p1.weak})
-    if p1.vulnerable != 0:
-        p1_status_effects.append({'image':VULNERABLE, 'number':p1.vulnerable})
-    if p1.frail != 0:
-        p1_status_effects.append({'image':FRAIL, 'number':p1.frail})
-    if p1.poison != 0:
-        p1_status_effects.append({'image':POISON, 'number':p1.poison})
-    if p1.thorns != 0:
-        p1_status_effects.append({'image':THORNS, 'number':p1.thorns})
-    if p1.additional_energy != 0:
-        p1_status_effects.append({'image':ADDITIONAL_ENERGY, 'number':p1.additional_energy})
-    
-    status_counter = 0
-    if len(p1_status_effects) > 0:
-        for status in p1_status_effects:
-            draw_status(status['image'], status['number'], status_counter, P1_X)
-            status_counter +=1
-
-def update_enemy_status(enemy, enemy_x):
-    enemy_status_effects = []
-    if enemy.block != 0:
-        enemy_status_effects.append({'image':BLOCK, 'number':enemy.block})
-    if enemy.shield != 0:
-        enemy_status_effects.append({'image':SHIELD, 'number':enemy.shield})
-    if enemy.strength != 0:
-        enemy_status_effects.append({'image':STRENGTH, 'number':enemy.strength})
-    if enemy.dexterity != 0:
-        enemy_status_effects.append({'image':DEXTERITY, 'number':enemy.dexterity})
-    if enemy.weak != 0:
-        enemy_status_effects.append({'image':WEAK, 'number':enemy.weak})
-    if enemy.vulnerable != 0:
-        enemy_status_effects.append({'image':VULNERABLE, 'number':enemy.vulnerable})
-    if enemy.frail != 0:
-        enemy_status_effects.append({'image':FRAIL, 'number':enemy.frail})
-    if enemy.poison != 0:
-        enemy_status_effects.append({'image':POISON, 'number':enemy.poison})
-    if enemy.thorns != 0:
-        enemy_status_effects.append({'image':THORNS, 'number':enemy.thorns})
-    
-    status_counter = 0
-    if len(enemy_status_effects) > 0:
-        for status in enemy_status_effects:
-            draw_status(status['image'], status['number'], status_counter, enemy_x)
-            status_counter +=1
-
-def draw_status(image, number, counter, character_x):
-    font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
-    text_surface = font.render(str(number), True, BLACK)
-    rect = pygame.Rect(character_x + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
-    text_rect = text_surface.get_rect(center=rect.center)
-
-    WIN.blit(image, (character_x + EFFECTS_WIDTH*counter, EFFECTS_Y))
-    WIN.blit(text_surface, text_rect)
-
-# sounds...
-
-def draw_end_turn_button():
-    is_hovered = False
-    colour = PINK
-    hover_colour = WHITE
-    font = pygame.font.Font(None, int(CARD_WIDTH/4))
-    text_surface = font.render('End Turn', True, BLACK)
-    rect = pygame.Rect(END_TURN_X, END_TURN_Y, END_TURN_WIDTH, END_TURN_HEIGHT)
-
-    if is_hovered:
-        pygame.draw.rect(WIN, hover_colour, rect)
-        pygame.draw.rect(WIN, colour, rect, 4)  # Border
-    else:
-        pygame.draw.rect(WIN, colour, rect)
-        pygame.draw.rect(WIN, hover_colour, rect, 4)  # Border
-        
-    text_rect = text_surface.get_rect(center=rect.center)
-    WIN.blit(text_surface, text_rect)
-
-class Button:
-    def __init__(self, name, image, button_x, button_y, button_width=DRAW_PILE_WIDTH, button_height=DRAW_PILE_HEIGHT):
+# classes
+class Card:
+    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
+        global card_id_counter
+        self.id = card_id_counter
+        card_id_counter += 1
         self.name = name
-        self.image = image
-        self.button_x = button_x
-        self.button_y = button_y
-        self.button_width = button_width
-        self.button_height = button_height
-        self.rect = pygame.Rect(button_x, button_y, button_width, button_height)
-        self.is_clicked = False
-
-    def draw_button(self):
-        WIN.blit(self.image, self.rect)
-
-    def show_cards(self, linked_list_of_cards):
-        card_number = 0
-        current_list = []
-        for card in linked_list_of_cards:
-            current_list.append(card.id)
-        if linked_list_of_cards == p1.draw_pile: # if looking at the draw pile then sort the list (to hide seeing what's next)
-            current_list = sorted(current_list)
-
-        WIN.fill(LIGHT_BLUE)
-        for button in pile_buttons:
-            button.draw_button()
-        energy_button.draw_button()
-
-        for card_id in current_list:
-            for card in list_of_all_cards:
-                if card_id == card.id:
-                    card.show_card(card_number)
-                    card_number += 1
+        self.energy = energy
+        self.rarity = rarity
+        self.type = type
+        self.picture = picture
+        self.player_hp = player_hp
+        self.enemy_hp = enemy_hp
+        self.block = block
+        self.shield = shield
+        self.player_strength = player_strength
+        self.enemy_strength = enemy_strength
+        self.player_dexterity = player_dexterity
+        self.enemy_dexterity = enemy_dexterity
+        self.player_weak = player_weak
+        self.enemy_weak = enemy_weak
+        self.player_vulnerable = player_vulnerable
+        self.enemy_vulnerable = enemy_vulnerable
+        self.player_frail = player_frail
+        self.enemy_frail = enemy_frail
+        self.player_poison = player_poison
+        self.enemy_poison = enemy_poison
+        self.draw_extra_card = draw_extra_card
+        self.discard = discard
+        self.exhaust = exhaust
+        self.thorns = thorns
+        self.locked = locked
+        self.player_energy = player_energy
+        self.colour = BLUE
+        self.hover_colour = BLACK
+        self.text_colour = WHITE
+        self.font = pygame.font.Font(None, int(CARD_WIDTH/6))  # customize the font and size
+        self.is_hovered = False
+        self.is_selected = False
+        self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
+        self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
+        list_of_all_cards.append(self)
+    
+    def draw_card(self, position, cards_in_hand):
+        self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH, CARD_HEIGHT)
+        if position == cards_in_hand: # if last card it has a bigger rect than the others
+            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH - 2, CARD_HEIGHT)
+        else:
+            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
         
-        pygame.display.update()
+        if self.is_hovered:
+            pygame.draw.rect(WIN, self.hover_colour, self.rect)
+            pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
+        else:
+            pygame.draw.rect(WIN, self.colour, self.rect)
+            pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
+        
+        if self.is_selected:
+            pygame.draw.rect(WIN, self.hover_colour, self.rect)
+            pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
+        else:
+            pygame.draw.rect(WIN, self.colour, self.rect)
+            pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
+        self.draw_text()
 
-pile_buttons = []
-draw_pile_button = Button('draw_pile_button', DRAW_PILE, LEFT_BUTTON_X, BOTTOM_BUTTON_Y)
-discard_pile_button = Button('discard_pile_button', DISCARD_PILE, RIGHT_BUTTON_X, BOTTOM_BUTTON_Y)
-exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X, TOP_BUTTON_Y)
-energy_button = Button('energy_button', ENERGY, LEFT_BUTTON_X, TOP_BUTTON_Y)
-entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT)
-pile_buttons.append(draw_pile_button)
-pile_buttons.append(discard_pile_button)
-pile_buttons.append(exhaust_pile_button)
-pile_buttons.append(entire_deck_button)
-            
+    def show_card(self, position):
+        col_num = position % DISPLAY_CARDS
+        row_num = position // DISPLAY_CARDS
+        self.rect = pygame.Rect(DESCRIPTION_X + DISPLAY_GAP_WIDTH*col_num + CARD_WIDTH*col_num, DISPLAY_GAP_HEIGHT + CARD_HEIGHT*row_num + DISPLAY_GAP_HEIGHT*row_num, CARD_WIDTH, CARD_HEIGHT)
+        pygame.draw.rect(WIN, self.colour, self.rect)
+        pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
+        self.draw_text()
+
+    def draw_text(self):
+        text_surface = self.font.render(self.name, True, self.text_colour)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        text_surface2 = self.font.render(str(self.energy), True, self.text_colour)
+        text_rect2 = text_surface2.get_rect(topleft=self.rect.topleft)
+        WIN.blit(text_surface, text_rect)
+        WIN.blit(text_surface2, text_rect2)
+    
+    def draw_description(self):
+        desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*9 + CARD_WIDTH, CARD_HEIGHT/8)
+        pygame.draw.rect(WIN, self.colour, desc_rect)
+        text_surface = self.font.render(self.long_description, True, self.text_colour)
+        text_rect = text_surface.get_rect(center=desc_rect.center)
+        WIN.blit(text_surface, text_rect)
+
+class AttackCard(Card):
+    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
+        super().__init__(name, energy, rarity, type, short_description, long_description, picture, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust, thorns, locked, player_energy)
+        self.type = attack
+        self.enemy_select = enemy_select
+
+# card instances
+punch = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch2 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch3 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch4 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch5 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
+parry = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
+parry2 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
+parry3 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
+parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
+parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
+jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {enemy_hp} dmg.\nApply {enemy_vulnerable} vulnerable.', 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
+test = Card('Test', 0, starter, power, 'test', 'test', player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
+
+starter_deck = []
+starter_deck.append(punch)
+starter_deck.append(punch2)
+starter_deck.append(punch3)
+starter_deck.append(punch4)
+starter_deck.append(punch5)
+starter_deck.append(parry)
+starter_deck.append(parry2)
+starter_deck.append(parry3)
+starter_deck.append(parry4)
+starter_deck.append(parry5)
+starter_deck.append(jab)
+starter_deck.append(test)
+
+
 class Character:
     def __init__(self, hp):
         self.max_hp = hp
@@ -299,11 +291,18 @@ class Player(Character):
         pygame.draw.rect(WIN, GREEN, self.rect)
 
     def draw_energy(self):
-        ENERGY_COORDS = (ENERGY_X, ENERGY_Y)
-        pygame.draw.circle(WIN, YELLOW, ENERGY_COORDS, ENERGY_WIDTH)
+        ENERGY_COORDS = (LEFT_BUTTON_X + DRAW_PILE_WIDTH/2, TOP_BUTTON_Y + DRAW_PILE_HEIGHT/2)
         font = pygame.font.Font(None, int(CARD_WIDTH/3))
         text_surface = font.render(str(self.energy), True, BLACK)
         text_rect = text_surface.get_rect(center=ENERGY_COORDS)
+        WIN.blit(text_surface, text_rect)
+    
+    def draw_number_of_cards(self, linked_list_of_cards, x, y, colour=LIGHT_BLUE, radius=DRAW_PILE_WIDTH/6):
+        coords = (x, y)
+        pygame.draw.circle(WIN, colour, coords, radius)
+        font = pygame.font.Font(None, int(CARD_WIDTH/4))
+        text_surface = font.render(str(len(linked_list_of_cards)), True, BLACK)
+        text_rect = text_surface.get_rect(center=coords)
         WIN.blit(text_surface, text_rect)
 
 class Enemy(Character):
@@ -411,129 +410,7 @@ class Enemy(Character):
             else:
                 p1.frail += 2
 
-class Card:
-    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
-        global card_id_counter
-        self.id = card_id_counter
-        card_id_counter += 1
-        self.name = name
-        self.energy = energy
-        self.rarity = rarity
-        self.type = type
-        self.picture = picture
-        self.player_hp = player_hp
-        self.enemy_hp = enemy_hp
-        self.block = block
-        self.shield = shield
-        self.player_strength = player_strength
-        self.enemy_strength = enemy_strength
-        self.player_dexterity = player_dexterity
-        self.enemy_dexterity = enemy_dexterity
-        self.player_weak = player_weak
-        self.enemy_weak = enemy_weak
-        self.player_vulnerable = player_vulnerable
-        self.enemy_vulnerable = enemy_vulnerable
-        self.player_frail = player_frail
-        self.enemy_frail = enemy_frail
-        self.player_poison = player_poison
-        self.enemy_poison = enemy_poison
-        self.draw_extra_card = draw_extra_card
-        self.discard = discard
-        self.exhaust = exhaust
-        self.thorns = thorns
-        self.locked = locked
-        self.player_energy = player_energy
-        self.colour = BLUE
-        self.hover_colour = BLACK
-        self.text_colour = WHITE
-        self.font = pygame.font.Font(None, int(CARD_WIDTH/6))  # customize the font and size
-        self.is_hovered = False
-        self.is_selected = False
-        self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
-        self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
-        list_of_all_cards.append(self)
-    
-    def draw_card(self, position, cards_in_hand):
-        self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH, CARD_HEIGHT)
-        if position == cards_in_hand: # if last card it has a bigger rect than the others
-            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH - 2, CARD_HEIGHT)
-        else:
-            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
-        
-        if self.is_hovered:
-            pygame.draw.rect(WIN, self.hover_colour, self.rect)
-            pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
-        else:
-            pygame.draw.rect(WIN, self.colour, self.rect)
-            pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
-        
-        if self.is_selected:
-            pygame.draw.rect(WIN, self.hover_colour, self.rect)
-            pygame.draw.rect(WIN, self.colour, self.rect, 8)  # Border
-        else:
-            pygame.draw.rect(WIN, self.colour, self.rect)
-            pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
-        self.draw_text()
-
-    def show_card(self, position):
-        col_num = position % DISPLAY_CARDS
-        row_num = position // DISPLAY_CARDS
-        self.rect = pygame.Rect(DESCRIPTION_X + DISPLAY_GAP_WIDTH*col_num + CARD_WIDTH*col_num, DISPLAY_GAP_HEIGHT + CARD_HEIGHT*row_num + DISPLAY_GAP_HEIGHT*row_num, CARD_WIDTH, CARD_HEIGHT)
-        pygame.draw.rect(WIN, self.colour, self.rect)
-        pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
-        self.draw_text()
-
-    def draw_text(self):
-        text_surface = self.font.render(self.name, True, self.text_colour)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        text_surface2 = self.font.render(str(self.energy), True, self.text_colour)
-        text_rect2 = text_surface2.get_rect(topleft=self.rect.topleft)
-        WIN.blit(text_surface, text_rect)
-        WIN.blit(text_surface2, text_rect2)
-    
-    def draw_description(self):
-        desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*9 + CARD_WIDTH, CARD_HEIGHT/8)
-        pygame.draw.rect(WIN, self.colour, desc_rect)
-        text_surface = self.font.render(self.long_description, True, self.text_colour)
-        text_rect = text_surface.get_rect(center=desc_rect.center)
-        WIN.blit(text_surface, text_rect)
-
-class AttackCard(Card):
-    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
-        super().__init__(name, energy, rarity, type, short_description, long_description, picture, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust, thorns, locked, player_energy)
-        self.type = attack
-        self.enemy_select = enemy_select
-
-punch = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch2 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch3 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch4 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch5 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-parry = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry2 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry3 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {enemy_hp} dmg.\nApply {enemy_vulnerable} vulnerable.', 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
-test = Card('Test', 0, starter, power, 'test', 'test', player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
-
-starter_deck = []
-# starter_deck.extend([punch] * 5)
-# starter_deck.extend([parry] * 5)
-# starter_deck.extend([jab] * 1)
-starter_deck.append(punch)
-starter_deck.append(punch2)
-starter_deck.append(punch3)
-starter_deck.append(punch4)
-starter_deck.append(punch5)
-starter_deck.append(parry)
-starter_deck.append(parry2)
-starter_deck.append(parry3)
-starter_deck.append(parry4)
-starter_deck.append(parry5)
-starter_deck.append(jab)
-starter_deck.append(test)
-
+# character instances
 p1 = Player(60, starter_deck)
 enemy1 = Enemy(20, 3, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT) # test enemy
 small_fights = []
@@ -550,6 +427,153 @@ weak_death_enemy = Enemy(10, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACT
 vulnerable_death_enemy = Enemy(15, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
 frail_death_enemy = Enemy(20, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
 small_fights.append([weak_death_enemy, vulnerable_death_enemy, frail_death_enemy])
+
+
+class Button:
+    def __init__(self, name, image, button_x, button_y, button_width=DRAW_PILE_WIDTH, button_height=DRAW_PILE_HEIGHT):
+        self.name = name
+        self.image = image
+        self.button_x = button_x
+        self.button_y = button_y
+        self.button_width = button_width
+        self.button_height = button_height
+        self.rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        self.is_clicked = False
+        if self.name == 'draw_pile_button':
+            self.linked_list_of_cards = p1.draw_pile
+        elif self.name == 'discard_pile_button':
+            self.linked_list_of_cards = p1.discard_pile
+        elif self.name == 'exhaust_pile_button':
+            self.linked_list_of_cards = p1.exhaust_pile
+        elif self.name == 'entire_deck_button':
+            self.linked_list_of_cards = p1.deck
+
+    def draw_button(self):
+        WIN.blit(self.image, self.rect)
+        if self.name == 'energy_button':
+            p1.draw_energy()
+        else:
+            p1.draw_number_of_cards(self.linked_list_of_cards, self.button_x, self.button_y)
+
+    def show_cards(self):
+        card_number = 0
+        current_list = []
+        for card in self.linked_list_of_cards:
+            current_list.append(card.id)
+        if self.linked_list_of_cards == p1.draw_pile: # if looking at the draw pile then sort the list (to hide seeing what's next)
+            current_list = sorted(current_list)
+
+        WIN.fill(LIGHT_BLUE)
+        for button in pile_buttons:
+            button.draw_button()
+        energy_button.draw_button()
+
+        for card_id in current_list:
+            for card in list_of_all_cards:
+                if card_id == card.id:
+                    card.show_card(card_number)
+                    card_number += 1
+        
+        pygame.display.update()
+
+# button instances
+draw_pile_button = Button('draw_pile_button', DRAW_PILE, LEFT_BUTTON_X, BOTTOM_BUTTON_Y)
+discard_pile_button = Button('discard_pile_button', DISCARD_PILE, RIGHT_BUTTON_X, BOTTOM_BUTTON_Y)
+exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X, TOP_BUTTON_Y)
+energy_button = Button('energy_button', ENERGY, LEFT_BUTTON_X, TOP_BUTTON_Y)
+entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT)
+pile_buttons = []
+pile_buttons.append(draw_pile_button)
+pile_buttons.append(discard_pile_button)
+pile_buttons.append(exhaust_pile_button)
+pile_buttons.append(entire_deck_button)
+
+
+# functions
+def update_p1_status():
+    p1_status_effects = []
+    if p1.block != 0:
+        p1_status_effects.append({'image':BLOCK, 'number':p1.block})
+    if p1.shield != 0:
+        p1_status_effects.append({'image':SHIELD, 'number':p1.shield})
+    if p1.strength != 0:
+        p1_status_effects.append({'image':STRENGTH, 'number':p1.strength})
+    if p1.dexterity != 0:
+        p1_status_effects.append({'image':DEXTERITY, 'number':p1.dexterity})
+    if p1.weak != 0:
+        p1_status_effects.append({'image':WEAK, 'number':p1.weak})
+    if p1.vulnerable != 0:
+        p1_status_effects.append({'image':VULNERABLE, 'number':p1.vulnerable})
+    if p1.frail != 0:
+        p1_status_effects.append({'image':FRAIL, 'number':p1.frail})
+    if p1.poison != 0:
+        p1_status_effects.append({'image':POISON, 'number':p1.poison})
+    if p1.thorns != 0:
+        p1_status_effects.append({'image':THORNS, 'number':p1.thorns})
+    if p1.additional_energy != 0:
+        p1_status_effects.append({'image':ADDITIONAL_ENERGY, 'number':p1.additional_energy})
+    
+    status_counter = 0
+    if len(p1_status_effects) > 0:
+        for status in p1_status_effects:
+            draw_status(status['image'], status['number'], status_counter, P1_X)
+            status_counter +=1
+
+def update_enemy_status(enemy, enemy_x):
+    enemy_status_effects = []
+    if enemy.block != 0:
+        enemy_status_effects.append({'image':BLOCK, 'number':enemy.block})
+    if enemy.shield != 0:
+        enemy_status_effects.append({'image':SHIELD, 'number':enemy.shield})
+    if enemy.strength != 0:
+        enemy_status_effects.append({'image':STRENGTH, 'number':enemy.strength})
+    if enemy.dexterity != 0:
+        enemy_status_effects.append({'image':DEXTERITY, 'number':enemy.dexterity})
+    if enemy.weak != 0:
+        enemy_status_effects.append({'image':WEAK, 'number':enemy.weak})
+    if enemy.vulnerable != 0:
+        enemy_status_effects.append({'image':VULNERABLE, 'number':enemy.vulnerable})
+    if enemy.frail != 0:
+        enemy_status_effects.append({'image':FRAIL, 'number':enemy.frail})
+    if enemy.poison != 0:
+        enemy_status_effects.append({'image':POISON, 'number':enemy.poison})
+    if enemy.thorns != 0:
+        enemy_status_effects.append({'image':THORNS, 'number':enemy.thorns})
+    
+    status_counter = 0
+    if len(enemy_status_effects) > 0:
+        for status in enemy_status_effects:
+            draw_status(status['image'], status['number'], status_counter, enemy_x)
+            status_counter +=1
+
+def draw_status(image, number, counter, character_x):
+    font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+    text_surface = font.render(str(number), True, BLACK)
+    rect = pygame.Rect(character_x + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+    text_rect = text_surface.get_rect(center=rect.center)
+
+    WIN.blit(image, (character_x + EFFECTS_WIDTH*counter, EFFECTS_Y))
+    WIN.blit(text_surface, text_rect)
+
+# sounds...
+
+def draw_end_turn_button():
+    is_hovered = False
+    colour = PINK
+    hover_colour = WHITE
+    font = pygame.font.Font(None, int(CARD_WIDTH/4))
+    text_surface = font.render('End Turn', True, BLACK)
+    rect = pygame.Rect(END_TURN_X, END_TURN_Y, END_TURN_WIDTH, END_TURN_HEIGHT)
+
+    if is_hovered:
+        pygame.draw.rect(WIN, hover_colour, rect)
+        pygame.draw.rect(WIN, colour, rect, 4)  # Border
+    else:
+        pygame.draw.rect(WIN, colour, rect)
+        pygame.draw.rect(WIN, hover_colour, rect, 4)  # Border
+        
+    text_rect = text_surface.get_rect(center=rect.center)
+    WIN.blit(text_surface, text_rect)
 
 def card_played(card, player, enemy): # do i need it to say player here or can i replace it with p1?
     if enemy.vulnerable >= 1:
@@ -599,7 +623,8 @@ def card_played(card, player, enemy): # do i need it to say player here or can i
 def main():
 
     clock = pygame.time.Clock()
-    WIN.fill(LIGHT_BLUE)
+    # WIN.fill(LIGHT_BLUE)
+    WIN.blit(PIRATE_BACKGROUND, (0, 0))
     p1.draw_player()
     current_enemies = []
     for enemy in small_fights[2]:
@@ -672,14 +697,7 @@ def main():
                             for b in pile_buttons:
                                 b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
                             button.is_clicked = True
-                            if button.name == 'draw_pile_button':
-                                button.show_cards(p1.draw_pile)
-                            elif button.name == 'discard_pile_button':
-                                button.show_cards(p1.discard_pile)
-                            elif button.name == 'exhaust_pile_button':
-                                button.show_cards(p1.exhaust_pile)
-                            elif button.name == 'entire_deck_button':
-                                button.show_cards(p1.deck)
+                            button.show_cards()
 
                         elif button.is_clicked: # if we click the button and it was already clicked...
                             button.is_clicked = False
@@ -690,7 +708,8 @@ def main():
                     clicked = False
 
         if update == True:
-            WIN.fill(LIGHT_BLUE)
+            # WIN.fill(LIGHT_BLUE)
+            WIN.blit(PIRATE_BACKGROUND, (0, 0))
             p1.draw_player()
             p1.draw_hp()
             p1.draw_energy()
@@ -722,7 +741,7 @@ def main():
             p1.energy = 3
             p1.draw_energy()
             draw_end_turn_button()
-            p1.draw_pile = p1.deck
+            p1.draw_pile = list(p1.deck)
             random.shuffle(p1.draw_pile)
             for i in range(p1.new_turn_draw_cards):
                 p1.active_hand.append(p1.draw_pile.pop())
@@ -766,11 +785,13 @@ main()
 # find a few different pirate themed background images for fights to happen in
 # figure out how to show fixed enemy abilities (like the stregth debuff on death enemy) (maybe above the enemy?)
 # create a list of different screen views so that i can say if in screen x then be able to do this, should stop past rects from being able to be clicked
-# blit in the name of the lists when looking at draw/discard/etc piles
+# blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
+# get a better way of adding images, create a function for it or something
+# put cards first, then player, then button
 
 # problems
 
 # can't figure out how to update the card colour when hovered
 # solved i think (just not actioned) - everything that had an interactable rect on the screen before still allows you to interact with it when looking at the draw/discard/etc piles
-# currently the deck pile is removing the cards when cards are drawn
+# why is the len of p1.draw pile saying it's 0?
