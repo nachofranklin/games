@@ -15,6 +15,7 @@ card_id_counter = 1
 BASE_DRAW_CARDS = 5 # 5
 list_of_all_cards = []
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
+current_enemies = []
 
 # width and heights
 WIN_WIDTH = 1200
@@ -79,6 +80,17 @@ attack_options.append(select)
 attack_options.append(all)
 attack_options.append(rando)
 
+# screen_view
+home = 'home'
+map = 'map'
+fight = 'fight'
+reward = 'reward'
+card_view = 'card_view'
+shop = 'shop'
+event = 'event'
+death = 'death'
+win = 'win'
+
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Nath\'s STS')
 
@@ -93,38 +105,30 @@ ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 
 # images
-BLOCK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'block.png'))
-BLOCK = pygame.transform.scale(BLOCK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-SHIELD_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'shield.png'))
-SHIELD = pygame.transform.scale(SHIELD_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-STRENGTH_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'strength.png'))
-STRENGTH = pygame.transform.scale(STRENGTH_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-DEXTERITY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'dexterity.png'))
-DEXTERITY = pygame.transform.scale(DEXTERITY_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-WEAK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'weak.png'))
-WEAK = pygame.transform.scale(WEAK_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-VULNERABLE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'vulnerable.png'))
-VULNERABLE = pygame.transform.scale(VULNERABLE_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-FRAIL_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'frail.png'))
-FRAIL = pygame.transform.scale(FRAIL_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-POISON_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'poison.png'))
-POISON = pygame.transform.scale(POISON_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-THORNS_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'thorns.png'))
-THORNS = pygame.transform.scale(THORNS_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-ADDITIONAL_ENERGY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'energy.png'))
-ADDITIONAL_ENERGY = pygame.transform.scale(ADDITIONAL_ENERGY_IMAGE, (EFFECTS_WIDTH, EFFECTS_HEIGHT))
-DRAW_PILE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'draw_pile.png'))
-DRAW_PILE = pygame.transform.scale(DRAW_PILE_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
-DISCARD_PILE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'discard_pile.png'))
-DISCARD_PILE = pygame.transform.scale(DISCARD_PILE_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
-EXHAUST_PILE_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'tombstone.png'))
-EXHAUST_PILE = pygame.transform.scale(EXHAUST_PILE_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
-ENTIRE_DECK_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'entire_deck.png'))
-ENTIRE_DECK = pygame.transform.scale(ENTIRE_DECK_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
-ENERGY_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'sun.png'))
-ENERGY = pygame.transform.scale(ENERGY_IMAGE, (DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT))
-PIRATE_BACKGROUND_IMAGE = pygame.image.load(os.path.join(PATH, 'images', 'pirate_background.png'))
-PIRATE_BACKGROUND = pygame.transform.scale(PIRATE_BACKGROUND_IMAGE, (WIN_WIDTH, WIN_HEIGHT))
+def image(file_name, img_width=EFFECTS_WIDTH, img_height=EFFECTS_HEIGHT):
+    img = pygame.image.load(os.path.join(PATH, 'images', f'{file_name}.png'))
+    scaled_img = pygame.transform.scale(img, (img_width, img_height))
+    return scaled_img
+
+BLOCK = image('block')
+SHIELD = image('shield')
+STRENGTH = image('strength')
+DEXTERITY = image('dexterity')
+WEAK = image('weak')
+VULNERABLE = image('vulnerable')
+FRAIL = image('frail')
+POISON = image('poison')
+THORNS = image('thorns')
+ADDITIONAL_ENERGY = image('energy')
+DRAW_PILE = image('draw_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+DISCARD_PILE = image('discard_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+EXHAUST_PILE = image('tombstone', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+ENTIRE_DECK = image('entire_deck', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+ENERGY = image('sun', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+PIRATE_BACKGROUND = image('pirate_background', WIN_WIDTH, WIN_HEIGHT)
+
+# sounds
+pass
 
 # classes
 class Card:
@@ -515,7 +519,7 @@ small_fights.append([weak_death_enemy, vulnerable_death_enemy, frail_death_enemy
 
 
 class Button:
-    def __init__(self, name, image, button_x, button_y, button_width=DRAW_PILE_WIDTH, button_height=DRAW_PILE_HEIGHT):
+    def __init__(self, name, image, button_x, button_y, button_width=DRAW_PILE_WIDTH, button_height=DRAW_PILE_HEIGHT, linked_list=[]):
         self.name = name
         self.image = image
         self.button_x = button_x
@@ -523,29 +527,22 @@ class Button:
         self.button_width = button_width
         self.button_height = button_height
         self.rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        self.linked_list = linked_list
         self.is_clicked = False
-        if self.name == 'draw_pile_button':
-            self.linked_list_of_cards = p1.draw_pile
-        elif self.name == 'discard_pile_button':
-            self.linked_list_of_cards = p1.discard_pile
-        elif self.name == 'exhaust_pile_button':
-            self.linked_list_of_cards = p1.exhaust_pile
-        elif self.name == 'entire_deck_button':
-            self.linked_list_of_cards = p1.deck
 
     def draw_button(self):
         WIN.blit(self.image, self.rect)
         if self.name == 'energy_button':
             p1.draw_energy()
         else:
-            p1.draw_number_of_cards(self.linked_list_of_cards, self.button_x, self.button_y)
+            p1.draw_number_of_cards(self.linked_list, self.button_x, self.button_y)
 
     def show_cards(self):
         card_number = 0
         current_list = []
-        for card in self.linked_list_of_cards:
+        for card in self.linked_list:
             current_list.append(card.id)
-        if self.linked_list_of_cards == p1.draw_pile: # if looking at the draw pile then sort the list (to hide seeing what's next)
+        if self.name == 'draw_pile_button': # if looking at the draw pile then sort the list (to hide seeing what's next)
             current_list = sorted(current_list)
 
         WIN.fill(LIGHT_BLUE)
@@ -562,11 +559,11 @@ class Button:
         pygame.display.update()
 
 # button instances
-draw_pile_button = Button('draw_pile_button', DRAW_PILE, LEFT_BUTTON_X, BOTTOM_BUTTON_Y)
-discard_pile_button = Button('discard_pile_button', DISCARD_PILE, RIGHT_BUTTON_X, BOTTOM_BUTTON_Y)
-exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X, TOP_BUTTON_Y)
+draw_pile_button = Button('draw_pile_button', DRAW_PILE, LEFT_BUTTON_X, BOTTOM_BUTTON_Y, linked_list=p1.draw_pile)
+discard_pile_button = Button('discard_pile_button', DISCARD_PILE, RIGHT_BUTTON_X, BOTTOM_BUTTON_Y, linked_list=p1.discard_pile)
+exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X, TOP_BUTTON_Y, linked_list=p1.exhaust_pile)
 energy_button = Button('energy_button', ENERGY, LEFT_BUTTON_X, TOP_BUTTON_Y)
-entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT)
+entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT, linked_list=p1.deck)
 pile_buttons = []
 pile_buttons.append(draw_pile_button)
 pile_buttons.append(discard_pile_button)
@@ -593,22 +590,29 @@ def draw_end_turn_button():
     text_rect = text_surface.get_rect(center=rect.center)
     WIN.blit(text_surface, text_rect)
 
+def randomise_fight(enemy_level):
+    global current_enemies
+    if enemy_level == 'small':
+        fights = small_fights
+    elif enemy_level == 'boss':
+        fights = boss_fights
+    elif enemy_level == 'main_boss':
+        fights = main_boss_fights
+    
+    fight_no = random.randint(0, len(fights) - 1)
+
+    for enemy in fights[fight_no]:
+        current_enemies.append(enemy)
+
 def main():
 
     clock = pygame.time.Clock()
-    # WIN.fill(LIGHT_BLUE)
-    WIN.blit(PIRATE_BACKGROUND, (0, 0))
-    p1.draw_player()
-    current_enemies = []
-    for enemy in small_fights[2]:
-        current_enemies.append(enemy)
-    for enemy in current_enemies:
-        enemy.draw_enemy()
-    pygame.display.update()
+    global current_enemies
+    screen_view = fight
+    new_fight = True
+    update = True
     clicked = False
     a_card_selected = False
-    update = False
-    stage = 1
     run = True
     while run:
         clock.tick(FPS)
@@ -620,7 +624,7 @@ def main():
 
             elif event.type == pygame.MOUSEMOTION:
                 for card in p1.active_hand:
-                    if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False:
+                    if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False: # threw up an error 2 times - AttributeError: 'Card' object has no attribute 'sel_rect'
                         card.is_hovered = True
                         card.draw_description()
                         pygame.display.update()
@@ -680,50 +684,42 @@ def main():
                 if clicked == True:
                     clicked = False
 
-        if update == True:
-            # WIN.fill(LIGHT_BLUE)
-            WIN.blit(PIRATE_BACKGROUND, (0, 0))
-            p1.draw_player()
-            p1.draw_hp()
-            p1.draw_energy()
-            for enemy in current_enemies:
-                enemy.draw_enemy()
-                enemy.draw_hp()
-                enemy.update_status()
-                if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
-                    p1.strength -= 2
-                    enemy.death_strength = False
-            draw_end_turn_button()
-            for button in pile_buttons:
-                button.draw_button()
-            energy_button.draw_button()
-            p1.update_status()
-            card_pos = 1
-            for card in p1.active_hand:
-                card.draw_card(card_pos, len(p1.active_hand))
-                card_pos += 1
-            pygame.display.update()
-            update = False
-        
-        if stage == 1:
-            p1.draw_hp()
-            for enemy in current_enemies:
-                enemy.draw_enemy()
-                enemy.draw_hp()
-                enemy.update_status()
-            p1.energy = 3
-            p1.draw_energy()
-            draw_end_turn_button()
-            p1.draw_pile = list(p1.deck)
-            random.shuffle(p1.draw_pile)
-            for i in range(p1.new_turn_draw_cards):
-                p1.active_hand.append(p1.draw_pile.pop())
-            card_pos = 1
-            for card in p1.active_hand:
-                card.draw_card(card_pos, len(p1.active_hand))
-                card_pos += 1
-            pygame.display.update()
-            stage = 2
+        if screen_view == fight:
+            if new_fight == True:
+                randomise_fight('small')
+                for card in p1.deck:
+                    p1.draw_pile.append(card)
+                random.shuffle(p1.draw_pile)
+                for i in range(p1.new_turn_draw_cards):
+                    p1.active_hand.append(p1.draw_pile.pop())
+                new_fight = False
+
+            elif update == True:
+                WIN.blit(PIRATE_BACKGROUND, (0, 0))
+                # p1 stuff
+                p1.draw_player()
+                p1.draw_hp()
+                p1.update_status()
+                # enemy stuff
+                for enemy in current_enemies:
+                    enemy.draw_enemy()
+                    enemy.draw_hp()
+                    enemy.update_status()
+                    if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
+                        p1.strength -= 2
+                        enemy.death_strength = False
+                # cards
+                card_pos = 1
+                for card in p1.active_hand:
+                    card.draw_card(card_pos, len(p1.active_hand))
+                    card_pos += 1
+                # buttons
+                draw_end_turn_button()
+                for button in pile_buttons:
+                    button.draw_button()
+                energy_button.draw_button()
+                pygame.display.update()
+                update = False
 
 main()
 
@@ -742,6 +738,8 @@ main()
 # bosses
 # a reason to win
 
+# screen_view = home, map, battle, reward, card_view, shop, event, death, win
+
 # to do
 
 # move the p1 and enemy starting positions so that they're in line with 10 cards drawn
@@ -755,10 +753,9 @@ main()
 # create a list of different screen views so that i can say if in screen x then be able to do this, should stop past rects from being able to be clicked
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
-# get a better way of adding images, create a function for it or something
 
 # problems
 
 # can't figure out how to update the card colour when hovered
 # solved i think (just not actioned) - everything that had an interactable rect on the screen before still allows you to interact with it when looking at the draw/discard/etc piles
-# why is the len of p1.draw pile saying it's 0?
+# keep getting errors on the sel_rect, but not sure why, plus it seems to be random? (maybe to do with jab/test not being able to be the last of the 5 cards?)
