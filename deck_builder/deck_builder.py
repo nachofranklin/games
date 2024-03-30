@@ -137,7 +137,7 @@ pass
 
 # classes
 class Card:
-    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
+    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
         global card_id_counter
         self.id = card_id_counter
         card_id_counter += 1
@@ -146,6 +146,7 @@ class Card:
         self.rarity = rarity
         self.type = type
         self.picture = picture
+        self.exhausts = exhausts
         self.player_hp = player_hp
         self.enemy_hp = enemy_hp
         self.block = block
@@ -164,7 +165,7 @@ class Card:
         self.enemy_poison = enemy_poison
         self.draw_extra_card = draw_extra_card
         self.discard = discard
-        self.exhaust = exhaust
+        self.exhaust_other_cards = exhaust_other_cards
         self.thorns = thorns
         self.locked = locked
         self.player_energy = player_energy
@@ -174,8 +175,8 @@ class Card:
         self.font = pygame.font.Font(None, int(CARD_WIDTH/6))  # customize the font and size
         self.is_hovered = False
         self.is_selected = False
-        self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
-        self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
+        self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust_other_cards=self.exhaust_other_cards, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
+        self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust_other_cards=self.exhaust_other_cards, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
         list_of_all_cards.append(self)
         if self.rarity == starter:
             starter_deck.append(self)
@@ -189,11 +190,13 @@ class Card:
             curse_cards.append(self)
     
     def blit_card(self, position, cards_in_hand):
-        self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH, CARD_HEIGHT)
+        x = WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position
+        y = CARDS_Y
+        self.rect = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
         if position == cards_in_hand: # if last card it has a bigger rect than the others
-            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH - 2, CARD_HEIGHT)
+            self.sel_rect = pygame.Rect(x, y, CARD_WIDTH - 2, CARD_HEIGHT) # maybe try copying this to the init section to see if that fixes the error i sometimes get?
         else:
-            self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
+            self.sel_rect = pygame.Rect(x, y, CARD_WIDTH*2/3 - 2, CARD_HEIGHT)
         
         if self.is_hovered:
             pygame.draw.rect(WIN, self.hover_colour, self.rect)
@@ -209,22 +212,31 @@ class Card:
             pygame.draw.rect(WIN, self.colour, self.rect)
             pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
         self.draw_text()
+        self.draw_energy_cost(x, y)
 
     def show_card(self, position):
         col_num = position % DISPLAY_CARDS
         row_num = position // DISPLAY_CARDS
-        self.rect = pygame.Rect(DESCRIPTION_X + DISPLAY_GAP_WIDTH*col_num + CARD_WIDTH*col_num, DISPLAY_GAP_HEIGHT + CARD_HEIGHT*row_num + DISPLAY_GAP_HEIGHT*row_num, CARD_WIDTH, CARD_HEIGHT)
+        x = DESCRIPTION_X + DISPLAY_GAP_WIDTH*col_num + CARD_WIDTH*col_num
+        y = DISPLAY_GAP_HEIGHT + CARD_HEIGHT*row_num + DISPLAY_GAP_HEIGHT*row_num
+        self.rect = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
         pygame.draw.rect(WIN, self.colour, self.rect)
         pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
         self.draw_text()
+        self.draw_energy_cost(x, y)
 
     def draw_text(self):
         text_surface = self.font.render(self.name, True, self.text_colour)
         text_rect = text_surface.get_rect(center=self.rect.center)
-        text_surface2 = self.font.render(str(self.energy), True, self.text_colour)
-        text_rect2 = text_surface2.get_rect(topleft=self.rect.topleft)
         WIN.blit(text_surface, text_rect)
-        WIN.blit(text_surface2, text_rect2)
+
+    def draw_energy_cost(self, x, y, circle_colour=BLACK, text_colour=WHITE, radius=CARD_WIDTH/8):
+        coords = (x + 3, y + 3)
+        pygame.draw.circle(WIN, circle_colour, coords, radius)
+        font = pygame.font.Font(None, int(CARD_WIDTH/4))
+        text_surface = font.render(str(self.energy), True, text_colour)
+        text_rect = text_surface.get_rect(center=coords)
+        WIN.blit(text_surface, text_rect)
     
     def draw_description(self):
         desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*9 + CARD_WIDTH, CARD_HEIGHT/8)
@@ -234,8 +246,8 @@ class Card:
         WIN.blit(text_surface, text_rect)
 
 class AttackCard(Card):
-    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust=0, thorns=0, locked=0, player_energy=0):
-        super().__init__(name, energy, rarity, type, short_description, long_description, picture, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust, thorns, locked, player_energy)
+    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
+        super().__init__(name, energy, rarity, type, short_description, long_description, picture, exhausts, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust_other_cards, thorns, locked, player_energy)
         self.type = attack
         self.enemy_select = enemy_select
 
@@ -251,7 +263,7 @@ parry3 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} b
 parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
 parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
 jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {enemy_hp} dmg.\nApply {enemy_vulnerable} vulnerable.', 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
-test = Card('Test', 0, starter, power, 'test', 'test', player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
+test = Card('Test', 0, starter, power, 'test', 'test', exhausts=True, player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
 
 
 class Character:
@@ -682,14 +694,20 @@ def main():
                                     if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
                                         p1.card_played(card, enemy)
                                         a_card_selected = False
-                                        p1.discard_pile.append(card)
+                                        if card.exhausts:
+                                            p1.exhaust_pile.append(card)
+                                        else:
+                                            p1.discard_pile.append(card)
                                         p1.active_hand.remove(card)
                                         update = True
                                     
                                     elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
                                         p1.card_played(card, enemy)
                                         a_card_selected = False
-                                        p1.discard_pile.append(card)
+                                        if card.exhausts:
+                                            p1.exhaust_pile.append(card)
+                                        else:
+                                            p1.discard_pile.append(card)
                                         p1.active_hand.remove(card)
                                         update = True
 
@@ -790,8 +808,6 @@ main()
 # figure out how to show fixed enemy abilities (like the stregth debuff on death enemy) (maybe above the enemy?)
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
-# make an extra exhaust card option so that one is for if the card is single use True/False or if you can exhaust other cards
-# add the circle stuff to the cards to make the energy requirement of cards clearer
 
 # problems
 
