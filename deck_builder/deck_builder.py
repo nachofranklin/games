@@ -16,14 +16,19 @@ BASE_DRAW_CARDS = 5 # 5
 list_of_all_cards = []
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
 current_enemies = []
+starter_deck = []
+common_cards = []
+uncommon_cards = []
+rare_cards = []
+curse_cards = []
 
 # width and heights
 WIN_WIDTH = 1200
 WIN_HEIGHT = 800 # might make it so that this is a fraction of win_width rather than a changeable value
 CARD_WIDTH = WIN_WIDTH/10 # 120
 CARD_HEIGHT = WIN_HEIGHT/4
-CHARACTER_WIDTH = WIN_WIDTH/3
-CHARACTER_HEIGHT = WIN_HEIGHT/3
+CHARACTER_WIDTH = ENEMY1_WIDTH =  WIN_WIDTH/3
+CHARACTER_HEIGHT = ENEMY1_HEIGHT = WIN_HEIGHT/3
 EFFECTS_WIDTH = EFFECTS_HEIGHT = WIN_WIDTH/27
 END_TURN_WIDTH = CARD_WIDTH
 END_TURN_HEIGHT = CARD_HEIGHT/3
@@ -35,16 +40,16 @@ DISPLAY_GAP_WIDTH = (DESCRIPTION_WIDTH - CARD_WIDTH*DISPLAY_CARDS) / (DISPLAY_CA
 DISPLAY_GAP_HEIGHT = WIN_HEIGHT/5 - CARD_HEIGHT/2
 
 # x and y co-ordinates
-P1_X = WIN_WIDTH/9
-P1_Y = ENEMY1_Y = WIN_HEIGHT/9
-ENEMY1_X = WIN_WIDTH*5/9
-EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
 # CARDS_X is a bit more complicated
 CARDS_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2
 END_TURN_X = WIN_WIDTH - END_TURN_WIDTH*1.25
 END_TURN_Y = WIN_HEIGHT*3/5 - END_TURN_HEIGHT*1.25
 DESCRIPTION_X = WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1
 DESCRIPTION_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
+P1_X = DESCRIPTION_X
+P1_Y = ENEMY1_Y = WIN_HEIGHT/9
+ENEMY1_X = DESCRIPTION_X + DESCRIPTION_WIDTH - ENEMY1_WIDTH
+EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
 LEFT_BUTTON_X = DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 RIGHT_BUTTON_X = WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 TOP_BUTTON_Y = CARDS_Y
@@ -172,8 +177,18 @@ class Card:
         self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
         self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust=self.exhaust, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
         list_of_all_cards.append(self)
+        if self.rarity == starter:
+            starter_deck.append(self)
+        elif self.rarity == uncommon:
+            uncommon_cards.append(self)
+        elif self.rarity == common:
+            common_cards.append(self)
+        elif self.rarity == rare:
+            rare_cards.append(self)
+        elif self.rarity == curse:
+            curse_cards.append(self)
     
-    def draw_card(self, position, cards_in_hand):
+    def blit_card(self, position, cards_in_hand):
         self.rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH, CARD_HEIGHT)
         if position == cards_in_hand: # if last card it has a bigger rect than the others
             self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*cards_in_hand/2 + CARD_WIDTH*2/3*position, CARDS_Y, CARD_WIDTH - 2, CARD_HEIGHT)
@@ -237,20 +252,6 @@ parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} b
 parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
 jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {enemy_hp} dmg.\nApply {enemy_vulnerable} vulnerable.', 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
 test = Card('Test', 0, starter, power, 'test', 'test', player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
-
-starter_deck = []
-starter_deck.append(punch)
-starter_deck.append(punch2)
-starter_deck.append(punch3)
-starter_deck.append(punch4)
-starter_deck.append(punch5)
-starter_deck.append(parry)
-starter_deck.append(parry2)
-starter_deck.append(parry3)
-starter_deck.append(parry4)
-starter_deck.append(parry5)
-starter_deck.append(jab)
-starter_deck.append(test)
 
 
 class Character:
@@ -393,6 +394,21 @@ class Player(Character):
         # card.locked
         # card.player_energy
         card.is_selected = False
+
+    def draw_card(self, how_many):
+        for i in range(how_many):
+            if len(self.draw_pile) == 0 and len(self.discard_pile) == 0:
+                continue
+            else:
+                if len(self.draw_pile) == 0:
+                    self.shuffle_discard_pile()
+                self.active_hand.append(self.draw_pile.pop())
+
+    def shuffle_discard_pile(self):
+        for card in self.discard_pile:
+            self.draw_pile.append(card)
+            self.discard_pile.remove(card)
+        random.shuffle(self.draw_pile)
 
 class Enemy(Character):
     def __init__(self, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
@@ -604,13 +620,21 @@ def randomise_fight(enemy_level):
     for enemy in fights[fight_no]:
         current_enemies.append(enemy)
 
+def all_enemies_defeated(enemies):
+    for enemy in enemies:
+        if enemy.hp > 0:
+            return False
+    return True
+
 def main():
 
     clock = pygame.time.Clock()
     global current_enemies
     screen_view = fight
     new_fight = True
+    new_turn = True
     update = True
+    enemy_level = 'small'
     clicked = False
     a_card_selected = False
     run = True
@@ -623,62 +647,69 @@ def main():
                 exit()
 
             elif event.type == pygame.MOUSEMOTION:
-                for card in p1.active_hand:
-                    if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False: # threw up an error 2 times - AttributeError: 'Card' object has no attribute 'sel_rect'
-                        card.is_hovered = True
-                        card.draw_description()
-                        pygame.display.update()
-                    elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered:
-                        card.is_hovered = False
-                        desc_rect = pygame.Rect(DESCRIPTION_X, DESCRIPTION_Y, DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT)
-                        pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
-                        pygame.display.update()
+                if screen_view == fight:
+                    for card in p1.active_hand:
+                        if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False: # threw up an error 2 times - AttributeError: 'Card' object has no attribute 'sel_rect'
+                            card.is_hovered = True
+                            card.draw_description()
+                            pygame.display.update()
+                        elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered:
+                            card.is_hovered = False
+                            desc_rect = pygame.Rect(DESCRIPTION_X, DESCRIPTION_Y, DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT)
+                            pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
+                            pygame.display.update()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for card in p1.active_hand:
-                    if card.is_hovered and clicked == False: # clicking on a card
-                        clicked = True
-                        update = True
-                        if card.is_selected == False and a_card_selected == False: # if no card selected, then select it
-                            card.is_selected = True
-                            a_card_selected = True
-                        elif card.is_selected and a_card_selected: # if a card is selected, then unselect it
-                            card.is_selected = False
-                            a_card_selected = False
-                    
-                    for enemy in current_enemies:
-                        if card.is_selected and (enemy.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
-                            if p1.energy - card.energy < 0:
+                if screen_view == fight:
+                    for card in p1.active_hand:
+                        if card.is_hovered and clicked == False: # clicking on a card
+                            clicked = True
+                            update = True
+                            if card.is_selected == False and a_card_selected == False: # if no card selected, then select it
+                                card.is_selected = True
+                                a_card_selected = True
+                            elif card.is_selected and a_card_selected: # if a card is selected, then unselect it
                                 card.is_selected = False
                                 a_card_selected = False
-                                update = True
-                            else:
-                                if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
-                                    p1.card_played(card, enemy)
+                        
+                        for enemy in current_enemies:
+                            if card.is_selected and (enemy.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
+                                if p1.energy - card.energy < 0:
+                                    card.is_selected = False
                                     a_card_selected = False
-                                    p1.discard_pile.append(card)
-                                    p1.active_hand.remove(card)
                                     update = True
-                                
-                                elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
-                                    p1.card_played(card, enemy)
-                                    a_card_selected = False
-                                    p1.discard_pile.append(card)
-                                    p1.active_hand.remove(card)
-                                    update = True
+                                else:
+                                    if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
+                                        p1.card_played(card, enemy)
+                                        a_card_selected = False
+                                        p1.discard_pile.append(card)
+                                        p1.active_hand.remove(card)
+                                        update = True
+                                    
+                                    elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
+                                        p1.card_played(card, enemy)
+                                        a_card_selected = False
+                                        p1.discard_pile.append(card)
+                                        p1.active_hand.remove(card)
+                                        update = True
 
-                for button in pile_buttons:
-                    if button.rect.collidepoint(event.pos):
-                        clicked = True
-                        if button.is_clicked == False:
-                            for b in pile_buttons:
-                                b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
-                            button.is_clicked = True
-                            button.show_cards()
+                if screen_view != card_view:
+                    current_screen_view = screen_view # saves what the screen was before going to screen_view
+                if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == shop or screen_view == event:
+                    for button in pile_buttons:
+                        if button.rect.collidepoint(event.pos):
+                            clicked = True
+                            if button.is_clicked == False:
+                                for b in pile_buttons:
+                                    b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
+                                button.is_clicked = True
+                                screen_view = card_view
+                                button.show_cards()
 
-                        elif button.is_clicked: # if we click the button and it was already clicked...
-                            button.is_clicked = False
-                            update = True # go back to in game screen
+                            elif button.is_clicked: # if we click the button and it was already clicked...
+                                button.is_clicked = False
+                                screen_view = current_screen_view # go back to the last screen you were on
+                                update = True # go back to in game screen
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
@@ -686,32 +717,42 @@ def main():
 
         if screen_view == fight:
             if new_fight == True:
-                randomise_fight('small')
+                randomise_fight(enemy_level)
                 for card in p1.deck:
                     p1.draw_pile.append(card)
                 random.shuffle(p1.draw_pile)
-                for i in range(p1.new_turn_draw_cards):
-                    p1.active_hand.append(p1.draw_pile.pop())
                 new_fight = False
+
+            elif new_turn == True:
+                p1.draw_card(p1.new_turn_draw_cards)
+                # i guess this would be where I remove any existing block and -1 on all effects i have? (after drawn cards)
+                new_turn = False
 
             elif update == True:
                 WIN.blit(PIRATE_BACKGROUND, (0, 0))
-                # p1 stuff
-                p1.draw_player()
-                p1.draw_hp()
-                p1.update_status()
                 # enemy stuff
+                if all_enemies_defeated(current_enemies):
+                    screen_view = reward
                 for enemy in current_enemies:
-                    enemy.draw_enemy()
-                    enemy.draw_hp()
-                    enemy.update_status()
                     if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
                         p1.strength -= 2
                         enemy.death_strength = False
+                    if enemy.hp > 0:
+                        enemy.draw_enemy()
+                        enemy.draw_hp()
+                        enemy.update_status()
+                # p1 stuff
+                if p1.hp <= 0:
+                    pygame.time.delay(3000)
+                    screen_view = death # not actually got anything for this yet
+                else:
+                    p1.draw_player()
+                    p1.draw_hp()
+                    p1.update_status()
                 # cards
                 card_pos = 1
                 for card in p1.active_hand:
-                    card.draw_card(card_pos, len(p1.active_hand))
+                    card.blit_card(card_pos, len(p1.active_hand))
                     card_pos += 1
                 # buttons
                 draw_end_turn_button()
@@ -742,20 +783,17 @@ main()
 
 # to do
 
-# move the p1 and enemy starting positions so that they're in line with 10 cards drawn
 # add in an end turn button (currently doesn't do anything)
 # add in something that shows what the enemy is about to do next
-# add logic that kills an enemy when hp goes to 0 or below
-# add logic that kills the player when hp goes to 0 or below
 # make the hp into a health bar which goes blue with block (like sts), meaning i'll have to remove the block from the current list
 # find a few different pirate themed background images for fights to happen in
 # figure out how to show fixed enemy abilities (like the stregth debuff on death enemy) (maybe above the enemy?)
-# create a list of different screen views so that i can say if in screen x then be able to do this, should stop past rects from being able to be clicked
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
+# make an extra exhaust card option so that one is for if the card is single use True/False or if you can exhaust other cards
+# add the circle stuff to the cards to make the energy requirement of cards clearer
 
 # problems
 
 # can't figure out how to update the card colour when hovered
-# solved i think (just not actioned) - everything that had an interactable rect on the screen before still allows you to interact with it when looking at the draw/discard/etc piles
 # keep getting errors on the sel_rect, but not sure why, plus it seems to be random? (maybe to do with jab/test not being able to be the last of the 5 cards?)
