@@ -13,9 +13,10 @@ FPS = 60
 MAX_CARDS_IN_HAND = 10
 card_id_counter = 1
 BASE_DRAW_CARDS = 5 # 5
-list_of_all_cards = []
+turn = 1
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
 current_enemies = []
+list_of_all_cards = []
 starter_deck = []
 common_cards = []
 uncommon_cards = []
@@ -24,14 +25,12 @@ curse_cards = []
 
 # width and heights
 WIN_WIDTH = 1200
-WIN_HEIGHT = 800 # might make it so that this is a fraction of win_width rather than a changeable value
+WIN_HEIGHT = WIN_WIDTH*2/3
 CARD_WIDTH = WIN_WIDTH/10 # 120
 CARD_HEIGHT = WIN_HEIGHT/4
 CHARACTER_WIDTH = ENEMY1_WIDTH =  WIN_WIDTH/3
 CHARACTER_HEIGHT = ENEMY1_HEIGHT = WIN_HEIGHT/3
 EFFECTS_WIDTH = EFFECTS_HEIGHT = WIN_WIDTH/27
-END_TURN_WIDTH = CARD_WIDTH
-END_TURN_HEIGHT = CARD_HEIGHT/3
 ENERGY_WIDTH = ENERGY_HEIGHT = WIN_HEIGHT/20 # radius
 DESCRIPTION_WIDTH = CARD_WIDTH*2/3*9 + CARD_WIDTH # 840
 DESCRIPTION_HEIGHT = CARD_HEIGHT/8
@@ -42,8 +41,7 @@ DISPLAY_GAP_HEIGHT = WIN_HEIGHT/5 - CARD_HEIGHT/2
 # x and y co-ordinates
 # CARDS_X is a bit more complicated
 CARDS_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2
-END_TURN_X = WIN_WIDTH - END_TURN_WIDTH*1.25
-END_TURN_Y = WIN_HEIGHT*3/5 - END_TURN_HEIGHT*1.25
+END_TURN_Y = CARDS_Y - CARD_HEIGHT + DRAW_PILE_HEIGHT
 DESCRIPTION_X = WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1
 DESCRIPTION_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
 P1_X = DESCRIPTION_X
@@ -130,6 +128,7 @@ DISCARD_PILE = image('discard_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 EXHAUST_PILE = image('tombstone', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 ENTIRE_DECK = image('entire_deck', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 ENERGY = image('sun', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
+END_TURN_IMG = image('end_turn', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 PIRATE_BACKGROUND = image('pirate_background', WIN_WIDTH, WIN_HEIGHT)
 
 # sounds
@@ -330,6 +329,35 @@ class Character:
         WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, EFFECTS_Y))
         WIN.blit(text_surface, text_rect)
 
+    def reduce_status(self):
+        # once i've finished my turn then everything needs to -1 for the enemy
+        if self.block > 0:
+            self.block = 0
+        if self.shield > 0:
+            shield = self.shield # not sure if i need to split this into two steps, test later
+            self.block = shield
+            self.shield = 0
+        if self.weak > 0:
+            self.weak -= 1
+        if self.vulnerable > 0:
+            self.vulnerable -= 1
+        if self.frail > 0:
+            self.frail -= 1
+        if self.poison > 0:
+            self.poison -= 1
+        if self.temp_additional_energy < 0:
+            self.temp_additional_energy += 1
+        if self.temp_additional_energy > 0:
+            self.temp_additional_energy -= 1
+        if self.temp_additional_draw < 0:
+            self.temp_additional_draw += 1
+        if self.temp_additional_draw > 0:
+            self.temp_additional_draw -= 1
+
+    def reset_status(self):
+        # at the end of battle i'll need to reset everything back to base levels so that p1 is ready and that enemy is ready in case i face it twice
+        pass
+
 class Player(Character):
     def __init__(self, hp, starter_deck):
         super().__init__(hp)
@@ -424,10 +452,12 @@ class Player(Character):
         random.shuffle(self.draw_pile)
 
 class Enemy(Character):
-    def __init__(self, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
+    def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
         super().__init__(hp)
-        self.is_enemy_turn = False
-        self.enemy_turn = 1
+        global turn
+        # self.is_enemy_turn = False # probably don't need this
+        # self.enemy_turn = 1
+        self.name = name
         self.block = starting_block
         self.x_pos = x_pos
         self.y_pos = y_pos
@@ -462,88 +492,96 @@ class Enemy(Character):
             FRAIL_MULTIPLIER = 1
         
         self.block += round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
+
+    def enemy_moveset(self):
+        if self.hp > 0: # if still alive
+            if self.name == 'confidence':
+                self.confidence_enemy_turns()
+            elif self.name == 'less_draw':
+                self.less_draw_enemy_turns()
+            elif self.name == 'less_energy':
+                self.less_energy_enemy_turns()
+            elif self.name == 'weak_death':
+                self.weak_death_enemy_turns()
+            elif self.name == 'vulnerable_death':
+                self.vulnerable_death_enemy_turns()
+            elif self.name == 'frail_death':
+                self.frail_death_enemy_turns()
     
     def confidence_enemy_turns(self):
-        if self.hp > 0: # if still alive
-            if self.block == 0:
-                self.enemy_dmg_dealt(5, 0.5) # cowardice
-            elif self.block >= 1:
-                self.enemy_dmg_dealt(5, 2) # confidence
-            self.block = self.enemy_block(5)
-            self.is_enemy_turn = False
+        if self.block == 0:
+            self.enemy_dmg_dealt(5, 0.5) # cowardice
+        elif self.block >= 1:
+            self.enemy_dmg_dealt(5, 2) # confidence
+        self.block = self.enemy_block(5)
     
     def less_draw_enemy_turns(self):
-        if self.hp > 0:
-            if self.enemy_turn == 1:
-                p1.new_turn_additional_draw += -1
-            elif p1.new_turn_draw_cards > 4:
-                p1.new_turn_additional_draw += -1
-            else:
-                ran_num = random.randint(1, 100)
-                if ran_num <= 50:
-                    self.enemy_dmg_dealt(6) # 6 hp
-                    self.enemy_block(5) # 5 block
-                else:
-                    p1.temp_additional_draw += -1
-            self.enemy_turn += 1
-            self.is_enemy_turn = False
-
-    def less_energy_enemy_turns(self):
-        if self.hp > 0:
-            if self.enemy_turn == 1:
-                p1.additional_energy += -1
-            elif p1.energy > 2:
-                p1.additional_energy += -1
-            else:
-                ran_num = random.randint(1, 100)
-                if ran_num <= 50:
-                    self.enemy_dmg_dealt(6) # 6 hp
-                    self.enemy_block(5) # 5 block
-                else:
-                    p1.temp_additional_energy += -1
-            self.enemy_turn += 1
-            self.is_enemy_turn = False
-    
-    def weak_death_enemy_turns(self):
-        if self.hp > 0:
-            ran_num = random.randint(1, 100)
-            if ran_num <= 50:
-                self.enemy_dmg_dealt(7) # 7 hp
-            else:
-                p1.weak += 2
-
-    def vulnerable_death_enemy_turns(self):
-        if self.hp > 0:
+        if turn == 1:
+            p1.new_turn_additional_draw -= 1
+        elif p1.new_turn_draw_cards > 4:
+            p1.new_turn_additional_draw -= 1
+        else:
             ran_num = random.randint(1, 100)
             if ran_num <= 50:
                 self.enemy_dmg_dealt(6) # 6 hp
+                self.enemy_block(5) # 5 block
             else:
-                p1.vulnerable += 2
+                p1.temp_additional_draw -= 1
+        # self.enemy_turn += 1
+        # self.is_enemy_turn = False
 
-    def frail_death_enemy_turns(self):
-        if self.hp > 0:
+    def less_energy_enemy_turns(self):
+        if turn == 1:
+            p1.additional_energy -= 1
+        elif p1.energy > 2:
+            p1.additional_energy -= 1
+        else:
             ran_num = random.randint(1, 100)
             if ran_num <= 50:
-                self.enemy_dmg_dealt(5) # 5 hp
+                self.enemy_dmg_dealt(6) # 6 hp
+                self.enemy_block(5) # 5 block
             else:
-                p1.frail += 2
+                p1.temp_additional_energy -= 1
+        # self.enemy_turn += 1
+        # self.is_enemy_turn = False
+    
+    def weak_death_enemy_turns(self):
+        ran_num = random.randint(1, 100)
+        if ran_num <= 50:
+            self.enemy_dmg_dealt(7) # 7 hp
+        else:
+            p1.weak += 2
+
+    def vulnerable_death_enemy_turns(self):
+        ran_num = random.randint(1, 100)
+        if ran_num <= 50:
+            self.enemy_dmg_dealt(6) # 6 hp
+        else:
+            p1.vulnerable += 2
+
+    def frail_death_enemy_turns(self):
+        ran_num = random.randint(1, 100)
+        if ran_num <= 50:
+            self.enemy_dmg_dealt(5) # 5 hp
+        else:
+            p1.frail += 2
 
 # character instances
 p1 = Player(60, starter_deck)
-enemy1 = Enemy(20, 3, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT) # test enemy
+# enemy1 = Enemy(20, 3, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT) # test enemy
 small_fights = []
 boss_fights = []
 main_boss_fights = []
-confidence_enemy_1 = Enemy(15, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_2 = Enemy(15, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_3 = Enemy(15, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_1 = Enemy('confidence', 15, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_2 = Enemy('confidence', 15, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_3 = Enemy('confidence', 15, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
 small_fights.append([confidence_enemy_1, confidence_enemy_2, confidence_enemy_3])
-less_draw_enemy = Enemy(25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
-less_energy_enemy = Enemy(25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
+less_draw_enemy = Enemy('less_draw', 25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
+less_energy_enemy = Enemy('less_energy', 25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
 small_fights.append([less_draw_enemy, less_energy_enemy])
-weak_death_enemy = Enemy(10, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
-vulnerable_death_enemy = Enemy(15, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
-frail_death_enemy = Enemy(20, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+weak_death_enemy = Enemy('weak_death', 10, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+vulnerable_death_enemy = Enemy('vulnerable_death', 15, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+frail_death_enemy = Enemy('frail_death', 20, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
 small_fights.append([weak_death_enemy, vulnerable_death_enemy, frail_death_enemy])
 
 
@@ -563,7 +601,7 @@ class Button:
         WIN.blit(self.image, self.rect)
         if self.name == 'energy_button':
             p1.draw_energy()
-        else:
+        elif self.name == 'draw_pile_button' or self.name == 'discard_pile_button' or self.name == 'exhaust_pile_button' or self.name == 'entire_deck_button':
             p1.draw_number_of_cards(self.linked_list, self.button_x, self.button_y)
 
     def show_cards(self):
@@ -593,6 +631,7 @@ discard_pile_button = Button('discard_pile_button', DISCARD_PILE, RIGHT_BUTTON_X
 exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X, TOP_BUTTON_Y, linked_list=p1.exhaust_pile)
 energy_button = Button('energy_button', ENERGY, LEFT_BUTTON_X, TOP_BUTTON_Y)
 entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT, linked_list=p1.deck)
+end_turn_button = Button('end_turn_button', END_TURN_IMG, RIGHT_BUTTON_X, END_TURN_Y)
 pile_buttons = []
 pile_buttons.append(draw_pile_button)
 pile_buttons.append(discard_pile_button)
@@ -601,24 +640,6 @@ pile_buttons.append(entire_deck_button)
 
 
 # functions
-def draw_end_turn_button():
-    is_hovered = False
-    colour = PINK
-    hover_colour = WHITE
-    font = pygame.font.Font(None, int(CARD_WIDTH/4))
-    text_surface = font.render('End Turn', True, BLACK)
-    rect = pygame.Rect(END_TURN_X, END_TURN_Y, END_TURN_WIDTH, END_TURN_HEIGHT)
-
-    if is_hovered:
-        pygame.draw.rect(WIN, hover_colour, rect)
-        pygame.draw.rect(WIN, colour, rect, 4)  # Border
-    else:
-        pygame.draw.rect(WIN, colour, rect)
-        pygame.draw.rect(WIN, hover_colour, rect, 4)  # Border
-        
-    text_rect = text_surface.get_rect(center=rect.center)
-    WIN.blit(text_surface, text_rect)
-
 def randomise_fight(enemy_level):
     global current_enemies
     if enemy_level == 'small':
@@ -643,8 +664,10 @@ def main():
 
     clock = pygame.time.Clock()
     global current_enemies
+    global turn
     screen_view = fight
     new_fight = True
+    player_turn = True
     new_turn = True
     update = True
     enemy_level = 'small'
@@ -674,45 +697,59 @@ def main():
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
-                    for card in p1.active_hand:
-                        if card.is_hovered and clicked == False: # clicking on a card
-                            clicked = True
-                            update = True
-                            if card.is_selected == False and a_card_selected == False: # if no card selected, then select it
-                                card.is_selected = True
-                                a_card_selected = True
-                            elif card.is_selected and a_card_selected: # if a card is selected, then unselect it
-                                card.is_selected = False
-                                a_card_selected = False
-                        
-                        for enemy in current_enemies:
-                            if card.is_selected and (enemy.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
-                                if p1.energy - card.energy < 0:
+                    # selecting cards
+                    if player_turn:
+                        for card in p1.active_hand:
+                            if card.is_hovered and clicked == False: # clicking on a card
+                                clicked = True
+                                update = True
+                                if card.is_selected == False and a_card_selected == False: # if no card selected, then select it
+                                    card.is_selected = True
+                                    a_card_selected = True
+                                elif card.is_selected and a_card_selected: # if a card is selected, then unselect it
                                     card.is_selected = False
                                     a_card_selected = False
-                                    update = True
-                                else:
-                                    if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
-                                        p1.card_played(card, enemy)
+                            
+                            for enemy in current_enemies:
+                                if card.is_selected and (enemy.rect.collidepoint(event.pos) or p1.rect.collidepoint(event.pos)):
+                                    if p1.energy - card.energy < 0:
+                                        card.is_selected = False
                                         a_card_selected = False
-                                        if card.exhausts:
-                                            p1.exhaust_pile.append(card)
-                                        else:
-                                            p1.discard_pile.append(card)
-                                        p1.active_hand.remove(card)
                                         update = True
-                                    
-                                    elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
-                                        p1.card_played(card, enemy)
-                                        a_card_selected = False
-                                        if card.exhausts:
-                                            p1.exhaust_pile.append(card)
-                                        else:
-                                            p1.discard_pile.append(card)
-                                        p1.active_hand.remove(card)
-                                        update = True
+                                    else:
+                                        if card.type == attack and enemy.rect.collidepoint(event.pos): # if attack card selected and selects enemy
+                                            p1.card_played(card, enemy)
+                                            a_card_selected = False
+                                            if card.exhausts:
+                                                p1.exhaust_pile.append(card)
+                                            else:
+                                                p1.discard_pile.append(card)
+                                            p1.active_hand.remove(card)
+                                            update = True
+                                        
+                                        elif (card.type == skill or card.type == power) and p1.rect.collidepoint(event.pos): # if skill or power card selected and selects player
+                                            p1.card_played(card, enemy)
+                                            a_card_selected = False
+                                            if card.exhausts:
+                                                p1.exhaust_pile.append(card)
+                                            else:
+                                                p1.discard_pile.append(card)
+                                            p1.active_hand.remove(card)
+                                            update = True
+                    
+                    # clicking end turn button
+                    if end_turn_button.rect.collidepoint(event.pos):
+                        for card in p1.active_hand:
+                            p1.discard_pile.append(card)
+                            p1.active_hand.remove(card)
+                        player_turn = False
+                        for enemy in current_enemies:
+                            enemy.reduce_status()
+                        # update = True
+                        # need to -1 on all effects and reset things like energy
 
                 if screen_view != card_view:
+                    # selecting the draw/discard/exhaust/deck pile
                     current_screen_view = screen_view # saves what the screen was before going to screen_view
                 if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == shop or screen_view == event:
                     for button in pile_buttons:
@@ -744,13 +781,14 @@ def main():
 
             elif new_turn == True:
                 p1.draw_card(p1.new_turn_draw_cards)
-                # i guess this would be where I remove any existing block and -1 on all effects i have? (after drawn cards)
+                p1.energy = 3 + p1.additional_energy + p1.temp_additional_energy
                 new_turn = False
 
             elif update == True:
                 WIN.blit(PIRATE_BACKGROUND, (0, 0))
                 # enemy stuff
                 if all_enemies_defeated(current_enemies):
+                    turn = 1
                     screen_view = reward
                 for enemy in current_enemies:
                     if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
@@ -774,12 +812,22 @@ def main():
                     card.blit_card(card_pos, len(p1.active_hand))
                     card_pos += 1
                 # buttons
-                draw_end_turn_button()
                 for button in pile_buttons:
                     button.draw_button()
                 energy_button.draw_button()
+                end_turn_button.draw_button()
                 pygame.display.update()
                 update = False
+            
+            elif player_turn == False: # enemies turn
+                for enemy in current_enemies:
+                    pygame.time.delay(1000)
+                    enemy.enemy_moveset()
+                    update = True
+                turn += 1
+                p1.reduce_status()
+                new_turn = True
+                player_turn = True
 
 main()
 
@@ -802,14 +850,25 @@ main()
 
 # to do
 
-# add in an end turn button (currently doesn't do anything)
 # add in something that shows what the enemy is about to do next
 # make the hp into a health bar which goes blue with block (like sts), meaning i'll have to remove the block from the current list
 # find a few different pirate themed background images for fights to happen in
 # figure out how to show fixed enemy abilities (like the stregth debuff on death enemy) (maybe above the enemy?)
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
+# add in a background image that can appear if you hover over the end turn button
+# do the rewards logic
+# might need to make it so that i can't click on the draw pile etc when it's the enemies turn
+# when i click end turn i need to stick all remaining cards in my hand to the discard pile
+# do the logic for reset status
+# write logic for things like poison and all other status effects to actually do something
 
 # problems
 
 # can't figure out how to update the card colour when hovered
+# need to make the update it's own separate function and then call it so that it updates with each enemy hit
+# will need to add in a variable that says if the enemy had block at the start of their turn
+# when the less energy/draw enemies die they're supposed to give back the energy/draw but they currently don't
+# also the less draw enemy doesn't seem to actually do less draw, probably because it updates before it can take affect
+# it's not drawing to the max 10 cards
+# it's not discarding all cards in my active hand when i end my go
