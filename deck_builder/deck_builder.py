@@ -443,12 +443,13 @@ class Player(Character):
             else:
                 if len(self.draw_pile) == 0:
                     self.shuffle_discard_pile()
-                self.active_hand.append(self.draw_pile.pop())
+                self.active_hand.append(self.draw_pile[0])
+                self.draw_pile.remove(self.draw_pile[0])
 
     def shuffle_discard_pile(self):
-        for card in self.discard_pile:
-            self.draw_pile.append(card)
-            self.discard_pile.remove(card)
+        for i in range(len(self.discard_pile)):
+            self.draw_pile.append(self.discard_pile[0])
+            self.discard_pile.remove(self.discard_pile[0])
         random.shuffle(self.draw_pile)
 
 class Enemy(Character):
@@ -740,9 +741,9 @@ def main():
                     
                     # clicking end turn button
                     if end_turn_button.rect.collidepoint(event.pos):
-                        for card in p1.active_hand:
-                            p1.discard_pile.append(card)
-                            p1.active_hand.remove(card)
+                        for i in range(len(p1.active_hand)):
+                            p1.discard_pile.append(p1.active_hand[0])
+                            p1.active_hand.remove(p1.active_hand[0])
                         player_turn = False
                         for enemy in current_enemies:
                             enemy.reduce_status()
@@ -873,5 +874,3 @@ main()
 # will need to add in a variable that says if the enemy had block at the start of their turn
 # when the less energy/draw enemies die they're supposed to give back the energy/draw but they currently don't
 # also the less draw enemy doesn't seem to actually do less draw, probably because it updates before it can take affect
-# it's not drawing to the max 10 cards
-# it's not discarding all cards in my active hand when i end my go
