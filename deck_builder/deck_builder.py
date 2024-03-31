@@ -439,7 +439,7 @@ class Player(Character):
     def draw_card(self, how_many):
         for i in range(how_many):
             if len(self.draw_pile) == 0 and len(self.discard_pile) == 0:
-                continue
+                continue # should this be break?
             else:
                 if len(self.draw_pile) == 0:
                     self.shuffle_discard_pile()
@@ -513,7 +513,7 @@ class Enemy(Character):
             self.enemy_dmg_dealt(5, 0.5) # cowardice
         elif self.block >= 1:
             self.enemy_dmg_dealt(5, 2) # confidence
-        self.block = self.enemy_block(5)
+        self.enemy_block(5)
     
     def less_draw_enemy_turns(self):
         if turn == 1:
@@ -642,6 +642,7 @@ pile_buttons.append(entire_deck_button)
 # functions
 def randomise_fight(enemy_level):
     global current_enemies
+    # might need to set current_enemies to = []
     if enemy_level == 'small':
         fights = small_fights
     elif enemy_level == 'boss':
@@ -781,6 +782,7 @@ def main():
 
             elif new_turn == True:
                 p1.draw_card(p1.new_turn_draw_cards)
+                # print(p1.new_turn_draw_cards)
                 p1.energy = 3 + p1.additional_energy + p1.temp_additional_energy
                 new_turn = False
 
@@ -821,9 +823,10 @@ def main():
             
             elif player_turn == False: # enemies turn
                 for enemy in current_enemies:
+                    # print(enemy.name)
                     pygame.time.delay(1000)
                     enemy.enemy_moveset()
-                    update = True
+                    # update = True
                 turn += 1
                 p1.reduce_status()
                 new_turn = True
