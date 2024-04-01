@@ -130,6 +130,8 @@ ENTIRE_DECK = image('entire_deck', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 ENERGY = image('sun', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 END_TURN_IMG = image('end_turn', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 PIRATE_BACKGROUND = image('pirate_background', WIN_WIDTH, WIN_HEIGHT)
+ATTACK_INTENT = image('sword')
+STATUS_INTENT = image('rum')
 
 # sounds
 pass
@@ -456,8 +458,6 @@ class Enemy(Character):
     def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
         super().__init__(hp)
         global turn
-        # self.is_enemy_turn = False # probably don't need this
-        # self.enemy_turn = 1
         self.name = name
         self.block = starting_block
         self.x_pos = x_pos
@@ -466,6 +466,8 @@ class Enemy(Character):
         self.height = height
         self.rect = pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
         self.death_strength = death_strength # if true then when an enemy dies it will apply -2 str and self.death_str = False
+        self.has_block = False
+        self.ran_num = random.randint(1, 100)
     
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
@@ -493,6 +495,12 @@ class Enemy(Character):
             FRAIL_MULTIPLIER = 1
         
         self.block += round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
+    
+    def block_checker(self):
+        if self.block > 0:
+            self.has_block = True
+        else:
+            self.has_block = False
 
     def enemy_moveset(self):
         if self.hp > 0: # if still alive
@@ -508,13 +516,16 @@ class Enemy(Character):
                 self.vulnerable_death_enemy_turns()
             elif self.name == 'frail_death':
                 self.frail_death_enemy_turns()
+
+    def show_enemy_intention(self):
+        pass
     
     def confidence_enemy_turns(self):
-        if self.block == 0:
-            self.enemy_dmg_dealt(5, 0.5) # cowardice
-        elif self.block >= 1:
-            self.enemy_dmg_dealt(5, 2) # confidence
-        self.enemy_block(5)
+        if self.has_block == False:
+            self.enemy_dmg_dealt(4, 0.5) # cowardice
+        elif self.has_block:
+            self.enemy_dmg_dealt(4, 2) # confidence
+        self.enemy_block(3)
     
     def less_draw_enemy_turns(self):
         if turn == 1:
@@ -522,14 +533,11 @@ class Enemy(Character):
         elif p1.new_turn_draw_cards > 4:
             p1.new_turn_additional_draw -= 1
         else:
-            ran_num = random.randint(1, 100)
-            if ran_num <= 50:
+            if self.ran_num <= 50:
                 self.enemy_dmg_dealt(6) # 6 hp
                 self.enemy_block(5) # 5 block
             else:
                 p1.temp_additional_draw -= 1
-        # self.enemy_turn += 1
-        # self.is_enemy_turn = False
 
     def less_energy_enemy_turns(self):
         if turn == 1:
@@ -537,45 +545,38 @@ class Enemy(Character):
         elif p1.energy > 2:
             p1.additional_energy -= 1
         else:
-            ran_num = random.randint(1, 100)
-            if ran_num <= 50:
+            if self.ran_num <= 50:
                 self.enemy_dmg_dealt(6) # 6 hp
                 self.enemy_block(5) # 5 block
             else:
                 p1.temp_additional_energy -= 1
-        # self.enemy_turn += 1
-        # self.is_enemy_turn = False
     
     def weak_death_enemy_turns(self):
-        ran_num = random.randint(1, 100)
-        if ran_num <= 50:
+        if self.ran_num <= 50:
             self.enemy_dmg_dealt(7) # 7 hp
         else:
             p1.weak += 2
 
     def vulnerable_death_enemy_turns(self):
-        ran_num = random.randint(1, 100)
-        if ran_num <= 50:
+        if self.ran_num <= 50:
             self.enemy_dmg_dealt(6) # 6 hp
         else:
             p1.vulnerable += 2
 
     def frail_death_enemy_turns(self):
-        ran_num = random.randint(1, 100)
-        if ran_num <= 50:
+        if self.ran_num <= 50:
             self.enemy_dmg_dealt(5) # 5 hp
         else:
             p1.frail += 2
 
 # character instances
 p1 = Player(60, starter_deck)
-# enemy1 = Enemy(20, 3, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT) # test enemy
 small_fights = []
 boss_fights = []
 main_boss_fights = []
-confidence_enemy_1 = Enemy('confidence', 15, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_2 = Enemy('confidence', 15, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_3 = Enemy('confidence', 15, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_1 = Enemy('confidence', 10, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_2 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_3 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
 small_fights.append([confidence_enemy_1, confidence_enemy_2, confidence_enemy_3])
 less_draw_enemy = Enemy('less_draw', 25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
 less_energy_enemy = Enemy('less_energy', 25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
@@ -643,7 +644,6 @@ pile_buttons.append(entire_deck_button)
 # functions
 def randomise_fight(enemy_level):
     global current_enemies
-    # might need to set current_enemies to = []
     if enemy_level == 'small':
         fights = small_fights
     elif enemy_level == 'boss':
@@ -687,7 +687,7 @@ def main():
             elif event.type == pygame.MOUSEMOTION:
                 if screen_view == fight:
                     for card in p1.active_hand:
-                        if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False: # threw up an error 2 times - AttributeError: 'Card' object has no attribute 'sel_rect'
+                        if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False:
                             card.is_hovered = True
                             card.draw_description()
                             pygame.display.update()
@@ -746,9 +746,9 @@ def main():
                             p1.active_hand.remove(p1.active_hand[0])
                         player_turn = False
                         for enemy in current_enemies:
+                            enemy.block_checker()
                             enemy.reduce_status()
                         # update = True
-                        # need to -1 on all effects and reset things like energy
 
                 if screen_view != card_view:
                     # selecting the draw/discard/exhaust/deck pile
@@ -783,8 +783,9 @@ def main():
 
             elif new_turn == True:
                 p1.draw_card(p1.new_turn_draw_cards)
-                # print(p1.new_turn_draw_cards)
                 p1.energy = 3 + p1.additional_energy + p1.temp_additional_energy
+                for enemy in current_enemies:
+                    enemy.ran_num = random.randint(1, 100)
                 new_turn = False
 
             elif update == True:
@@ -824,7 +825,6 @@ def main():
             
             elif player_turn == False: # enemies turn
                 for enemy in current_enemies:
-                    # print(enemy.name)
                     pygame.time.delay(1000)
                     enemy.enemy_moveset()
                     # update = True
@@ -871,6 +871,5 @@ main()
 
 # can't figure out how to update the card colour when hovered
 # need to make the update it's own separate function and then call it so that it updates with each enemy hit
-# will need to add in a variable that says if the enemy had block at the start of their turn
 # when the less energy/draw enemies die they're supposed to give back the energy/draw but they currently don't
 # also the less draw enemy doesn't seem to actually do less draw, probably because it updates before it can take affect
