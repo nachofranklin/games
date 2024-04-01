@@ -131,7 +131,9 @@ ENERGY = image('sun', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 END_TURN_IMG = image('end_turn', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 PIRATE_BACKGROUND = image('pirate_background', WIN_WIDTH, WIN_HEIGHT)
 ATTACK_INTENT = image('sword')
-STATUS_INTENT = image('rum')
+DEBUFF_INTENT = image('rum')
+CARD_STEAL_INTENT_IMG = image('card_thief')
+ENERGY_STEAL_INTENT_IMG = image('sun_thief')
 
 # sounds
 pass
@@ -286,6 +288,16 @@ class Character:
         self.new_turn_additional_draw = 0
         self.temp_additional_draw = 0
         self.gold = 50
+        # intentions
+        self.attack_intent = False
+        self.attack_actual = 0
+        self.block_intent = False
+        self.block_actual = 0
+        self.debuff_intent = False
+        self.power_up_intent = False
+        self.energy_steal_intent = False
+        self.card_steal_intent = False
+        self.curse_intent = False
 
     def draw_hp(self):
         font = pygame.font.Font(None, int(CARD_WIDTH/3))
@@ -471,8 +483,8 @@ class Enemy(Character):
     
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
-    
-    def enemy_dmg_dealt(self, base_dmg, confidence_multiplier=1):
+
+    def enemy_attack(self, base_dmg, confidence_multiplier=1):
         if p1.vulnerable >= 1:
             VULNERABLE_MULTIPLIER = 1.5
         else:
@@ -482,11 +494,14 @@ class Enemy(Character):
         else:
             WEAK_MULTIPLIER = 1
 
-        if p1.block < round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier):
-            p1.hp -= round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier) - p1.block
+        return round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
+    
+    def enemy_dmg_dealt(self, base_dmg, confidence_multiplier=1):
+        if p1.block < self.enemy_attack(base_dmg, confidence_multiplier):
+            p1.hp -= self.enemy_attack(base_dmg, confidence_multiplier) - p1.block
             p1.block = 0
         else:
-            p1.block -= round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
+            p1.block -= self.enemy_attack(base_dmg, confidence_multiplier)
     
     def enemy_block(self, base_block):
         if self.frail >= 1:
@@ -494,13 +509,27 @@ class Enemy(Character):
         else:
             FRAIL_MULTIPLIER = 1
         
-        self.block += round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
+        return round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
     
     def block_checker(self):
         if self.block > 0:
             self.has_block = True
         else:
             self.has_block = False
+
+    def draw_intention(self, image, counter):
+        WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos - EFFECTS_HEIGHT)) # always blit the image
+
+        if image == ATTACK_INTENT:
+            num = self.attack_actual
+        elif image == BLOCK:
+            num = self.block_actual
+        if image == ATTACK_INTENT or image == BLOCK: # only blit the number for att or block
+            font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+            text_surface = font.render(str(num), True, BLACK)
+            rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos - EFFECTS_HEIGHT, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+            text_rect = text_surface.get_rect(center=rect.center)
+            WIN.blit(text_surface, text_rect)
 
     def enemy_moveset(self):
         if self.hp > 0: # if still alive
@@ -517,16 +546,61 @@ class Enemy(Character):
             elif self.name == 'frail_death':
                 self.frail_death_enemy_turns()
 
-    def show_enemy_intention(self):
-        pass
+    def show_enemy_intention(self): # will need to update the enemy intention first
+        counter = 0
+        if self.attack_intent == True:
+            self.draw_intention(ATTACK_INTENT, counter)
+            counter += 1
+        if self.block_intent == True:
+            self.draw_intention(BLOCK, counter)
+            counter += 1
+        if self.debuff_intent == True:
+            self.draw_intention(DEBUFF_INTENT, counter)
+            counter += 1
+        # if self.power_up_intent == True:
+        #     self.draw_intention(XXXXX, counter) # need to get images for all of these things
+        #     counter += 1
+        if self.energy_steal_intent == True:
+            self.draw_intention(ENERGY_STEAL_INTENT_IMG, counter)
+            counter += 1
+        if self.card_steal_intent == True:
+            self.draw_intention(CARD_STEAL_INTENT_IMG, counter)
+            counter += 1
+        # if self.curse_intent == True:
+        #     self.draw_intention(XXXXX, counter)
+        #     counter += 1
+
+    def enemy_intentions(self):
+        if self.hp > 0: # if still alive
+            if self.name == 'confidence':
+                self.confidence_enemy_intent()
+            elif self.name == 'less_draw':
+                self.less_draw_enemy_intent()
+            elif self.name == 'less_energy':
+                self.less_energy_enemy_intent()
+            elif self.name == 'weak_death':
+                self.weak_death_enemy_intent()
+            elif self.name == 'vulnerable_death':
+                self.vulnerable_death_enemy_intent()
+            elif self.name == 'frail_death':
+                self.frail_death_enemy_intent()
     
     def confidence_enemy_turns(self):
         if self.has_block == False:
             self.enemy_dmg_dealt(4, 0.5) # cowardice
         elif self.has_block:
             self.enemy_dmg_dealt(4, 2) # confidence
-        self.enemy_block(3)
-    
+        self.block += self.enemy_block(3)
+
+    def confidence_enemy_intent(self):
+        self.attack_intent = True
+        if self.has_block == False:
+            self.attack_actual = self.enemy_attack(4, 0.5) # cowardice
+        elif self.has_block:
+            self.attack_actual = self.enemy_attack(4, 2) # confidence
+        self.block_intent = True
+        self.block_actual = self.enemy_block(3)
+
     def less_draw_enemy_turns(self):
         if turn == 1:
             p1.new_turn_additional_draw -= 1
@@ -535,9 +609,23 @@ class Enemy(Character):
         else:
             if self.ran_num <= 50:
                 self.enemy_dmg_dealt(6) # 6 hp
-                self.enemy_block(5) # 5 block
+                self.block += self.enemy_block(5) # 5 block
             else:
                 p1.temp_additional_draw -= 1
+
+    def less_draw_enemy_intent(self):
+        if turn == 1:
+            self.card_steal_intent = True
+        elif p1.new_turn_draw_cards > 4:
+            self.card_steal_intent = True
+        else:
+            if self.ran_num <= 50:
+                self.attack_intent = True
+                self.attack_actual = self.enemy_attack(6)
+                self.block_intent = True
+                self.block_actual = self.enemy_block(5)
+            else:
+                self.card_steal_intent = True
 
     def less_energy_enemy_turns(self):
         if turn == 1:
@@ -547,9 +635,23 @@ class Enemy(Character):
         else:
             if self.ran_num <= 50:
                 self.enemy_dmg_dealt(6) # 6 hp
-                self.enemy_block(5) # 5 block
+                self.block += self.enemy_block(5) # 5 block
             else:
                 p1.temp_additional_energy -= 1
+
+    def less_energy_enemy_intent(self):
+        if turn == 1:
+            self.energy_steal_intent = True
+        elif p1.energy > 2:
+            self.energy_steal_intent = True
+        else:
+            if self.ran_num <= 50:
+                self.attack_intent = True
+                self.attack_actual = self.enemy_attack(6)
+                self.block_intent = True
+                self.block_actual = self.enemy_block(5)
+            else:
+                self.energy_steal_intent = True
     
     def weak_death_enemy_turns(self):
         if self.ran_num <= 50:
@@ -557,17 +659,38 @@ class Enemy(Character):
         else:
             p1.weak += 2
 
+    def weak_death_enemy_intent(self):
+        if self.ran_num <= 50:
+            self.attack_intent = True
+            self.attack_actual = self.enemy_attack(7)
+        else:
+            self.debuff_intent = True
+
     def vulnerable_death_enemy_turns(self):
         if self.ran_num <= 50:
             self.enemy_dmg_dealt(6) # 6 hp
         else:
             p1.vulnerable += 2
 
+    def vulnerable_death_enemy_intent(self):
+        if self.ran_num <= 50:
+            self.attack_intent = True
+            self.attack_actual = self.enemy_attack(6)
+        else:
+            self.debuff_intent = True
+
     def frail_death_enemy_turns(self):
         if self.ran_num <= 50:
             self.enemy_dmg_dealt(5) # 5 hp
         else:
             p1.frail += 2
+
+    def frail_death_enemy_intent(self):
+        if self.ran_num <= 50:
+            self.attack_intent = True
+            self.attack_actual = self.enemy_attack(5)
+        else:
+            self.debuff_intent = True
 
 # character instances
 p1 = Player(60, starter_deck)
@@ -754,20 +877,21 @@ def main():
                     # selecting the draw/discard/exhaust/deck pile
                     current_screen_view = screen_view # saves what the screen was before going to screen_view
                 if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == shop or screen_view == event:
-                    for button in pile_buttons:
-                        if button.rect.collidepoint(event.pos):
-                            clicked = True
-                            if button.is_clicked == False:
-                                for b in pile_buttons:
-                                    b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
-                                button.is_clicked = True
-                                screen_view = card_view
-                                button.show_cards()
+                    if player_turn:
+                        for button in pile_buttons:
+                            if button.rect.collidepoint(event.pos):
+                                clicked = True
+                                if button.is_clicked == False:
+                                    for b in pile_buttons:
+                                        b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
+                                    button.is_clicked = True
+                                    screen_view = card_view
+                                    button.show_cards()
 
-                            elif button.is_clicked: # if we click the button and it was already clicked...
-                                button.is_clicked = False
-                                screen_view = current_screen_view # go back to the last screen you were on
-                                update = True # go back to in game screen
+                                elif button.is_clicked: # if we click the button and it was already clicked...
+                                    button.is_clicked = False
+                                    screen_view = current_screen_view # go back to the last screen you were on
+                                    update = True # go back to in game screen
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
@@ -802,6 +926,9 @@ def main():
                         enemy.draw_enemy()
                         enemy.draw_hp()
                         enemy.update_status()
+                        enemy.block_checker()
+                        enemy.enemy_intentions() # works out enemy intentions
+                        enemy.show_enemy_intention() # blits intentions on screen
                 # p1 stuff
                 if p1.hp <= 0:
                     pygame.time.delay(3000)
@@ -866,6 +993,7 @@ main()
 # when i click end turn i need to stick all remaining cards in my hand to the discard pile
 # do the logic for reset status
 # write logic for things like poison and all other status effects to actually do something
+# make it so that attack or block won't ever go below 0 (don't want a debuffed enemy giving p1 positive hp when attacking)
 
 # problems
 
