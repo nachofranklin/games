@@ -13,7 +13,10 @@ FPS = 60
 MAX_CARDS_IN_HAND = 10
 card_id_counter = 1
 BASE_DRAW_CARDS = 5 # 5
+BASE_ENERGY = 3
 turn = 1
+screen_view = 'fight'
+update = True
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
 current_enemies = []
 list_of_all_cards = []
@@ -372,13 +375,22 @@ class Character:
         # at the end of battle i'll need to reset everything back to base levels so that p1 is ready and that enemy is ready in case i face it twice
         pass
 
+    def reset_intent(self):
+        self.attack_intent = False
+        self.block_intent = False
+        self.debuff_intent = False
+        self.power_up_intent = False
+        self.energy_steal_intent = False
+        self.card_steal_intent = False
+        self.curse_intent = False
+
 class Player(Character):
     def __init__(self, hp, starter_deck):
         super().__init__(hp)
         self.x_pos = P1_X
         self.y_pos = P1_Y
         self.energy = 3 + self.additional_energy + self.temp_additional_energy
-        self.new_turn_draw_cards = BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
+        # self.new_turn_draw_cards = BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
         self.deck = starter_deck
         self.draw_pile = []
         self.active_hand = []
@@ -386,6 +398,12 @@ class Player(Character):
         self.exhaust_pile = []
         self.floor_level = 1
         self.rect = pygame.Rect(self.x_pos, self.y_pos, CHARACTER_WIDTH, CHARACTER_HEIGHT)
+
+    def new_turn_draw_cards(self):
+        return BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
+
+    def new_turn_energy(self):
+        return BASE_ENERGY + self.additional_energy + self.temp_additional_energy
     
     def draw_player(self):
         pygame.draw.rect(WIN, GREEN, self.rect)
@@ -604,7 +622,7 @@ class Enemy(Character):
     def less_draw_enemy_turns(self):
         if turn == 1:
             p1.new_turn_additional_draw -= 1
-        elif p1.new_turn_draw_cards > 4:
+        elif p1.new_turn_draw_cards() > 4:
             p1.new_turn_additional_draw -= 1
         else:
             if self.ran_num <= 50:
@@ -616,7 +634,7 @@ class Enemy(Character):
     def less_draw_enemy_intent(self):
         if turn == 1:
             self.card_steal_intent = True
-        elif p1.new_turn_draw_cards > 4:
+        elif p1.new_turn_draw_cards() > 4:
             self.card_steal_intent = True
         else:
             if self.ran_num <= 50:
@@ -785,16 +803,58 @@ def all_enemies_defeated(enemies):
             return False
     return True
 
+def updates():
+    global current_enemies
+    global turn
+    global screen_view
+    global update
+    WIN.blit(PIRATE_BACKGROUND, (0, 0))
+    # enemy stuff
+    if all_enemies_defeated(current_enemies):
+        turn = 1
+        screen_view = reward
+    for enemy in current_enemies:
+        if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
+            p1.strength -= 2
+            enemy.death_strength = False
+        if enemy.hp > 0:
+            enemy.draw_enemy()
+            enemy.draw_hp()
+            enemy.update_status()
+            enemy.block_checker()
+            enemy.enemy_intentions() # works out enemy intentions
+            enemy.show_enemy_intention() # blits intentions on screen
+    # p1 stuff
+    if p1.hp <= 0:
+        pygame.time.delay(3000)
+        screen_view = death # not actually got anything for this yet
+    else:
+        p1.draw_player()
+        p1.draw_hp()
+        p1.update_status()
+    # cards
+    card_pos = 1
+    for card in p1.active_hand:
+        card.blit_card(card_pos, len(p1.active_hand))
+        card_pos += 1
+    # buttons
+    for button in pile_buttons:
+        button.draw_button()
+    energy_button.draw_button()
+    end_turn_button.draw_button()
+    pygame.display.update()
+    update = False
+
 def main():
 
     clock = pygame.time.Clock()
     global current_enemies
     global turn
-    screen_view = fight
+    global screen_view
+    global update
     new_fight = True
     player_turn = True
     new_turn = True
-    update = True
     enemy_level = 'small'
     clicked = False
     a_card_selected = False
@@ -871,7 +931,7 @@ def main():
                         for enemy in current_enemies:
                             enemy.block_checker()
                             enemy.reduce_status()
-                        # update = True
+                        updates()
 
                 if screen_view != card_view:
                     # selecting the draw/discard/exhaust/deck pile
@@ -906,55 +966,22 @@ def main():
                 new_fight = False
 
             elif new_turn == True:
-                p1.draw_card(p1.new_turn_draw_cards)
-                p1.energy = 3 + p1.additional_energy + p1.temp_additional_energy
+                p1.draw_card(p1.new_turn_draw_cards())
+                p1.energy = p1.new_turn_energy()
                 for enemy in current_enemies:
                     enemy.ran_num = random.randint(1, 100)
                 new_turn = False
+                update = True
 
             elif update == True:
-                WIN.blit(PIRATE_BACKGROUND, (0, 0))
-                # enemy stuff
-                if all_enemies_defeated(current_enemies):
-                    turn = 1
-                    screen_view = reward
-                for enemy in current_enemies:
-                    if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
-                        p1.strength -= 2
-                        enemy.death_strength = False
-                    if enemy.hp > 0:
-                        enemy.draw_enemy()
-                        enemy.draw_hp()
-                        enemy.update_status()
-                        enemy.block_checker()
-                        enemy.enemy_intentions() # works out enemy intentions
-                        enemy.show_enemy_intention() # blits intentions on screen
-                # p1 stuff
-                if p1.hp <= 0:
-                    pygame.time.delay(3000)
-                    screen_view = death # not actually got anything for this yet
-                else:
-                    p1.draw_player()
-                    p1.draw_hp()
-                    p1.update_status()
-                # cards
-                card_pos = 1
-                for card in p1.active_hand:
-                    card.blit_card(card_pos, len(p1.active_hand))
-                    card_pos += 1
-                # buttons
-                for button in pile_buttons:
-                    button.draw_button()
-                energy_button.draw_button()
-                end_turn_button.draw_button()
-                pygame.display.update()
-                update = False
+                updates()
             
             elif player_turn == False: # enemies turn
                 for enemy in current_enemies:
                     pygame.time.delay(1000)
                     enemy.enemy_moveset()
-                    # update = True
+                    enemy.reset_intent()
+                    updates()
                 turn += 1
                 p1.reduce_status()
                 new_turn = True
@@ -981,16 +1008,13 @@ main()
 
 # to do
 
-# add in something that shows what the enemy is about to do next
 # make the hp into a health bar which goes blue with block (like sts), meaning i'll have to remove the block from the current list
 # find a few different pirate themed background images for fights to happen in
-# figure out how to show fixed enemy abilities (like the stregth debuff on death enemy) (maybe above the enemy?)
+# figure out how to show fixed enemy abilities (like the stregth debuff on death enemy)
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # add in a background image that can appear if you hover over the end turn button
 # do the rewards logic
-# might need to make it so that i can't click on the draw pile etc when it's the enemies turn
-# when i click end turn i need to stick all remaining cards in my hand to the discard pile
 # do the logic for reset status
 # write logic for things like poison and all other status effects to actually do something
 # make it so that attack or block won't ever go below 0 (don't want a debuffed enemy giving p1 positive hp when attacking)
@@ -998,6 +1022,6 @@ main()
 # problems
 
 # can't figure out how to update the card colour when hovered
-# need to make the update it's own separate function and then call it so that it updates with each enemy hit
 # when the less energy/draw enemies die they're supposed to give back the energy/draw but they currently don't
-# also the less draw enemy doesn't seem to actually do less draw, probably because it updates before it can take affect
+# the less draw/energy enemies can reduce it once but the second one doesn´t ever do anything
+# enemy intentions don't go away after they've changed intention
