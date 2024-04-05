@@ -17,6 +17,7 @@ BASE_ENERGY = 3
 turn = 1
 screen_view = 'fight'
 update = True
+player_turn = True
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
 current_enemies = []
 list_of_all_cards = []
@@ -372,6 +373,8 @@ class Character:
             self.temp_additional_draw -= 1
 
     def reset_status(self):
+        self.reset_intent()
+        # current_enemies = []
         # at the end of battle i'll need to reset everything back to base levels so that p1 is ready and that enemy is ready in case i face it twice
         pass
 
@@ -629,7 +632,10 @@ class Enemy(Character):
                 self.enemy_dmg_dealt(6) # 6 hp
                 self.block += self.enemy_block(5) # 5 block
             else:
-                p1.temp_additional_draw -= 1
+                if p1.temp_additional_draw == 0:
+                    p1.temp_additional_draw -= 2 # it updates before p1 turn to be only -1
+                else:
+                    p1.temp_additional_draw -= 1 # # this means it will only ever be able to reduce cards drawn by 2
 
     def less_draw_enemy_intent(self):
         if turn == 1:
@@ -655,7 +661,10 @@ class Enemy(Character):
                 self.enemy_dmg_dealt(6) # 6 hp
                 self.block += self.enemy_block(5) # 5 block
             else:
-                p1.temp_additional_energy -= 1
+                if p1.temp_additional_energy == 0:
+                    p1.temp_additional_energy -= 2 # it updates before p1 turn to be only -1
+                else:
+                    p1.temp_additional_energy -= 1 # this means it will only ever be able to reduce energy by 2
 
     def less_energy_enemy_intent(self):
         if turn == 1:
@@ -804,7 +813,7 @@ def all_enemies_defeated(enemies):
     return True
 
 def updates():
-    global current_enemies
+    # global current_enemies # don't think this is needed
     global turn
     global screen_view
     global update
@@ -821,7 +830,9 @@ def updates():
             enemy.draw_enemy()
             enemy.draw_hp()
             enemy.update_status()
-            enemy.block_checker()
+            if player_turn: # stops it from resetting block to zero and then checking it at the end of the turn
+                enemy.block_checker()
+            enemy.reset_intent()
             enemy.enemy_intentions() # works out enemy intentions
             enemy.show_enemy_intention() # blits intentions on screen
     # p1 stuff
@@ -845,6 +856,8 @@ def updates():
     pygame.display.update()
     update = False
 
+
+
 def main():
 
     clock = pygame.time.Clock()
@@ -852,8 +865,8 @@ def main():
     global turn
     global screen_view
     global update
+    global player_turn
     new_fight = True
-    player_turn = True
     new_turn = True
     enemy_level = 'small'
     clicked = False
@@ -980,10 +993,9 @@ def main():
                 for enemy in current_enemies:
                     pygame.time.delay(1000)
                     enemy.enemy_moveset()
-                    enemy.reset_intent()
                     updates()
                 turn += 1
-                p1.reduce_status()
+                p1.reduce_status() # because this reduces status straight away i'll need to set the effects to +1 more than i wanted if that status is at 0
                 new_turn = True
                 player_turn = True
 
@@ -1018,10 +1030,10 @@ main()
 # do the logic for reset status
 # write logic for things like poison and all other status effects to actually do something
 # make it so that attack or block won't ever go below 0 (don't want a debuffed enemy giving p1 positive hp when attacking)
+# change the y coords for enemy status effects to be y + enemy height (like it is for intentions)
+# add in images for missing statuses (like less draw)
+# might need to change logic of what gets displayed on less energy/draw status to include permanent and temporary effects as one
 
 # problems
 
 # can't figure out how to update the card colour when hovered
-# when the less energy/draw enemies die they're supposed to give back the energy/draw but they currently don't
-# the less draw/energy enemies can reduce it once but the second one doesn´t ever do anything
-# enemy intentions don't go away after they've changed intention
