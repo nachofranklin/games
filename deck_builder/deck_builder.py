@@ -41,6 +41,8 @@ DESCRIPTION_HEIGHT = CARD_HEIGHT/8
 DRAW_PILE_WIDTH = DRAW_PILE_HEIGHT = CARD_WIDTH*3/4
 DISPLAY_GAP_WIDTH = (DESCRIPTION_WIDTH - CARD_WIDTH*DISPLAY_CARDS) / (DISPLAY_CARDS - 1)
 DISPLAY_GAP_HEIGHT = WIN_HEIGHT/5 - CARD_HEIGHT/2
+STATUS_DESCRIPTION_WIDTH = CARD_WIDTH
+STATUS_DESCRIPTION_HEIGHT = CARD_HEIGHT/2
 
 # x and y co-ordinates
 # CARDS_X is a bit more complicated
@@ -295,6 +297,7 @@ class Character:
         self.new_turn_additional_draw = 0
         self.temp_additional_draw = 0
         self.gold = 50
+        self.status_effects = []
         # intentions
         self.attack_intent = False
         self.attack_actual = 0
@@ -313,44 +316,121 @@ class Character:
         WIN.blit(text_surface, text_rect)
     
     def update_status(self):
-        status_effects = []
+        self.status_effects = []
         if self.block != 0:
-            status_effects.append({'image':BLOCK, 'number':self.block})
+            self.status_effects.append({'image':BLOCK, 'number':self.block})
         if self.shield != 0:
-            status_effects.append({'image':SHIELD, 'number':self.shield})
+            self.status_effects.append({'image':SHIELD, 'number':self.shield})
         if self.strength != 0:
-            status_effects.append({'image':STRENGTH, 'number':self.strength})
+            self.status_effects.append({'image':STRENGTH, 'number':self.strength})
         if self.dexterity != 0:
-            status_effects.append({'image':DEXTERITY, 'number':self.dexterity})
+            self.status_effects.append({'image':DEXTERITY, 'number':self.dexterity})
         if self.weak != 0:
-            status_effects.append({'image':WEAK, 'number':self.weak})
+            self.status_effects.append({'image':WEAK, 'number':self.weak})
         if self.vulnerable != 0:
-            status_effects.append({'image':VULNERABLE, 'number':self.vulnerable})
+            self.status_effects.append({'image':VULNERABLE, 'number':self.vulnerable})
         if self.frail != 0:
-            status_effects.append({'image':FRAIL, 'number':self.frail})
+            self.status_effects.append({'image':FRAIL, 'number':self.frail})
         if self.poison != 0:
-            status_effects.append({'image':POISON, 'number':self.poison})
+            self.status_effects.append({'image':POISON, 'number':self.poison})
         if self.thorns != 0:
-            status_effects.append({'image':THORNS, 'number':self.thorns})
+            self.status_effects.append({'image':THORNS, 'number':self.thorns})
         if self.additional_energy + self.temp_additional_energy != 0:
-            status_effects.append({'image':ADDITIONAL_ENERGY, 'number':self.additional_energy + self.temp_additional_energy})
+            self.status_effects.append({'image':ADDITIONAL_ENERGY, 'number':self.additional_energy + self.temp_additional_energy})
         if self.new_turn_additional_draw + self.temp_additional_draw != 0:
-            status_effects.append({'image':ADDITIONAL_DRAW_IMG, 'number':self.new_turn_additional_draw + self.temp_additional_draw})
+            self.status_effects.append({'image':ADDITIONAL_DRAW_IMG, 'number':self.new_turn_additional_draw + self.temp_additional_draw})
         
         status_counter = 0
-        if len(status_effects) > 0:
-            for status in status_effects:
-                self.draw_status(status['image'], status['number'], status_counter)
+        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+        if len(self.status_effects) > 0:
+            for status in self.status_effects:
+                # self.draw_status(status['image'], status['number'], status_counter)
+                text_surface = font.render(str(status['number']), True, BLACK)
+                rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*status_counter, self.y_pos + self.height, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+                text_rect = text_surface.get_rect(center=rect.center)
+                status['rect'] = rect
+                status['counter'] = status_counter
+                status['hovered'] = False
+
+                WIN.blit(status['image'], (self.x_pos + EFFECTS_WIDTH*status_counter, self.y_pos + self.height))
+                WIN.blit(text_surface, text_rect)
                 status_counter +=1
     
-    def draw_status(self, image, number, counter):
-        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
-        text_surface = font.render(str(number), True, BLACK)
-        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height, EFFECTS_WIDTH, EFFECTS_HEIGHT)
-        text_rect = text_surface.get_rect(center=rect.center)
+    # def draw_status(self, image, number, counter):
+    #     font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+    #     text_surface = font.render(str(number), True, BLACK)
+    #     rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+    #     text_rect = text_surface.get_rect(center=rect.center)
 
-        WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height))
-        WIN.blit(text_surface, text_rect)
+    #     WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height))
+    #     WIN.blit(text_surface, text_rect)
+
+    def blit_status_description(self, status):
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*status['counter'] + EFFECTS_WIDTH/2 - STATUS_DESCRIPTION_WIDTH/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, STATUS_DESCRIPTION_WIDTH, STATUS_DESCRIPTION_HEIGHT)
+        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+
+        if status['image'] == BLOCK:
+            line1 = 'BLOCK'
+            line2 = f'Negates {status["number"]} damage'
+            line3 = 'Remove unused block at the start of the turn'
+        elif status['image'] == SHIELD:
+            line1 = 'SHIELD'
+            line2 = f'Next turn transform {status["number"]} shield into {status["number"]} block'
+            line3 = 'Remove shield at the start of the turn'
+        elif status['image'] == STRENGTH:
+            line1 = 'STRENGTH'
+            line2 = f'Increases base damage by {status["number"]}'
+            line3 = 'Ending the turn has no effect on strength'
+        elif status['image'] == DEXTERITY:
+            line1 = 'DEXTERITY'
+            line2 = f'Increases base block by {status["number"]}'
+            line3 = 'Ending the turn has no effect on dexterity'
+        elif status['image'] == WEAK:
+            line1 = 'WEAK'
+            line2 = f'Deal 25% less damage for {status["number"]} turns'
+            line3 = 'Reduce weak by one on turn end'
+        elif status['image'] == VULNERABLE:
+            line1 = 'VULNERABLE'
+            line2 = f'Take 50% more damage for {status["number"]} turns'
+            line3 = 'Reduce vulnerable by one on turn end'
+        elif status['image'] == FRAIL:
+            line1 = 'FRAIL'
+            line2 = f'Block 25% less for {status["number"]} turns'
+            line3 = 'Reduce frail by one on turn end'
+        elif status['image'] == POISON:
+            line1 = 'POISON'
+            line2 = f'Reduce HP by {status["number"]}, ignores block'
+            line3 = 'Reduce poison by one on turn end'
+        elif status['image'] == THORNS:
+            line1 = 'THORNS'
+            line2 = f'When attacked, the attacker takes {status["number"]} damage with each hit'
+            line3 = 'Ending the turn has no effect on thorns'
+        elif status['image'] == ADDITIONAL_ENERGY:
+            line1 = 'ADDITIONAL ENERGY'
+            line2 = f'Increases your energy by {status["number"]}'
+            line3 = 'Ending the turn has no effect on additional energy'
+        elif status['image'] == ADDITIONAL_DRAW_IMG:
+            line1 = 'ADDITIONAL DRAW'
+            line2 = f'Increases the number of cards drawn by {status["number"]} next turn'
+            line3 = 'Ending the turn has no effect on additional draw'
+
+        text_surface1 = font.render(line1, True, BLACK)
+        text_surface2 = font.render(line2, True, BLACK)
+        text_surface3 = font.render(line3, True, BLACK)
+        text_rect1 = text_surface1.get_rect(midtop=rect.midtop)
+        text_rect2 = text_surface2.get_rect(center=rect.center)
+        text_rect3 = text_surface3.get_rect(midbottom=rect.midbottom)
+        if text_rect2.width > text_rect3.width:
+            rect_width = text_rect2.width
+        else:
+            rect_width = text_rect3.width
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*status['counter'] + EFFECTS_WIDTH/2 - rect_width/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, rect_width, STATUS_DESCRIPTION_HEIGHT)
+        pygame.draw.rect(WIN, PINK, rect)
+        WIN.blit(text_surface1, text_rect1)
+        WIN.blit(text_surface2, text_rect2)
+        WIN.blit(text_surface3, text_rect3)
+        
+        pygame.display.update()
 
     def reduce_status(self):
         # once i've finished my turn then everything needs to -1 for the enemy
@@ -937,6 +1017,23 @@ def main():
                     elif end_turn_button.rect.collidepoint(event.pos) == False and end_turn_button.is_hovered == True:
                         end_turn_button.is_hovered = False
                         update = True
+
+                    for status in p1.status_effects:
+                        if status['rect'].collidepoint(event.pos) and status['hovered'] == False:
+                            status['hovered'] = True
+                            p1.blit_status_description(status)
+                        elif status['rect'].collidepoint(event.pos) == False and status['hovered'] == True:
+                            status['hovered'] = False
+                            update = True
+
+                    for enemy in current_enemies:
+                        for status in enemy.status_effects:
+                            if status['rect'].collidepoint(event.pos) and status['hovered'] == False:
+                                status['hovered'] = True
+                                enemy.blit_status_description(status)
+                            elif status['rect'].collidepoint(event.pos) == False and status['hovered'] == True:
+                                status['hovered'] = False
+                                update = True
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
@@ -1071,8 +1168,7 @@ main()
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # do the rewards logic
-# add in something so that when you hover over a status effect it will tell you the effect
-# to do the above i might need to turn the images into it's own class
+# add in something so that when you hover over an enemy intent it will tell you the intent
 
 # problems
 
