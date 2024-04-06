@@ -51,7 +51,6 @@ DESCRIPTION_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
 P1_X = DESCRIPTION_X
 P1_Y = ENEMY1_Y = WIN_HEIGHT/9
 ENEMY1_X = DESCRIPTION_X + DESCRIPTION_WIDTH - ENEMY1_WIDTH
-# EFFECTS_Y = P1_Y + CHARACTER_HEIGHT # changed to match the enemy y position
 LEFT_BUTTON_X = DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 RIGHT_BUTTON_X = WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 TOP_BUTTON_Y = CARDS_Y
@@ -368,6 +367,7 @@ class Character:
         if self.frail > 0:
             self.frail -= 1
         if self.poison > 0:
+            self.hp -= self.poison
             self.poison -= 1
         if self.temp_additional_energy < 0:
             self.temp_additional_energy += 1
@@ -392,6 +392,33 @@ class Character:
         self.energy_steal_intent = False
         self.card_steal_intent = False
         self.curse_intent = False
+
+    def dmg_dealt(self, opposition, base_dmg, confidence_multiplier=1):
+        if opposition.block < self.actual_attack(opposition, base_dmg, confidence_multiplier):
+            opposition.hp -= self.actual_attack(opposition, base_dmg, confidence_multiplier) - opposition.block
+            opposition.block = 0
+        else:
+            opposition.block -= self.actual_attack(opposition, base_dmg, confidence_multiplier)
+
+    def actual_attack(self, opposition, base_dmg, confidence_multiplier=1):
+        if opposition.vulnerable >= 1:
+            VULNERABLE_MULTIPLIER = 1.5
+        else:
+            VULNERABLE_MULTIPLIER = 1
+        if self.weak >= 1:
+            WEAK_MULTIPLIER = 0.75
+        else:
+            WEAK_MULTIPLIER = 1
+
+        return round(self.base_dmg_plus_strength(base_dmg, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
+    
+    def actual_block(self, base_block):
+        if self.frail >= 1:
+            FRAIL_MULTIPLIER = 0.75
+        else:
+            FRAIL_MULTIPLIER = 1
+        
+        return round(self.base_block_plus_dexterity(base_block, self.dexterity) * FRAIL_MULTIPLIER)
 
     def base_dmg_plus_strength(self, base_dmg, strength):
         if base_dmg + strength < 0:
@@ -446,31 +473,12 @@ class Player(Character):
         WIN.blit(text_surface, text_rect)
     
     def card_played(self, card, enemy):
-        if enemy.vulnerable >= 1:
-            VULNERABLE_MULTIPLIER = 1.5
-        else:
-            VULNERABLE_MULTIPLIER = 1
-        if self.weak >= 1:
-            WEAK_MULTIPLIER = 0.75
-        else:
-            WEAK_MULTIPLIER = 1
-        if self.frail >= 1:
-            FRAIL_MULTIPLIER = 0.75
-        else:
-            FRAIL_MULTIPLIER = 1
-
         self.energy -= card.energy
         self.hp -= card.player_hp
-
         if card.enemy_hp >= 1:
-            if enemy.block < round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER):
-                enemy.hp -= round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER) - enemy.block
-                enemy.block = 0
-            else:
-                enemy.block -= round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER)
-        
+            self.dmg_dealt(enemy, card.enemy_hp)
         if card.block >= 1:
-            self.block += round(self.base_block_plus_dexterity(card.block, self.dexterity) * FRAIL_MULTIPLIER)
+            self.block += self.actual_block(card.block)
         self.shield += card.shield
         self.strength += card.player_strength
         enemy.strength -= card.enemy_strength
@@ -524,33 +532,6 @@ class Enemy(Character):
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
 
-    def enemy_attack(self, base_dmg, confidence_multiplier=1):
-        if p1.vulnerable >= 1:
-            VULNERABLE_MULTIPLIER = 1.5
-        else:
-            VULNERABLE_MULTIPLIER = 1
-        if self.weak >= 1:
-            WEAK_MULTIPLIER = 0.75
-        else:
-            WEAK_MULTIPLIER = 1
-
-        return round(self.base_dmg_plus_strength(base_dmg, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
-    
-    def enemy_dmg_dealt(self, base_dmg, confidence_multiplier=1):
-        if p1.block < self.enemy_attack(base_dmg, confidence_multiplier):
-            p1.hp -= self.enemy_attack(base_dmg, confidence_multiplier) - p1.block
-            p1.block = 0
-        else:
-            p1.block -= self.enemy_attack(base_dmg, confidence_multiplier)
-    
-    def enemy_block(self, base_block):
-        if self.frail >= 1:
-            FRAIL_MULTIPLIER = 0.75
-        else:
-            FRAIL_MULTIPLIER = 1
-        
-        return round(self.base_block_plus_dexterity(base_block, self.dexterity) * FRAIL_MULTIPLIER)
-    
     def block_checker(self):
         if self.block > 0:
             self.has_block = True
@@ -627,19 +608,19 @@ class Enemy(Character):
     
     def confidence_enemy_turns(self):
         if self.has_block == False:
-            self.enemy_dmg_dealt(4, 0.5) # cowardice
+            self.dmg_dealt(p1, 4, 0.5) # cowardice
         elif self.has_block:
-            self.enemy_dmg_dealt(4, 2) # confidence
-        self.block += self.enemy_block(3)
+            self.dmg_dealt(p1, 4, 2) # confidence
+        self.block += self.actual_block(3)
 
     def confidence_enemy_intent(self):
         self.attack_intent = True
         if self.has_block == False:
-            self.attack_actual = self.enemy_attack(4, 0.5) # cowardice
+            self.attack_actual = self.actual_attack(p1, 4, 0.5) # cowardice
         elif self.has_block:
-            self.attack_actual = self.enemy_attack(4, 2) # confidence
+            self.attack_actual = self.actual_attack(p1, 4, 2) # confidence
         self.block_intent = True
-        self.block_actual = self.enemy_block(3)
+        self.block_actual = self.actual_block(3)
 
     def less_draw_enemy_turns(self):
         if turn == 1:
@@ -648,8 +629,8 @@ class Enemy(Character):
             p1.new_turn_additional_draw -= 1
         else:
             if self.ran_num <= 50:
-                self.enemy_dmg_dealt(6) # 6 hp
-                self.block += self.enemy_block(5) # 5 block
+                self.dmg_dealt(p1, 6) # 6 hp
+                self.block += self.actual_block(5) # 5 block
             else:
                 if p1.temp_additional_draw == 0:
                     p1.temp_additional_draw -= 2 # it updates before p1 turn to be only -1
@@ -664,9 +645,9 @@ class Enemy(Character):
         else:
             if self.ran_num <= 50:
                 self.attack_intent = True
-                self.attack_actual = self.enemy_attack(6)
+                self.attack_actual = self.actual_attack(p1, 6)
                 self.block_intent = True
-                self.block_actual = self.enemy_block(5)
+                self.block_actual = self.actual_block(5)
             else:
                 self.card_steal_intent = True
 
@@ -677,8 +658,8 @@ class Enemy(Character):
             p1.additional_energy -= 1
         else:
             if self.ran_num <= 50:
-                self.enemy_dmg_dealt(6) # 6 hp
-                self.block += self.enemy_block(5) # 5 block
+                self.dmg_dealt(p1, 6) # 6 hp
+                self.block += self.actual_block(5) # 5 block
             else:
                 if p1.temp_additional_energy == 0:
                     p1.temp_additional_energy -= 2 # it updates before p1 turn to be only -1
@@ -693,48 +674,48 @@ class Enemy(Character):
         else:
             if self.ran_num <= 50:
                 self.attack_intent = True
-                self.attack_actual = self.enemy_attack(6)
+                self.attack_actual = self.actual_attack(p1, 6)
                 self.block_intent = True
-                self.block_actual = self.enemy_block(5)
+                self.block_actual = self.actual_block(5)
             else:
                 self.energy_steal_intent = True
     
     def weak_death_enemy_turns(self):
         if self.ran_num <= 50:
-            self.enemy_dmg_dealt(7) # 7 hp
+            self.dmg_dealt(p1, 7) # 7 hp
         else:
             p1.weak += 2
 
     def weak_death_enemy_intent(self):
         if self.ran_num <= 50:
             self.attack_intent = True
-            self.attack_actual = self.enemy_attack(7)
+            self.attack_actual = self.actual_attack(p1, 7)
         else:
             self.debuff_intent = True
 
     def vulnerable_death_enemy_turns(self):
         if self.ran_num <= 50:
-            self.enemy_dmg_dealt(6) # 6 hp
+            self.dmg_dealt(p1, 6) # 6 hp
         else:
             p1.vulnerable += 2
 
     def vulnerable_death_enemy_intent(self):
         if self.ran_num <= 50:
             self.attack_intent = True
-            self.attack_actual = self.enemy_attack(6)
+            self.attack_actual = self.actual_attack(p1, 6)
         else:
             self.debuff_intent = True
 
     def frail_death_enemy_turns(self):
         if self.ran_num <= 50:
-            self.enemy_dmg_dealt(5) # 5 hp
+            self.dmg_dealt(p1, 5) # 5 hp
         else:
             p1.frail += 2
 
     def frail_death_enemy_intent(self):
         if self.ran_num <= 50:
             self.attack_intent = True
-            self.attack_actual = self.enemy_attack(5)
+            self.attack_actual = self.actual_attack(p1, 5)
         else:
             self.debuff_intent = True
 
