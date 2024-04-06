@@ -379,10 +379,27 @@ class Character:
             self.temp_additional_draw -= 1
 
     def reset_status(self):
+        # to reset everything at the end of the battle, ready for the next fight
+        global turn
+        global player_turn
+        turn = 1
+        player_turn = True
         self.reset_intent()
-        # current_enemies = []
-        # at the end of battle i'll need to reset everything back to base levels so that p1 is ready and that enemy is ready in case i face it twice
-        pass
+        self.attack_actual = 0
+        self.block_actual = 0
+        self.block = 0
+        self.shield = 0
+        self.strength = 0
+        self.dexterity = 0
+        self.weak = 0
+        self.vulnerable = 0
+        self.frail = 0
+        self.poison = 0
+        self.thorns = 0
+        self.additional_energy = 0
+        self.temp_additional_energy = 0
+        self.new_turn_additional_draw = 0
+        self.temp_additional_draw = 0
 
     def reset_intent(self):
         self.attack_intent = False
@@ -438,7 +455,7 @@ class Player(Character):
         self.x_pos = P1_X
         self.y_pos = P1_Y
         self.height = CHARACTER_HEIGHT
-        self.energy = 3 + self.additional_energy + self.temp_additional_energy
+        self.energy = BASE_ENERGY + self.additional_energy + self.temp_additional_energy
         # self.new_turn_draw_cards = BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
         self.deck = starter_deck
         self.draw_pile = []
@@ -513,6 +530,15 @@ class Player(Character):
             self.draw_pile.append(self.discard_pile[0])
             self.discard_pile.remove(self.discard_pile[0])
         random.shuffle(self.draw_pile)
+
+    def reset_lists(self):
+        # needs to be after reset_status
+        global current_enemies
+        current_enemies = []
+        self.draw_pile = []
+        self.active_hand = []
+        self.discard_pile = []
+        self.exhaust_pile = []
 
 class Enemy(Character):
     def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
@@ -821,7 +847,11 @@ def updates():
     WIN.blit(PIRATE_BACKGROUND, (0, 0))
     # enemy stuff
     if all_enemies_defeated(current_enemies):
-        turn = 1
+        for enemy in current_enemies:
+            enemy.reset_status()
+        p1.reset_status()
+        p1.reset_lists()
+        p1.floor_level += 1 # check that this isn't going up infinitely (if it is add in logic that says if current_enemies != [])
         screen_view = reward
     for enemy in current_enemies:
         if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
@@ -838,6 +868,11 @@ def updates():
             enemy.show_enemy_intention() # blits intentions on screen
     # p1 stuff
     if p1.hp <= 0:
+        for enemy in current_enemies:
+            enemy.reset_status()
+        p1.reset_status()
+        p1.reset_lists()
+        p1.floor_level = 1
         pygame.time.delay(3000)
         screen_view = death # not actually got anything for this yet
     else:
@@ -1036,8 +1071,6 @@ main()
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # do the rewards logic
-# do the logic for reset status
-# write logic for things like poison and all other status effects to actually do something
 # add in something so that when you hover over a status effect it will tell you the effect
 # to do the above i might need to turn the images into it's own class
 
