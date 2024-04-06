@@ -127,6 +127,7 @@ FRAIL = image('frail')
 POISON = image('poison')
 THORNS = image('thorns')
 ADDITIONAL_ENERGY = image('energy')
+ADDITIONAL_DRAW_IMG = image('drawing_cards')
 DRAW_PILE = image('draw_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 DISCARD_PILE = image('discard_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 EXHAUST_PILE = image('tombstone', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
@@ -136,8 +137,11 @@ END_TURN_IMG = image('end_turn', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 PIRATE_BACKGROUND = image('pirate_background', WIN_WIDTH, WIN_HEIGHT)
 ATTACK_INTENT = image('sword')
 DEBUFF_INTENT = image('rum')
+# POWER_UP_INTENT_IMG = image('')
 CARD_STEAL_INTENT_IMG = image('card_thief')
 ENERGY_STEAL_INTENT_IMG = image('sun_thief')
+# CURSE_INTENT_IMG = image('')
+STEERING_WHEEL_IMG = image('steering_wheel', DRAW_PILE_WIDTH * 1.5, DRAW_PILE_HEIGHT * 1.5)
 
 # sounds
 pass
@@ -329,8 +333,10 @@ class Character:
             status_effects.append({'image':POISON, 'number':self.poison})
         if self.thorns != 0:
             status_effects.append({'image':THORNS, 'number':self.thorns})
-        if self.additional_energy != 0:
-            status_effects.append({'image':ADDITIONAL_ENERGY, 'number':self.additional_energy})
+        if self.additional_energy + self.temp_additional_energy != 0:
+            status_effects.append({'image':ADDITIONAL_ENERGY, 'number':self.additional_energy + self.temp_additional_energy})
+        if self.new_turn_additional_draw + self.temp_additional_draw != 0:
+            status_effects.append({'image':ADDITIONAL_DRAW_IMG, 'number':self.new_turn_additional_draw + self.temp_additional_draw})
         
         status_counter = 0
         if len(status_effects) > 0:
@@ -748,6 +754,7 @@ class Button:
         self.rect = pygame.Rect(button_x, button_y, button_width, button_height)
         self.linked_list = linked_list
         self.is_clicked = False
+        self.is_hovered = False
 
     def draw_button(self):
         WIN.blit(self.image, self.rect)
@@ -849,6 +856,8 @@ def updates():
         card.blit_card(card_pos, len(p1.active_hand))
         card_pos += 1
     # buttons
+    if end_turn_button.is_hovered:
+        WIN.blit(STEERING_WHEEL_IMG, (RIGHT_BUTTON_X + DRAW_PILE_WIDTH/2 - DRAW_PILE_WIDTH*1.5/2, END_TURN_Y + DRAW_PILE_HEIGHT/2 - DRAW_PILE_HEIGHT*1.5/2))
     for button in pile_buttons:
         button.draw_button()
     energy_button.draw_button()
@@ -892,6 +901,13 @@ def main():
                             desc_rect = pygame.Rect(DESCRIPTION_X, DESCRIPTION_Y, DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT)
                             pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
                             pygame.display.update()
+
+                    if end_turn_button.rect.collidepoint(event.pos) and end_turn_button.is_hovered == False:
+                        end_turn_button.is_hovered = True
+                        update = True
+                    elif end_turn_button.rect.collidepoint(event.pos) == False and end_turn_button.is_hovered == True:
+                        end_turn_button.is_hovered = False
+                        update = True
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
@@ -1025,14 +1041,13 @@ main()
 # figure out how to show fixed enemy abilities (like the stregth debuff on death enemy)
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
-# add in a background image that can appear if you hover over the end turn button
 # do the rewards logic
 # do the logic for reset status
 # write logic for things like poison and all other status effects to actually do something
 # make it so that attack or block won't ever go below 0 (don't want a debuffed enemy giving p1 positive hp when attacking)
 # change the y coords for enemy status effects to be y + enemy height (like it is for intentions)
-# add in images for missing statuses (like less draw)
-# might need to change logic of what gets displayed on less energy/draw status to include permanent and temporary effects as one
+# add in something so that when you hover over a status effect it will tell you the effect
+# to do the above i might need to turn the images into it's own class
 
 # problems
 
