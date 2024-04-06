@@ -51,7 +51,7 @@ DESCRIPTION_Y = WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4
 P1_X = DESCRIPTION_X
 P1_Y = ENEMY1_Y = WIN_HEIGHT/9
 ENEMY1_X = DESCRIPTION_X + DESCRIPTION_WIDTH - ENEMY1_WIDTH
-EFFECTS_Y = P1_Y + CHARACTER_HEIGHT
+# EFFECTS_Y = P1_Y + CHARACTER_HEIGHT # changed to match the enemy y position
 LEFT_BUTTON_X = DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 RIGHT_BUTTON_X = WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 TOP_BUTTON_Y = CARDS_Y
@@ -347,10 +347,10 @@ class Character:
     def draw_status(self, image, number, counter):
         font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
         text_surface = font.render(str(number), True, BLACK)
-        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, EFFECTS_Y, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height, EFFECTS_WIDTH, EFFECTS_HEIGHT)
         text_rect = text_surface.get_rect(center=rect.center)
 
-        WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, EFFECTS_Y))
+        WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height))
         WIN.blit(text_surface, text_rect)
 
     def reduce_status(self):
@@ -393,11 +393,24 @@ class Character:
         self.card_steal_intent = False
         self.curse_intent = False
 
+    def base_dmg_plus_strength(self, base_dmg, strength):
+        if base_dmg + strength < 0:
+            return 0
+        else:
+            return base_dmg + strength
+        
+    def base_block_plus_dexterity(self, base_block, dexterity):
+        if base_block + dexterity < 0:
+            return 0
+        else:
+            return base_block + dexterity
+
 class Player(Character):
     def __init__(self, hp, starter_deck):
         super().__init__(hp)
         self.x_pos = P1_X
         self.y_pos = P1_Y
+        self.height = CHARACTER_HEIGHT
         self.energy = 3 + self.additional_energy + self.temp_additional_energy
         # self.new_turn_draw_cards = BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
         self.deck = starter_deck
@@ -406,7 +419,7 @@ class Player(Character):
         self.discard_pile = []
         self.exhaust_pile = []
         self.floor_level = 1
-        self.rect = pygame.Rect(self.x_pos, self.y_pos, CHARACTER_WIDTH, CHARACTER_HEIGHT)
+        self.rect = pygame.Rect(self.x_pos, self.y_pos, CHARACTER_WIDTH, self.height)
 
     def new_turn_draw_cards(self):
         return BASE_DRAW_CARDS + self.new_turn_additional_draw + self.temp_additional_draw
@@ -450,14 +463,14 @@ class Player(Character):
         self.hp -= card.player_hp
 
         if card.enemy_hp >= 1:
-            if enemy.block < round((card.enemy_hp + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER):
-                enemy.hp -= round((card.enemy_hp + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER) - enemy.block
+            if enemy.block < round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER):
+                enemy.hp -= round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER) - enemy.block
                 enemy.block = 0
             else:
-                enemy.block -= round((card.enemy_hp + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER)
+                enemy.block -= round(self.base_dmg_plus_strength(card.enemy_hp, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER)
         
         if card.block >= 1:
-            self.block += round((card.block + self.dexterity) * FRAIL_MULTIPLIER)
+            self.block += round(self.base_block_plus_dexterity(card.block, self.dexterity) * FRAIL_MULTIPLIER)
         self.shield += card.shield
         self.strength += card.player_strength
         enemy.strength -= card.enemy_strength
@@ -521,7 +534,7 @@ class Enemy(Character):
         else:
             WEAK_MULTIPLIER = 1
 
-        return round((base_dmg + self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
+        return round(self.base_dmg_plus_strength(base_dmg, self.strength) * VULNERABLE_MULTIPLIER * WEAK_MULTIPLIER * confidence_multiplier)
     
     def enemy_dmg_dealt(self, base_dmg, confidence_multiplier=1):
         if p1.block < self.enemy_attack(base_dmg, confidence_multiplier):
@@ -536,7 +549,7 @@ class Enemy(Character):
         else:
             FRAIL_MULTIPLIER = 1
         
-        return round((base_block + self.dexterity) * FRAIL_MULTIPLIER)
+        return round(self.base_block_plus_dexterity(base_block, self.dexterity) * FRAIL_MULTIPLIER)
     
     def block_checker(self):
         if self.block > 0:
@@ -1044,8 +1057,6 @@ main()
 # do the rewards logic
 # do the logic for reset status
 # write logic for things like poison and all other status effects to actually do something
-# make it so that attack or block won't ever go below 0 (don't want a debuffed enemy giving p1 positive hp when attacking)
-# change the y coords for enemy status effects to be y + enemy height (like it is for intentions)
 # add in something so that when you hover over a status effect it will tell you the effect
 # to do the above i might need to turn the images into it's own class
 
