@@ -129,6 +129,9 @@ POISON = image('poison')
 THORNS = image('thorns')
 ADDITIONAL_ENERGY = image('energy')
 ADDITIONAL_DRAW_IMG = image('drawing_cards')
+CONFIDENCE_IMG = image('confidence')
+COWARDICE_IMG = image('cowardice')
+DEATH_STRENGTH_IMG = image('milkshake')
 DRAW_PILE = image('draw_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 DISCARD_PILE = image('discard_pile', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
 EXHAUST_PILE = image('tombstone', DRAW_PILE_WIDTH, DRAW_PILE_HEIGHT)
@@ -298,6 +301,8 @@ class Character:
         self.temp_additional_draw = 0
         self.gold = 50
         self.status_effects = []
+        self.confidence_cowardice = False
+        self.death_strength = False
         # intentions
         self.attack_intent = False
         self.attack_actual = 0
@@ -317,6 +322,15 @@ class Character:
     
     def update_status(self):
         self.status_effects = []
+        if self.confidence_cowardice == True:
+            # if self.block > 0:
+            if self.attack_actual == self.actual_attack(p1, 4, 2):
+                self.status_effects.append({'image':CONFIDENCE_IMG, 'number':''})
+            # elif self.block == 0:
+            elif self.attack_actual == self.actual_attack(p1, 4, 0.5):
+                self.status_effects.append({'image':COWARDICE_IMG, 'number':''})
+        if self.death_strength == True:
+            self.status_effects.append({'image':DEATH_STRENGTH_IMG, 'number':2})
         if self.block != 0:
             self.status_effects.append({'image':BLOCK, 'number':self.block})
         if self.shield != 0:
@@ -413,6 +427,18 @@ class Character:
             line1 = 'ADDITIONAL DRAW'
             line2 = f'Increases the number of cards drawn by {status["number"]} next turn'
             line3 = 'Ending the turn has no effect on additional draw'
+        elif status['image'] == CONFIDENCE_IMG:
+            line1 = 'CONFIDENCE'
+            line2 = f'Doubles the attack power'
+            line3 = 'Confidence turns to cowardice when there\'s no block'
+        elif status['image'] == COWARDICE_IMG:
+            line1 = 'COWARDICE'
+            line2 = f'Halves the attack power'
+            line3 = 'Without block this guy doesn\'t seem so tough'
+        elif status['image'] == DEATH_STRENGTH_IMG:
+            line1 = 'DEATH PENALTY'
+            line2 = f'On death reduce the player\'s strength by {status["number"]}'
+            line3 = 'Ending the turn has no effect on death penalty'
 
         text_surface1 = font.render(line1, True, BLACK)
         text_surface2 = font.render(line2, True, BLACK)
@@ -621,7 +647,7 @@ class Player(Character):
         self.exhaust_pile = []
 
 class Enemy(Character):
-    def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False):
+    def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False, confidence_cowardice=False):
         super().__init__(hp)
         global turn
         self.name = name
@@ -632,6 +658,7 @@ class Enemy(Character):
         self.height = height
         self.rect = pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
         self.death_strength = death_strength # if true then when an enemy dies it will apply -2 str and self.death_str = False
+        self.confidence_cowardice = confidence_cowardice
         self.has_block = False
         self.ran_num = random.randint(1, 100)
     
@@ -830,9 +857,9 @@ p1 = Player(60, starter_deck)
 small_fights = []
 boss_fights = []
 main_boss_fights = []
-confidence_enemy_1 = Enemy('confidence', 10, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_2 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
-confidence_enemy_3 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2)
+confidence_enemy_1 = Enemy('confidence', 10, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
+confidence_enemy_2 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
+confidence_enemy_3 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
 small_fights.append([confidence_enemy_1, confidence_enemy_2, confidence_enemy_3])
 less_draw_enemy = Enemy('less_draw', 25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
 less_energy_enemy = Enemy('less_energy', 25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
@@ -940,11 +967,11 @@ def updates():
         if enemy.hp > 0:
             enemy.draw_enemy()
             enemy.draw_hp()
-            enemy.update_status()
             if player_turn: # stops it from resetting block to zero and then checking it at the end of the turn
                 enemy.block_checker()
             enemy.reset_intent()
             enemy.enemy_intentions() # works out enemy intentions
+            enemy.update_status()
             enemy.show_enemy_intention() # blits intentions on screen
     # p1 stuff
     if p1.hp <= 0:
@@ -1164,11 +1191,11 @@ main()
 
 # make the hp into a health bar which goes blue with block (like sts), meaning i'll have to remove the block from the current list
 # find a few different pirate themed background images for fights to happen in
-# figure out how to show fixed enemy abilities (like the stregth debuff on death enemy)
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # do the rewards logic
 # add in something so that when you hover over an enemy intent it will tell you the intent
+# fix the blue bar that gets left when hovering over a card
 
 # problems
 
