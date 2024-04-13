@@ -320,7 +320,7 @@ class Character:
         text_rect = text_surface.get_rect(center=self.rect.center)
         WIN.blit(text_surface, text_rect)
     
-    def update_status(self):
+    def blit_status(self):
         self.status_effects = []
         if self.confidence_cowardice == True:
             # if self.block > 0:
@@ -369,15 +369,6 @@ class Character:
                 WIN.blit(status['image'], (self.x_pos + EFFECTS_WIDTH*status_counter, self.y_pos + self.height))
                 WIN.blit(text_surface, text_rect)
                 status_counter +=1
-    
-    # def draw_status(self, image, number, counter):
-    #     font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
-    #     text_surface = font.render(str(number), True, BLACK)
-    #     rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height, EFFECTS_WIDTH, EFFECTS_HEIGHT)
-    #     text_rect = text_surface.get_rect(center=rect.center)
-
-    #     WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos + self.height))
-    #     WIN.blit(text_surface, text_rect)
 
     def blit_status_description(self, status):
         rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*status['counter'] + EFFECTS_WIDTH/2 - STATUS_DESCRIPTION_WIDTH/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, STATUS_DESCRIPTION_WIDTH, STATUS_DESCRIPTION_HEIGHT)
@@ -661,6 +652,7 @@ class Enemy(Character):
         self.confidence_cowardice = confidence_cowardice
         self.has_block = False
         self.ran_num = random.randint(1, 100)
+        self.intention_list = []
     
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
@@ -671,19 +663,60 @@ class Enemy(Character):
         else:
             self.has_block = False
 
-    def draw_intention(self, image, counter):
-        WIN.blit(image, (self.x_pos + EFFECTS_WIDTH*counter, self.y_pos - EFFECTS_HEIGHT)) # always blit the image
-
-        if image == ATTACK_INTENT:
+    def blit_enemy_intention(self): # will need to update the enemy intention first
+        self.intention_list = []
+        if self.attack_intent == True:
             num = self.attack_actual
-        elif image == BLOCK:
+            self.intention_list.append({'image': ATTACK_INTENT, 'number': num})
+        if self.block_intent == True:
             num = self.block_actual
-        if image == ATTACK_INTENT or image == BLOCK: # only blit the number for att or block
-            font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
-            text_surface = font.render(str(num), True, BLACK)
-            rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*counter, self.y_pos - EFFECTS_HEIGHT, EFFECTS_WIDTH, EFFECTS_HEIGHT)
-            text_rect = text_surface.get_rect(center=rect.center)
-            WIN.blit(text_surface, text_rect)
+            self.intention_list.append({'image': BLOCK, 'number': num})
+        if self.debuff_intent == True:
+            self.intention_list.append({'image': DEBUFF_INTENT, 'number':''})
+        # if self.power_up_intent == True:
+        if self.energy_steal_intent == True:
+            self.intention_list.append({'image': ENERGY_STEAL_INTENT_IMG, 'number':''})
+        if self.card_steal_intent == True:
+            self.intention_list.append({'image': CARD_STEAL_INTENT_IMG, 'number':''})
+        # if self.curse_intent == True:
+
+        intent_counter = 0
+        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+        if len(self.intention_list) > 0:
+            for intent in self.intention_list:
+                text_surface = font.render(str(intent['number']), True, BLACK)
+                rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent_counter, self.y_pos - EFFECTS_HEIGHT, EFFECTS_WIDTH, EFFECTS_HEIGHT)
+                text_rect = text_surface.get_rect(center=rect.center)
+                intent['rect'] = rect
+                intent['counter'] = intent_counter
+                intent['hovered'] = False
+
+                WIN.blit(intent['image'], (self.x_pos + EFFECTS_WIDTH*intent_counter, self.y_pos - EFFECTS_HEIGHT))
+                if intent['image'] == ATTACK_INTENT or intent['image'] == BLOCK: # only blit the number for att or block
+                    WIN.blit(text_surface, text_rect)
+                intent_counter +=1
+
+    def blit_intention_description(self, intent):
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - STATUS_DESCRIPTION_WIDTH/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, STATUS_DESCRIPTION_WIDTH, STATUS_DESCRIPTION_HEIGHT)
+        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+
+        if intent['image'] == ATTACK_INTENT:
+            line = f'Enemy intends to attack for {intent["number"]} damage'
+        elif intent['image'] == BLOCK:
+            line = f'Enemy intends to block for {intent["number"]}'
+        elif intent['image'] == DEBUFF_INTENT:
+            line = f'Enemy intends to apply a debuff to you'
+        elif intent['image'] == ENERGY_STEAL_INTENT_IMG:
+            line = f'Enemy intends to steal energy from you'
+        elif intent['image'] == CARD_STEAL_INTENT_IMG:
+            line = f'Enemy intends to steal a card draw from you'
+
+        text_surface = font.render(line, True, BLACK)
+        text_rect = text_surface.get_rect(center=rect.center)
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - text_rect.width/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, text_rect.width, STATUS_DESCRIPTION_HEIGHT)
+        pygame.draw.rect(WIN, PINK, rect)
+        WIN.blit(text_surface, text_rect)
+        pygame.display.update()
 
     def enemy_moveset(self):
         if self.hp > 0: # if still alive
@@ -699,30 +732,6 @@ class Enemy(Character):
                 self.vulnerable_death_enemy_turns()
             elif self.name == 'frail_death':
                 self.frail_death_enemy_turns()
-
-    def show_enemy_intention(self): # will need to update the enemy intention first
-        counter = 0
-        if self.attack_intent == True:
-            self.draw_intention(ATTACK_INTENT, counter)
-            counter += 1
-        if self.block_intent == True:
-            self.draw_intention(BLOCK, counter)
-            counter += 1
-        if self.debuff_intent == True:
-            self.draw_intention(DEBUFF_INTENT, counter)
-            counter += 1
-        # if self.power_up_intent == True:
-        #     self.draw_intention(XXXXX, counter) # need to get images for all of these things
-        #     counter += 1
-        if self.energy_steal_intent == True:
-            self.draw_intention(ENERGY_STEAL_INTENT_IMG, counter)
-            counter += 1
-        if self.card_steal_intent == True:
-            self.draw_intention(CARD_STEAL_INTENT_IMG, counter)
-            counter += 1
-        # if self.curse_intent == True:
-        #     self.draw_intention(XXXXX, counter)
-        #     counter += 1
 
     def enemy_intentions(self):
         if self.hp > 0: # if still alive
@@ -971,8 +980,8 @@ def updates():
                 enemy.block_checker()
             enemy.reset_intent()
             enemy.enemy_intentions() # works out enemy intentions
-            enemy.update_status()
-            enemy.show_enemy_intention() # blits intentions on screen
+            enemy.blit_status()
+            enemy.blit_enemy_intention() # blits intentions on screen
     # p1 stuff
     if p1.hp <= 0:
         for enemy in current_enemies:
@@ -985,7 +994,7 @@ def updates():
     else:
         p1.draw_player()
         p1.draw_hp()
-        p1.update_status()
+        p1.blit_status()
     # cards
     card_pos = 1
     for card in p1.active_hand:
@@ -1061,6 +1070,13 @@ def main():
                             elif status['rect'].collidepoint(event.pos) == False and status['hovered'] == True:
                                 status['hovered'] = False
                                 update = True
+                        for intent in enemy.intention_list:
+                            if intent['rect'].collidepoint(event.pos) and intent['hovered'] == False:
+                                intent['hovered'] = True
+                                enemy.blit_intention_description(intent)
+                            elif intent['rect'].collidepoint(event.pos) == False and intent['hovered'] == True:
+                                intent['hovered'] = False
+                                update = True
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
@@ -1106,6 +1122,9 @@ def main():
                     
                     # clicking end turn button
                     if end_turn_button.rect.collidepoint(event.pos):
+                        a_card_selected = False
+                        for card in p1.active_hand:
+                            card.is_selected = False
                         for i in range(len(p1.active_hand)):
                             p1.discard_pile.append(p1.active_hand[0])
                             p1.active_hand.remove(p1.active_hand[0])
@@ -1194,8 +1213,8 @@ main()
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # do the rewards logic
-# add in something so that when you hover over an enemy intent it will tell you the intent
 # fix the blue bar that gets left when hovering over a card
+# say how much damage the attack will do when you've clicked on a card and hover over an enemy
 
 # problems
 
