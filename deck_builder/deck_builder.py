@@ -43,6 +43,7 @@ DISPLAY_GAP_WIDTH = (DESCRIPTION_WIDTH - CARD_WIDTH*DISPLAY_CARDS) / (DISPLAY_CA
 DISPLAY_GAP_HEIGHT = WIN_HEIGHT/5 - CARD_HEIGHT/2
 STATUS_DESCRIPTION_WIDTH = CARD_WIDTH
 STATUS_DESCRIPTION_HEIGHT = CARD_HEIGHT/2
+INTENT_DESCRIPTION_HEIGHT = CARD_HEIGHT/4
 
 # x and y co-ordinates
 # CARDS_X is a bit more complicated
@@ -152,7 +153,7 @@ pass
 
 # classes
 class Card:
-    def __init__(self, name, energy, rarity, type, short_description, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
+    def __init__(self, name, energy, rarity, type, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
         global card_id_counter
         self.id = card_id_counter
         card_id_counter += 1
@@ -184,13 +185,22 @@ class Card:
         self.thorns = thorns
         self.locked = locked
         self.player_energy = player_energy
-        self.colour = BLUE
-        self.hover_colour = BLACK
+        if self.rarity == rare:
+            self.colour = YELLOW
+        elif self.rarity == uncommon:
+            self.colour = LIGHT_BLUE
+        elif self.rarity == common:
+            self.colour = ORANGE
+        elif self.rarity == starter:
+            self.colour = GREEN
+        elif self.rarity == curse:
+            self.colour = BLACK
+        self.hover_colour = PINK
         self.text_colour = WHITE
         self.font = pygame.font.Font(None, int(CARD_WIDTH/6))  # customize the font and size
         self.is_hovered = False
         self.is_selected = False
-        self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust_other_cards=self.exhaust_other_cards, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
+        # self.short_description = short_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust_other_cards=self.exhaust_other_cards, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
         self.long_description = long_description.format(player_hp=self.player_hp, enemy_hp=self.enemy_hp, block=self.block, shield=self.shield, player_strength=self.player_strength, enemy_strength=self.enemy_strength, player_dexterity=self.player_dexterity, enemy_dexterity=self.enemy_dexterity, player_weak=self.player_weak, enemy_weak=self.enemy_weak, player_vulnerable=self.player_vulnerable, enemy_vulnerable=self.enemy_vulnerable, player_frail=self.player_frail, enemy_frail=self.enemy_frail, player_poison=self.player_poison, enemy_poison=self.enemy_poison, draw_extra_card=self.draw_extra_card, discard=self.discard, exhaust_other_cards=self.exhaust_other_cards, thorns=self.thorns, locked=self.locked, player_energy=self.player_energy)
         self.sel_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3/2 + CARD_WIDTH*2/3, CARDS_Y, CARD_WIDTH - 2, CARD_HEIGHT) # don't understand why this is necessary, but it seems to have fixed the sel.rect issue that occassionally popped up
         list_of_all_cards.append(self)
@@ -262,24 +272,46 @@ class Card:
         WIN.blit(text_surface, text_rect)
 
 class AttackCard(Card):
-    def __init__(self, name, energy, rarity, type, enemy_select, short_description, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
-        super().__init__(name, energy, rarity, type, short_description, long_description, picture, exhausts, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust_other_cards, thorns, locked, player_energy)
+    def __init__(self, name, energy, rarity, type, enemy_select, long_description, picture=None, exhausts=False, player_hp=0, enemy_hp=0, block=0, shield=0, player_strength=0, enemy_strength=0, player_dexterity=0, enemy_dexterity=0, player_weak=0, enemy_weak=0, player_vulnerable=0, enemy_vulnerable=0, player_frail=0, enemy_frail=0, player_poison=0, enemy_poison=0, draw_extra_card=0, discard=0, exhaust_other_cards=0, thorns=0, locked=0, player_energy=0):
+        super().__init__(name, energy, rarity, type, long_description, picture, exhausts, player_hp, enemy_hp, block, shield, player_strength, enemy_strength, player_dexterity, enemy_dexterity, player_weak, enemy_weak, player_vulnerable, enemy_vulnerable, player_frail, enemy_frail, player_poison, enemy_poison, draw_extra_card, discard, exhaust_other_cards, thorns, locked, player_energy)
         self.type = attack
         self.enemy_select = enemy_select
 
 # card instances
-punch = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch2 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch3 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch4 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-punch5 = AttackCard('Punch', 1, starter, attack, select, 'Deal {enemy_hp} dmg.', 'Punch for {enemy_hp} base damage', enemy_hp=5)
-parry = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry2 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry3 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block.', 'Gain {block} block', block=4)
-jab = AttackCard('Jab', 0, starter, attack, select, 'Deal {enemy_hp} dmg.\nApply {enemy_vulnerable} vulnerable.', 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
-test = Card('Test', 0, starter, power, 'test', 'test', exhausts=True, player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
+# starter
+punch = AttackCard('Punch', 1, starter, attack, select, 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch2 = AttackCard('Punch', 1, starter, attack, select, 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch3 = AttackCard('Punch', 1, starter, attack, select, 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch4 = AttackCard('Punch', 1, starter, attack, select, 'Punch for {enemy_hp} base damage', enemy_hp=5)
+punch5 = AttackCard('Punch', 1, starter, attack, select, 'Punch for {enemy_hp} base damage', enemy_hp=5)
+parry = Card('Parry', 1, starter, skill, 'Gain {block} block', block=4)
+parry2 = Card('Parry', 1, starter, skill, 'Gain {block} block', block=4)
+parry3 = Card('Parry', 1, starter, skill, 'Gain {block} block', block=4)
+parry4 = Card('Parry', 1, starter, skill, 'Gain {block} block', block=4)
+parry5 = Card('Parry', 1, starter, skill, 'Gain {block} block', block=4)
+jab = AttackCard('Jab', 0, starter, attack, select, 'Jab for {enemy_hp} base damage and apply {enemy_vulnerable} vulnerable', enemy_hp=3, enemy_vulnerable=2)
+test = Card('Test', 0, starter, power, 'test', exhausts=True, player_dexterity=2, player_vulnerable=2, player_strength=1, player_poison=4)
+# common
+# helmet_throw = AttackCard('Helmet Throw', 1, common, attack, select, 'Deal {enemy_hp} damage, lose 5 block or lose one health for every block you don\'t have', enemy_hp=15, block=) # this needs a function that would reduce block or hp
+blitz = Card('Blitz', 0, common, skill, 'Play first. Gain {block} block, all damage this turn is doubled, can\'t play skill cards this turn', block=5) # this needs an attack multiplier
+duel = AttackCard('Duel', 1, common, attack, select, 'Deal {enemy_hp} damage, draw {draw_extra_card} card', enemy_hp=8, draw_extra_card=1)
+devour = Card('Devour', 2, common, skill, 'Gain {block} block, exhaust {exhaust_other_cards} card in your hand, gain x energy of that card', block=10, exhaust_other_cards=1) # figure out how to gain energy of another card
+rock = AttackCard('Rock', 0, common, attack, select, 'Apply {enemy_vulnerable} vulnerable, draw {draw_extra_card} card. Exhaust', enemy_vulnerable=1, draw_extra_card=1, exhausts=True)
+paper = AttackCard('Paper', 0, common, attack, select, 'Apply {enemy_frail} vulnerable, draw {draw_extra_card} card. Exhaust', enemy_frail=1, draw_extra_card=1, exhausts=True)
+scissors = AttackCard('Scissors', 0, common, attack, select, 'Apply {enemy_weak} vulnerable, draw {draw_extra_card} card. Exhaust', enemy_weak=1, draw_extra_card=1, exhausts=True)
+wild_swing = AttackCard('Wild swing', 1, common, attack, all, 'Deal {enemy_hp} damage to all enemies', enemy_hp=5)
+# uncommon
+# rando = Card('Random', 1, uncommon, skill, 'Play a random card from your draw pile', ) # need a random card function
+# training_camp = Card('Training camp', 1, uncommon, skill, 'Gain 1 block for every skill card played this combat') # need a training camp function
+the_one = Card('The one', 1, uncommon, skill, 'Lose {player_hp} hp, suffer {player_vulnerable} vulnerable, suffer {player_weak} weak, gain {player_strength} strength, gain {player_dexterity} dexterity, gain {player_energy} energy', player_hp=1, player_vulnerable=1, player_weak=1, player_strength=1, player_dexterity=1, player_energy=1)
+shop_token = AttackCard('Shop token', 1, uncommon, attack, select, 'Deal 1 damage. Can be traded for any card at a shop', enemy_hp=1)
+reinforced = Card('Reinforced', 2, uncommon, skill, 'Gain {block} block, draw {draw_extra_card} cards', block=10, draw_extra_card=3)
+cuts_and_bruises = AttackCard('Cuts and bruises', 1, uncommon, attack, select, 'Deal {enemy_hp} damage, lose {player_hp} hp', enemy_hp=15, player_hp=2)
+# rare
+# protein = Card('Protein', 1, rare, skill, 'Triple your strength. Exhaust', player_strength=p1.strength*3)
+powerful = Card('Powerful', 1, rare, power, 'Gain {player_strength} strength', player_strength=5)
+# curse
+walled_in = Card('Walled in', '', curse, curse, 'All enemies gain 1 block whenever a card is played this turn', block=1) # need to change this to enemy block, make it unplayable and apply it to all
 
 
 class Character:
@@ -637,6 +669,15 @@ class Player(Character):
         self.discard_pile = []
         self.exhaust_pile = []
 
+    def blit_actual_attack_dmg(self, card, enemy):
+        desc_rect = pygame.Rect(WIN_WIDTH/2 - CARD_WIDTH/2 - CARD_WIDTH/3 - CARD_WIDTH*2/3*MAX_CARDS_IN_HAND/2 + CARD_WIDTH*2/3*1, WIN_HEIGHT*4/5 - CARD_HEIGHT/2 - CARD_HEIGHT/4, CARD_WIDTH*2/3*9 + CARD_WIDTH, CARD_HEIGHT/8)
+        pygame.draw.rect(WIN, BLUE, desc_rect)
+        font = pygame.font.Font(None, int(CARD_WIDTH/6))
+        text_surface = font.render(f'{self.actual_attack(enemy, card.enemy_hp)} damage', True, WHITE)
+        text_rect = text_surface.get_rect(center=desc_rect.center)
+        WIN.blit(text_surface, text_rect)
+        pygame.display.update()
+
 class Enemy(Character):
     def __init__(self, name, hp, starting_block, x_pos, y_pos, width, height, death_strength=False, confidence_cowardice=False):
         super().__init__(hp)
@@ -653,6 +694,7 @@ class Enemy(Character):
         self.has_block = False
         self.ran_num = random.randint(1, 100)
         self.intention_list = []
+        self.is_hovered = False
     
     def draw_enemy(self):
         pygame.draw.rect(WIN, ORANGE, self.rect)
@@ -697,7 +739,7 @@ class Enemy(Character):
                 intent_counter +=1
 
     def blit_intention_description(self, intent):
-        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - STATUS_DESCRIPTION_WIDTH/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, STATUS_DESCRIPTION_WIDTH, STATUS_DESCRIPTION_HEIGHT)
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - STATUS_DESCRIPTION_WIDTH/2, self.y_pos + EFFECTS_HEIGHT/2, STATUS_DESCRIPTION_WIDTH, INTENT_DESCRIPTION_HEIGHT)
         font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
 
         if intent['image'] == ATTACK_INTENT:
@@ -713,7 +755,7 @@ class Enemy(Character):
 
         text_surface = font.render(line, True, BLACK)
         text_rect = text_surface.get_rect(center=rect.center)
-        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - text_rect.width/2, self.y_pos + self.height - STATUS_DESCRIPTION_HEIGHT - EFFECTS_HEIGHT/2, text_rect.width, STATUS_DESCRIPTION_HEIGHT)
+        rect = pygame.Rect(self.x_pos + EFFECTS_WIDTH*intent['counter'] + EFFECTS_WIDTH/2 - text_rect.width/2, self.y_pos + EFFECTS_HEIGHT/2, text_rect.width, INTENT_DESCRIPTION_HEIGHT)
         pygame.draw.rect(WIN, PINK, rect)
         WIN.blit(text_surface, text_rect)
         pygame.display.update()
@@ -1036,25 +1078,31 @@ def main():
 
             elif event.type == pygame.MOUSEMOTION:
                 if screen_view == fight:
-                    for card in p1.active_hand:
+                    for card in p1.active_hand: # blits description of the card
                         if card.sel_rect.collidepoint(event.pos) and card.is_hovered == False:
                             card.is_hovered = True
                             card.draw_description()
                             pygame.display.update()
                         elif card.sel_rect.collidepoint(event.pos) == False and card.is_hovered:
                             card.is_hovered = False
-                            desc_rect = pygame.Rect(DESCRIPTION_X, DESCRIPTION_Y, DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT)
-                            pygame.draw.rect(WIN, LIGHT_BLUE, desc_rect)
-                            pygame.display.update()
+                            update = True
+                        
+                        for enemy in current_enemies: # blits the actual damage
+                            if card.is_selected and enemy.rect.collidepoint(event.pos) and enemy.is_hovered == False and card.enemy_hp > 0 and enemy.hp > 0:
+                                enemy.is_hovered = True
+                                p1.blit_actual_attack_dmg(card, enemy)
+                            elif card.is_selected and enemy.rect.collidepoint(event.pos) == False and enemy.is_hovered == True and card.enemy_hp > 0 and enemy.hp > 0:
+                                enemy.is_hovered = False
+                                update = True
 
-                    if end_turn_button.rect.collidepoint(event.pos) and end_turn_button.is_hovered == False:
+                    if end_turn_button.rect.collidepoint(event.pos) and end_turn_button.is_hovered == False: # blits a background image behind the button
                         end_turn_button.is_hovered = True
                         update = True
                     elif end_turn_button.rect.collidepoint(event.pos) == False and end_turn_button.is_hovered == True:
                         end_turn_button.is_hovered = False
                         update = True
 
-                    for status in p1.status_effects:
+                    for status in p1.status_effects: # show player status descriptions when hovered
                         if status['rect'].collidepoint(event.pos) and status['hovered'] == False:
                             status['hovered'] = True
                             p1.blit_status_description(status)
@@ -1062,21 +1110,22 @@ def main():
                             status['hovered'] = False
                             update = True
 
-                    for enemy in current_enemies:
-                        for status in enemy.status_effects:
-                            if status['rect'].collidepoint(event.pos) and status['hovered'] == False:
-                                status['hovered'] = True
-                                enemy.blit_status_description(status)
-                            elif status['rect'].collidepoint(event.pos) == False and status['hovered'] == True:
-                                status['hovered'] = False
-                                update = True
-                        for intent in enemy.intention_list:
-                            if intent['rect'].collidepoint(event.pos) and intent['hovered'] == False:
-                                intent['hovered'] = True
-                                enemy.blit_intention_description(intent)
-                            elif intent['rect'].collidepoint(event.pos) == False and intent['hovered'] == True:
-                                intent['hovered'] = False
-                                update = True
+                    for enemy in current_enemies: # show enemy status and intent descriptions when hovered
+                        if enemy.hp > 0:
+                            for status in enemy.status_effects:
+                                if status['rect'].collidepoint(event.pos) and status['hovered'] == False:
+                                    status['hovered'] = True
+                                    enemy.blit_status_description(status)
+                                elif status['rect'].collidepoint(event.pos) == False and status['hovered'] == True:
+                                    status['hovered'] = False
+                                    update = True
+                            for intent in enemy.intention_list:
+                                if intent['rect'].collidepoint(event.pos) and intent['hovered'] == False:
+                                    intent['hovered'] = True
+                                    enemy.blit_intention_description(intent)
+                                elif intent['rect'].collidepoint(event.pos) == False and intent['hovered'] == True:
+                                    intent['hovered'] = False
+                                    update = True
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
@@ -1213,8 +1262,8 @@ main()
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
 # do the rewards logic
-# fix the blue bar that gets left when hovering over a card
-# say how much damage the attack will do when you've clicked on a card and hover over an enemy
+# change the cards somehow to show differences in skill, attack and power cards
+# make a card unplayable
 
 # problems
 
