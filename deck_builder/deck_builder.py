@@ -17,7 +17,10 @@ BASE_ENERGY = 3
 turn = 1
 screen_view = 'fight'
 update = True
-player_turn = True
+player_turn = False
+card_rewards_list = []
+gold_reward = 0
+card_taken = False
 DISPLAY_CARDS = 6 # determines how many cards in a row get shown when clicking on draw pile etc
 current_enemies = []
 list_of_all_cards = []
@@ -44,6 +47,7 @@ DISPLAY_GAP_HEIGHT = WIN_HEIGHT/5 - CARD_HEIGHT/2
 STATUS_DESCRIPTION_WIDTH = CARD_WIDTH
 STATUS_DESCRIPTION_HEIGHT = CARD_HEIGHT/2
 INTENT_DESCRIPTION_HEIGHT = CARD_HEIGHT/4
+GAP_WIDTH = CARD_WIDTH/2
 
 # x and y co-ordinates
 # CARDS_X is a bit more complicated
@@ -147,6 +151,8 @@ CARD_STEAL_INTENT_IMG = image('card_thief')
 ENERGY_STEAL_INTENT_IMG = image('sun_thief')
 # CURSE_INTENT_IMG = image('')
 STEERING_WHEEL_IMG = image('steering_wheel', DRAW_PILE_WIDTH * 1.5, DRAW_PILE_HEIGHT * 1.5)
+BUTTON_OUTLINE_IMG = image('button_outline', CARD_WIDTH*1.5, CARD_HEIGHT/3)
+LOOT_BACKGROUND_IMG = image('loot_background', WIN_WIDTH*3/4, WIN_HEIGHT*4/5)
 
 # sounds
 pass
@@ -250,6 +256,15 @@ class Card:
         pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
         self.draw_text()
         self.draw_energy_cost(x, y)
+    
+    def blit_card_reward_options(self, position, total_cards):
+        x = WIN_WIDTH/2 - CARD_WIDTH*total_cards/2 + CARD_WIDTH*position - GAP_WIDTH*(total_cards - 1)/2 + GAP_WIDTH*(position)
+        y = WIN_HEIGHT/4
+        self.rect = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
+        pygame.draw.rect(WIN, self.colour, self.rect)
+        pygame.draw.rect(WIN, self.hover_colour, self.rect, 8)  # Border
+        self.draw_text()
+        self.draw_energy_cost(x, y)
 
     def draw_text(self):
         text_surface = self.font.render(self.name, True, self.text_colour)
@@ -310,6 +325,7 @@ cuts_and_bruises = AttackCard('Cuts and bruises', 1, uncommon, attack, select, '
 # rare
 # protein = Card('Protein', 1, rare, skill, 'Triple your strength. Exhaust', player_strength=p1.strength*3)
 powerful = Card('Powerful', 1, rare, power, 'Gain {player_strength} strength', player_strength=5)
+extension = Card('Extension', 0, rare, skill, 'Gain {player_energy} energy, draw {draw_extra_card} cards. Exhaust', player_energy=2, draw_extra_card=3, exhausts=True)
 # curse
 walled_in = Card('Walled in', '', curse, curse, 'All enemies gain 1 block whenever a card is played this turn', block=1) # need to change this to enemy block, make it unplayable and apply it to all
 
@@ -933,9 +949,11 @@ class Button:
         self.linked_list = linked_list
         self.is_clicked = False
         self.is_hovered = False
+        self.text = ''
 
     def draw_button(self):
         WIN.blit(self.image, self.rect)
+        self.blit_text()
         if self.name == 'energy_button':
             p1.draw_energy()
         elif self.name == 'draw_pile_button' or self.name == 'discard_pile_button' or self.name == 'exhaust_pile_button' or self.name == 'entire_deck_button':
@@ -961,6 +979,29 @@ class Button:
                     card_number += 1
         
         pygame.display.update()
+    
+    def blit_text(self):
+        if self.name == 'gold_reward_button':
+            self.text = f'{gold_reward} gold'
+        elif self.name == 'select_card_reward_button':
+            self.text = 'Choose a card'
+        elif self.name == 'back_button':
+            self.text = 'Back'
+        elif self.name == 'skip_rewards_button':
+            self.text = 'Skip rewards'
+        
+        font = pygame.font.Font(None, int(EFFECTS_WIDTH*2/3))
+        text_surface = font.render(self.text, True, WHITE)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        WIN.blit(text_surface, text_rect)
+
+    def update_linked_list(self):
+        if self.name == 'draw_pile_button':
+            self.linked_list = p1.draw_pile
+        elif self.name == 'discard_pile_button':
+            self.linked_list = p1.discard_pile
+        elif self.name == 'exhaust_pile_button':
+            self.linked_list = p1.exhaust_pile
 
 # button instances
 draw_pile_button = Button('draw_pile_button', DRAW_PILE, LEFT_BUTTON_X, BOTTOM_BUTTON_Y, linked_list=p1.draw_pile)
@@ -969,6 +1010,10 @@ exhaust_pile_button = Button('exhaust_pile_button', EXHAUST_PILE, RIGHT_BUTTON_X
 energy_button = Button('energy_button', ENERGY, LEFT_BUTTON_X, TOP_BUTTON_Y)
 entire_deck_button = Button('entire_deck_button', ENTIRE_DECK, WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2, WIN_HEIGHT - CARDS_Y - CARD_HEIGHT, linked_list=p1.deck)
 end_turn_button = Button('end_turn_button', END_TURN_IMG, RIGHT_BUTTON_X, END_TURN_Y)
+select_card_reward_button = Button('select_card_reward_button', BUTTON_OUTLINE_IMG, WIN_WIDTH/2 - CARD_WIDTH*1.5/2, WIN_HEIGHT/4, CARD_WIDTH*1.5, CARD_HEIGHT/3)
+gold_reward_button = Button('gold_reward_button', BUTTON_OUTLINE_IMG, WIN_WIDTH/2 - CARD_WIDTH*1.5/2, WIN_HEIGHT/2, CARD_WIDTH*1.5, CARD_HEIGHT/3)
+back_button = Button('back_button', BUTTON_OUTLINE_IMG, WIN_WIDTH/2 - CARD_WIDTH*1.5/2, WIN_HEIGHT*3/4, CARD_WIDTH*1.5, CARD_HEIGHT/3)
+skip_rewards_button = Button('skip_rewards_button', BUTTON_OUTLINE_IMG, WIN_WIDTH/2 - CARD_WIDTH*1.5/2, WIN_HEIGHT*3/4, CARD_WIDTH*1.5, CARD_HEIGHT/3)
 pile_buttons = []
 pile_buttons.append(draw_pile_button)
 pile_buttons.append(discard_pile_button)
@@ -1002,30 +1047,10 @@ def updates():
     global turn
     global screen_view
     global update
+    global card_taken
     WIN.blit(PIRATE_BACKGROUND, (0, 0))
-    # enemy stuff
-    if all_enemies_defeated(current_enemies):
-        for enemy in current_enemies:
-            enemy.reset_status()
-        p1.reset_status()
-        p1.reset_lists()
-        p1.floor_level += 1 # check that this isn't going up infinitely (if it is add in logic that says if current_enemies != [])
-        screen_view = reward
-    for enemy in current_enemies:
-        if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
-            p1.strength -= 2
-            enemy.death_strength = False
-        if enemy.hp > 0:
-            enemy.draw_enemy()
-            enemy.draw_hp()
-            if player_turn: # stops it from resetting block to zero and then checking it at the end of the turn
-                enemy.block_checker()
-            enemy.reset_intent()
-            enemy.enemy_intentions() # works out enemy intentions
-            enemy.blit_status()
-            enemy.blit_enemy_intention() # blits intentions on screen
-    # p1 stuff
-    if p1.hp <= 0:
+    
+    if p1.hp <= 0: # if p1 is dead...
         for enemy in current_enemies:
             enemy.reset_status()
         p1.reset_status()
@@ -1033,24 +1058,116 @@ def updates():
         p1.floor_level = 1
         pygame.time.delay(3000)
         screen_view = death # not actually got anything for this yet
-    else:
+        update = True
+        
+    elif all_enemies_defeated(current_enemies): # if all enemies are dead...
+        card_reward(current_enemies)
+        for enemy in current_enemies:
+            enemy.reset_status()
+        p1.reset_status()
+        p1.reset_lists()
+        p1.floor_level += 1 # check that this isn't going up infinitely (if it is add in logic that says if current_enemies != [])
+        screen_view = reward
+        card_taken = False
+        update = True
+
+    else: # if p1 and enemies are still alive then...
+        # enemy stuff
+        for enemy in current_enemies:
+            if enemy.hp <= 0 and enemy.death_strength == True: # if p1 kills an enemy that reduces p1 str on death
+                p1.strength -= 2
+                enemy.death_strength = False
+            if enemy.hp > 0:
+                enemy.draw_enemy()
+                enemy.draw_hp()
+                if player_turn: # stops it from resetting block to zero and then checking it at the end of the turn
+                    enemy.block_checker()
+                enemy.reset_intent()
+                enemy.enemy_intentions() # works out enemy intentions
+                enemy.blit_status()
+                enemy.blit_enemy_intention() # blits intentions on screen
+        # p1 stuff
         p1.draw_player()
         p1.draw_hp()
         p1.blit_status()
-    # cards
-    card_pos = 1
-    for card in p1.active_hand:
-        card.blit_card(card_pos, len(p1.active_hand))
-        card_pos += 1
-    # buttons
-    if end_turn_button.is_hovered:
-        WIN.blit(STEERING_WHEEL_IMG, (RIGHT_BUTTON_X + DRAW_PILE_WIDTH/2 - DRAW_PILE_WIDTH*1.5/2, END_TURN_Y + DRAW_PILE_HEIGHT/2 - DRAW_PILE_HEIGHT*1.5/2))
-    for button in pile_buttons:
-        button.draw_button()
-    energy_button.draw_button()
-    end_turn_button.draw_button()
+        # cards
+        card_pos = 1
+        for card in p1.active_hand:
+            card.blit_card(card_pos, len(p1.active_hand))
+            card_pos += 1
+        # buttons
+        if end_turn_button.is_hovered:
+            WIN.blit(STEERING_WHEEL_IMG, (RIGHT_BUTTON_X + DRAW_PILE_WIDTH/2 - DRAW_PILE_WIDTH*1.5/2, END_TURN_Y + DRAW_PILE_HEIGHT/2 - DRAW_PILE_HEIGHT*1.5/2))
+        for button in pile_buttons:
+            button.draw_button()
+        energy_button.draw_button()
+        end_turn_button.draw_button()
+        pygame.display.update()
+        update = False
+
+def update_reward():
+    global update
+    global card_taken
+    if screen_view == reward:
+        WIN.blit(PIRATE_BACKGROUND, (0, 0))
+        WIN.blit(LOOT_BACKGROUND_IMG, (WIN_WIDTH/2 - LOOT_BACKGROUND_IMG.get_width()/2, WIN_HEIGHT/2 - LOOT_BACKGROUND_IMG.get_height()/2))
+        if card_taken == False:
+            select_card_reward_button.draw_button()
+        if gold_reward > 0:
+            gold_reward_button.draw_button()
+        skip_rewards_button.draw_button()
+    elif screen_view == 'select_card':
+        WIN.blit(PIRATE_BACKGROUND, (0, 0))
+        WIN.blit(LOOT_BACKGROUND_IMG, (WIN_WIDTH/2 - LOOT_BACKGROUND_IMG.get_width()/2, WIN_HEIGHT/2 - LOOT_BACKGROUND_IMG.get_height()/2))
+        blit_card_reward_options()
+        back_button.draw_button()
+    entire_deck_button.draw_button()
     pygame.display.update()
     update = False
+
+def card_reward(current_enemy, num_of_cards_offered=3):
+    global card_rewards_list
+    # if enemy_level == 'small':
+    if current_enemy in small_fights:
+        common_chance = 90
+        uncommon_chance = 9
+        rare_chance = 1
+    # elif enemy_level == 'boss':
+    elif current_enemy in boss_fights:
+        common_chance = 55
+        uncommon_chance = 30
+        rare_chance = 15
+    # elif enemy_level == 'main_boss':
+    elif current_enemy in main_boss_fights:
+        common_chance = 0
+        uncommon_chance = 0
+        rare_chance = 100
+    ran_num_list = []
+    for i in range(num_of_cards_offered):
+        ran_num_list.append(random.randint(1, 100))
+    
+    card_rewards_list = []
+    for num in ran_num_list:
+        if num <= common_chance:
+            list = common_cards
+        elif num <= common_chance + uncommon_chance:
+            list = uncommon_cards
+        elif num <= common_chance + uncommon_chance + rare_chance:
+            list = rare_cards
+        
+        while True:
+            random_card = random.choice(list)
+            if random_card in card_rewards_list:
+                continue
+            else:
+                card_rewards_list.append(random_card)
+                break
+
+def blit_card_reward_options():
+    card_pos = 0
+    for card in card_rewards_list:
+        card.blit_card_reward_options(card_pos, len(card_rewards_list))
+        card_pos += 1
 
 
 
@@ -1062,8 +1179,11 @@ def main():
     global screen_view
     global update
     global player_turn
+    global card_rewards_list
+    global gold_reward
+    global card_taken
     new_fight = True
-    new_turn = True
+    new_turn = False
     enemy_level = 'small'
     clicked = False
     a_card_selected = False
@@ -1126,6 +1246,9 @@ def main():
                                 elif intent['rect'].collidepoint(event.pos) == False and intent['hovered'] == True:
                                     intent['hovered'] = False
                                     update = True
+
+                elif screen_view == 'select_card':
+                    pass # this is for hovering over the cards and showing the desc
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_view == fight:
@@ -1183,10 +1306,33 @@ def main():
                             enemy.reduce_status()
                         updates()
 
+                elif screen_view == reward:
+                    if select_card_reward_button.rect.collidepoint(event.pos) and card_taken == False:
+                        screen_view = 'select_card'
+                    elif gold_reward_button.rect.collidepoint(event.pos) and gold_reward > 0:
+                        p1.gold += gold_reward
+                        gold_reward = 0
+                    elif skip_rewards_button.rect.collidepoint(event.pos):
+                        # pass # this should take me to the map
+                        screen_view = fight
+                        new_fight = True
+                    update = True
+
+                elif screen_view == 'select_card':
+                    for card in card_rewards_list:
+                        if card.rect.collidepoint(event.pos):
+                            p1.deck.append(card)
+                            card_taken = True
+                            screen_view = reward
+                            update = True
+                    if back_button.rect.collidepoint(event.pos):
+                        screen_view = reward
+                        update = True
+
                 if screen_view != card_view:
                     # selecting the draw/discard/exhaust/deck pile
                     current_screen_view = screen_view # saves what the screen was before going to screen_view
-                if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == shop or screen_view == event:
+                if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == 'card_select' or screen_view == shop or screen_view == event:
                     if player_turn:
                         for button in pile_buttons:
                             if button.rect.collidepoint(event.pos):
@@ -1210,10 +1356,13 @@ def main():
         if screen_view == fight:
             if new_fight == True:
                 randomise_fight(enemy_level)
+                for button in pile_buttons:
+                    button.update_linked_list()
                 for card in p1.deck:
                     p1.draw_pile.append(card)
                 random.shuffle(p1.draw_pile)
                 new_fight = False
+                new_turn = True
 
             elif new_turn == True:
                 p1.draw_card(p1.new_turn_draw_cards())
@@ -1221,6 +1370,7 @@ def main():
                 for enemy in current_enemies:
                     enemy.ran_num = random.randint(1, 100)
                 new_turn = False
+                player_turn = True
                 update = True
 
             elif update == True:
@@ -1234,7 +1384,11 @@ def main():
                 turn += 1
                 p1.reduce_status() # because this reduces status straight away i'll need to set the effects to +1 more than i wanted if that status is at 0
                 new_turn = True
-                player_turn = True
+                # player_turn = True
+        
+        if screen_view == reward or screen_view == 'select_card':
+            if update == True:
+                update_reward()
 
 main()
 
@@ -1264,7 +1418,17 @@ main()
 # do the rewards logic
 # change the cards somehow to show differences in skill, attack and power cards
 # make a card unplayable
+# make a curse class
+# make things like attack all, attack random, draw a card, etc work
+# make a status cards class
+# for reward screen...
+# need to keep the entire deck button in the rewards screen
+# change the logic so that the entire deck button always appears but the others only show when it's a fight
+# need to be able to hover over the card to show the descriptions too
+# change the y coord to minus half the height of the buttons
 
 # problems
 
 # can't figure out how to update the card colour when hovered
+# back button isn't showing, but i think it's interfering with the skip rewards button, which is why i can keep picking rewards
+# sometimes i'll take a card and it'll take me back to the reward screen where i can then take another card
