@@ -924,16 +924,16 @@ p1 = Player(60, starter_deck)
 small_fights = []
 boss_fights = []
 main_boss_fights = []
-confidence_enemy_1 = Enemy('confidence', 10, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
-confidence_enemy_2 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
-confidence_enemy_3 = Enemy('confidence', 10, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True)
+confidence_enemy_1 = Enemy('confidence', 1, 3, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True) #10
+confidence_enemy_2 = Enemy('confidence', 1, 3, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True) #10
+confidence_enemy_3 = Enemy('confidence', 1, 3, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, confidence_cowardice=True) #10
 small_fights.append([confidence_enemy_1, confidence_enemy_2, confidence_enemy_3])
-less_draw_enemy = Enemy('less_draw', 25, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
-less_energy_enemy = Enemy('less_energy', 25, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT)
+less_draw_enemy = Enemy('less_draw', 1, 0, ENEMY1_X, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT) #25
+less_energy_enemy = Enemy('less_energy', 1, 0, ENEMY1_X + CHARACTER_WIDTH/2, ENEMY1_Y, CHARACTER_WIDTH/2, CHARACTER_HEIGHT) #25
 small_fights.append([less_draw_enemy, less_energy_enemy])
-weak_death_enemy = Enemy('weak_death', 10, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
-vulnerable_death_enemy = Enemy('vulnerable_death', 15, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
-frail_death_enemy = Enemy('frail_death', 20, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True)
+weak_death_enemy = Enemy('weak_death', 1, 5, ENEMY1_X, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True) #10
+vulnerable_death_enemy = Enemy('vulnerable_death', 1, 5, ENEMY1_X + CHARACTER_WIDTH/3, ENEMY1_Y, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True) #15
+frail_death_enemy = Enemy('frail_death', 1, 5, ENEMY1_X + CHARACTER_WIDTH*2/3, ENEMY1_Y + CHARACTER_HEIGHT/2, CHARACTER_WIDTH/3, CHARACTER_HEIGHT/2, death_strength=True) #20
 small_fights.append([weak_death_enemy, vulnerable_death_enemy, frail_death_enemy])
 
 
@@ -1119,7 +1119,7 @@ def update_reward():
         if gold_reward > 0:
             gold_reward_button.draw_button()
         skip_rewards_button.draw_button()
-    elif screen_view == 'select_card':
+    elif screen_view == select_card:
         WIN.blit(PIRATE_BACKGROUND, (0, 0))
         WIN.blit(LOOT_BACKGROUND_IMG, (WIN_WIDTH/2 - LOOT_BACKGROUND_IMG.get_width()/2, WIN_HEIGHT/2 - LOOT_BACKGROUND_IMG.get_height()/2))
         blit_card_reward_options()
@@ -1247,7 +1247,7 @@ def main():
                                     intent['hovered'] = False
                                     update = True
 
-                elif screen_view == 'select_card':
+                elif screen_view == select_card:
                     pass # this is for hovering over the cards and showing the desc
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -1308,7 +1308,7 @@ def main():
 
                 elif screen_view == reward:
                     if select_card_reward_button.rect.collidepoint(event.pos) and card_taken == False:
-                        screen_view = 'select_card'
+                        screen_view = select_card
                     elif gold_reward_button.rect.collidepoint(event.pos) and gold_reward > 0:
                         p1.gold += gold_reward
                         gold_reward = 0
@@ -1318,7 +1318,7 @@ def main():
                         new_fight = True
                     update = True
 
-                elif screen_view == 'select_card':
+                elif screen_view == select_card:
                     for card in card_rewards_list:
                         if card.rect.collidepoint(event.pos):
                             p1.deck.append(card)
@@ -1332,7 +1332,7 @@ def main():
                 if screen_view != card_view:
                     # selecting the draw/discard/exhaust/deck pile
                     current_screen_view = screen_view # saves what the screen was before going to screen_view
-                if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == 'card_select' or screen_view == shop or screen_view == event:
+                if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == select_card or screen_view == shop or screen_view == event:
                     if current_screen_view == fight:
                         if player_turn:
                             for button in pile_buttons:
@@ -1397,7 +1397,7 @@ def main():
                 p1.reduce_status() # because this reduces status straight away i'll need to set the effects to +1 more than i wanted if that status is at 0
                 new_turn = True
         
-        if screen_view == reward or screen_view == 'select_card':
+        if screen_view == reward or screen_view == select_card:
             if update == True:
                 update_reward()
 
@@ -1440,4 +1440,4 @@ main()
 
 # can't figure out how to update the card colour when hovered
 # sometimes i'll take a card and it'll take me back to the reward screen where i can then take another card
-# can i now click on the all deck button when i'm selecting a card or not?
+# reard screen works on first reward, but becomes indefinite rewards after the second fight
