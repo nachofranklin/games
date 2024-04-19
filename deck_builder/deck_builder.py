@@ -959,7 +959,7 @@ class Button:
         elif self.name == 'draw_pile_button' or self.name == 'discard_pile_button' or self.name == 'exhaust_pile_button' or self.name == 'entire_deck_button':
             p1.draw_number_of_cards(self.linked_list, self.button_x, self.button_y)
 
-    def show_cards(self):
+    def show_cards(self, previous_screen_view):
         card_number = 0
         current_list = []
         for card in self.linked_list:
@@ -968,9 +968,12 @@ class Button:
             current_list = sorted(current_list)
 
         WIN.fill(LIGHT_BLUE)
-        for button in pile_buttons:
-            button.draw_button()
-        energy_button.draw_button()
+        if previous_screen_view == fight:
+            for button in pile_buttons:
+                button.draw_button()
+            energy_button.draw_button()
+        else:
+            entire_deck_button.draw_button()
 
         for card_id in current_list:
             for card in list_of_all_cards:
@@ -1127,17 +1130,14 @@ def update_reward():
 
 def card_reward(current_enemy, num_of_cards_offered=3):
     global card_rewards_list
-    # if enemy_level == 'small':
     if current_enemy in small_fights:
         common_chance = 90
         uncommon_chance = 9
         rare_chance = 1
-    # elif enemy_level == 'boss':
     elif current_enemy in boss_fights:
         common_chance = 55
         uncommon_chance = 30
         rare_chance = 15
-    # elif enemy_level == 'main_boss':
     elif current_enemy in main_boss_fights:
         common_chance = 0
         uncommon_chance = 0
@@ -1333,21 +1333,33 @@ def main():
                     # selecting the draw/discard/exhaust/deck pile
                     current_screen_view = screen_view # saves what the screen was before going to screen_view
                 if screen_view == fight or screen_view == card_view or screen_view == map or screen_view == reward or screen_view == 'card_select' or screen_view == shop or screen_view == event:
-                    if player_turn:
-                        for button in pile_buttons:
-                            if button.rect.collidepoint(event.pos):
-                                clicked = True
-                                if button.is_clicked == False:
-                                    for b in pile_buttons:
-                                        b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
-                                    button.is_clicked = True
-                                    screen_view = card_view
-                                    button.show_cards()
+                    if current_screen_view == fight:
+                        if player_turn:
+                            for button in pile_buttons:
+                                if button.rect.collidepoint(event.pos):
+                                    clicked = True
+                                    if button.is_clicked == False:
+                                        for b in pile_buttons:
+                                            b.is_clicked = False # allows you to switch between different buttons indefinitely without it closing
+                                        button.is_clicked = True
+                                        screen_view = card_view
+                                        button.show_cards(current_screen_view)
 
-                                elif button.is_clicked: # if we click the button and it was already clicked...
-                                    button.is_clicked = False
-                                    screen_view = current_screen_view # go back to the last screen you were on
-                                    update = True # go back to in game screen
+                                    elif button.is_clicked: # if we click the button and it was already clicked...
+                                        button.is_clicked = False
+                                        screen_view = current_screen_view # go back to the last screen you were on
+                                        update = True # go back to in game screen
+                    else:
+                        if entire_deck_button.rect.collidepoint(event.pos):
+                            clicked = True
+                            if entire_deck_button.is_clicked == False:
+                                entire_deck_button.is_clicked = True
+                                screen_view = card_view
+                                entire_deck_button.show_cards(current_screen_view)
+                            elif entire_deck_button.is_clicked: # if we click the button and it was already clicked...
+                                        entire_deck_button.is_clicked = False
+                                        screen_view = current_screen_view # go back to the last screen you were on
+                                        update = True # go back to in game screen
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
@@ -1384,7 +1396,6 @@ def main():
                 turn += 1
                 p1.reduce_status() # because this reduces status straight away i'll need to set the effects to +1 more than i wanted if that status is at 0
                 new_turn = True
-                # player_turn = True
         
         if screen_view == reward or screen_view == 'select_card':
             if update == True:
@@ -1422,13 +1433,11 @@ main()
 # make things like attack all, attack random, draw a card, etc work
 # make a status cards class
 # for reward screen...
-# need to keep the entire deck button in the rewards screen
-# change the logic so that the entire deck button always appears but the others only show when it's a fight
 # need to be able to hover over the card to show the descriptions too
 # change the y coord to minus half the height of the buttons
 
 # problems
 
 # can't figure out how to update the card colour when hovered
-# back button isn't showing, but i think it's interfering with the skip rewards button, which is why i can keep picking rewards
 # sometimes i'll take a card and it'll take me back to the reward screen where i can then take another card
+# can i now click on the all deck button when i'm selecting a card or not?
