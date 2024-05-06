@@ -98,6 +98,7 @@ home = 'home'
 map = 'map'
 fight = 'fight'
 reward = 'reward'
+select_card = 'select_card'
 card_view = 'card_view'
 shop = 'shop'
 event = 'event'
@@ -699,6 +700,8 @@ class Enemy(Character):
         super().__init__(hp)
         global turn
         self.name = name
+        self.starting_hp = hp
+        self.hp = self.starting_hp
         self.block = starting_block
         self.x_pos = x_pos
         self.y_pos = y_pos
@@ -720,6 +723,9 @@ class Enemy(Character):
             self.has_block = True
         else:
             self.has_block = False
+    
+    def reset_hp(self):
+        self.hp = self.starting_hp
 
     def blit_enemy_intention(self): # will need to update the enemy intention first
         self.intention_list = []
@@ -1064,9 +1070,12 @@ def updates():
         update = True
         
     elif all_enemies_defeated(current_enemies): # if all enemies are dead...
+        # for enemy in current_enemies:
+        #     print(f'{enemy.name} + {enemy.hp}')
         card_reward(current_enemies)
         for enemy in current_enemies:
             enemy.reset_status()
+            enemy.reset_hp()
         p1.reset_status()
         p1.reset_lists()
         p1.floor_level += 1 # check that this isn't going up infinitely (if it is add in logic that says if current_enemies != [])
@@ -1309,14 +1318,15 @@ def main():
                 elif screen_view == reward:
                     if select_card_reward_button.rect.collidepoint(event.pos) and card_taken == False:
                         screen_view = select_card
+                        update = True
                     elif gold_reward_button.rect.collidepoint(event.pos) and gold_reward > 0:
                         p1.gold += gold_reward
                         gold_reward = 0
+                        update = True
                     elif skip_rewards_button.rect.collidepoint(event.pos):
                         # pass # this should take me to the map
                         screen_view = fight
                         new_fight = True
-                    update = True
 
                 elif screen_view == select_card:
                     for card in card_rewards_list:
@@ -1365,6 +1375,8 @@ def main():
                 if clicked == True:
                     clicked = False
 
+        # non button clicking code
+
         if screen_view == fight:
             if new_fight == True:
                 randomise_fight(enemy_level)
@@ -1397,7 +1409,7 @@ def main():
                 p1.reduce_status() # because this reduces status straight away i'll need to set the effects to +1 more than i wanted if that status is at 0
                 new_turn = True
         
-        if screen_view == reward or screen_view == select_card:
+        elif screen_view == reward or screen_view == select_card:
             if update == True:
                 update_reward()
 
@@ -1440,4 +1452,6 @@ main()
 
 # can't figure out how to update the card colour when hovered
 # sometimes i'll take a card and it'll take me back to the reward screen where i can then take another card
-# reard screen works on first reward, but becomes indefinite rewards after the second fight
+# reward screen works on first reward, but becomes indefinite rewards after the second fight
+# it went weird the first time then
+# it's because it thinks the current enemies are all still dead, so need to reset all the current enemies back to full health
