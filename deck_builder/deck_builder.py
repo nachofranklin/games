@@ -702,13 +702,15 @@ class Enemy(Character):
         self.name = name
         self.starting_hp = hp
         self.hp = self.starting_hp
-        self.block = starting_block
+        self.starting_block = starting_block
+        self.block = self.starting_block
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.width = width
         self.height = height
         self.rect = pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
-        self.death_strength = death_strength # if true then when an enemy dies it will apply -2 str and self.death_str = False
+        self.has_death_strength = death_strength
+        self.death_strength = self.has_death_strength # if true then when an enemy dies it will apply -2 str and self.death_str = False
         self.confidence_cowardice = confidence_cowardice
         self.has_block = False
         self.ran_num = random.randint(1, 100)
@@ -724,8 +726,10 @@ class Enemy(Character):
         else:
             self.has_block = False
     
-    def reset_hp(self):
+    def reset_unique_stats(self):
         self.hp = self.starting_hp
+        self.block = self.starting_block
+        self.death_strength = self.has_death_strength
 
     def blit_enemy_intention(self): # will need to update the enemy intention first
         self.intention_list = []
@@ -1075,7 +1079,7 @@ def updates():
         card_reward(current_enemies)
         for enemy in current_enemies:
             enemy.reset_status()
-            enemy.reset_hp()
+            enemy.reset_unique_stats()
         p1.reset_status()
         p1.reset_lists()
         p1.floor_level += 1 # check that this isn't going up infinitely (if it is add in logic that says if current_enemies != [])
@@ -1451,7 +1455,4 @@ main()
 # problems
 
 # can't figure out how to update the card colour when hovered
-# sometimes i'll take a card and it'll take me back to the reward screen where i can then take another card
-# reward screen works on first reward, but becomes indefinite rewards after the second fight
-# it went weird the first time then
-# it's because it thinks the current enemies are all still dead, so need to reset all the current enemies back to full health
+# if i add two of the same card and they both get drawn then it treats them as the same card (similar/same issue as the starting deck cards where i created their own instances)
