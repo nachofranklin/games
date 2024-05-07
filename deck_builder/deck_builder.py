@@ -63,35 +63,24 @@ RIGHT_BUTTON_X = WIN_WIDTH - DESCRIPTION_X/2 - DRAW_PILE_WIDTH/2
 TOP_BUTTON_Y = CARDS_Y
 BOTTOM_BUTTON_Y = CARDS_Y + CARD_HEIGHT - DRAW_PILE_HEIGHT
 
-rarity_types = []
+# rarity_types
 common = 'common'
 uncommon = 'uncommon'
 rare = 'rare'
 starter = 'starter'
 curse = 'curse'
-rarity_types.append(common)
-rarity_types.append(uncommon)
-rarity_types.append(rare)
-rarity_types.append(starter)
-rarity_types.append(curse)
 
-card_types = []
+# card_types
 attack = 'attack'
 skill = 'skill'
 power = 'power'
 curse = 'curse'
-card_types.append(attack)
-card_types.append(skill)
-card_types.append(power)
-card_types.append(curse)
+unplayable = 'unplayable'
 
-attack_options = []
+# attack_options
 select = 'select'
 all = 'all'
 rando = 'random'
-attack_options.append(select)
-attack_options.append(all)
-attack_options.append(rando)
 
 # screen_view
 home = 'home'
@@ -192,6 +181,7 @@ class Card:
         self.thorns = thorns
         self.locked = locked
         self.player_energy = player_energy
+        self.unplayable = unplayable
         if self.rarity == rare:
             self.colour = YELLOW
         elif self.rarity == uncommon:
@@ -639,7 +629,25 @@ class Player(Character):
         self.energy -= card.energy
         self.hp -= card.player_hp
         if card.enemy_hp >= 1:
-            self.dmg_dealt(enemy, card.enemy_hp)
+            if card.enemy_select == select:
+                self.dmg_dealt(enemy, card.enemy_hp)
+            elif card.enemy_select == all:
+                for e in current_enemies:
+                    if e.hp > 0:
+                        self.dmg_dealt(e, card.enemy_hp)
+            elif card.enemy_select == rando:
+                alive_enemies = 0
+                for e in current_enemies:
+                    if e.hp > 0:
+                        alive_enemies += 1
+                ran_num = random.randint(0, alive_enemies)
+                ran_enemy = 0
+                for e in current_enemies:
+                    if e.hp > 0:
+                        if ran_enemy == ran_num:
+                            self.dmg_dealt(e, card.enemy_hp)
+                        else:
+                            ran_enemy += 1
         if card.block >= 1:
             self.block += self.actual_block(card.block)
         self.shield += card.shield
@@ -653,7 +661,7 @@ class Player(Character):
         enemy.vulnerable += card.enemy_vulnerable
         self.poison += card.player_poison
         enemy.poison += card.enemy_poison
-        # card.draw_extra_card
+        self.draw_card(card.draw_extra_card)
         # card.discard
         # card.exhaust
         self.thorns += card.thorns
@@ -1436,17 +1444,19 @@ main()
 
 # screen_view = home, map, battle, reward, card_view, shop, event, death, win
 
-# to do
+# future problems
 
+# can't figure out how to update the card colour when hovered
+# if i add two of the same card and they both get drawn then it treats them as the same card (similar/same issue as the starting deck cards where i created their own instances)
 # make the hp into a health bar which goes blue with block (like sts), meaning i'll have to remove the block from the current list
 # find a few different pirate themed background images for fights to happen in
+
+# to do
+
 # blit in the name of the lists when looking at draw/discard/etc piles (could have it show in the same place as card desc?)
 # blit in something that says cards order is hidden on draw pile list
-# do the rewards logic
 # change the cards somehow to show differences in skill, attack and power cards
-# make a card unplayable
 # make a curse class
-# make things like attack all, attack random, draw a card, etc work
 # make a status cards class
 # for reward screen...
 # need to be able to hover over the card to show the descriptions too
@@ -1454,5 +1464,13 @@ main()
 
 # problems
 
-# can't figure out how to update the card colour when hovered
-# if i add two of the same card and they both get drawn then it treats them as the same card (similar/same issue as the starting deck cards where i created their own instances)
+# cards stuff to add - under player(character) - card played - line 650ish
+
+# play first
+# unplayable # maybe done?
+# damage multiplier
+# exhaust another card
+# add energy equal to card cost
+# shop token
+# enemies gain block per card played
+# maybe rename confidence_multiplier to attack_multiplier?
