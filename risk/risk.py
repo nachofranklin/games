@@ -414,6 +414,7 @@ def main():
                             if end_turn_button.is_hovered and attack_button.is_clicked == False:
                                 next_players_turn(p)
                                 update()
+                                break
 
                             if attack_button.is_hovered and attack_button.is_clicked == False:
                                 attack_button.is_clicked = True
@@ -488,3 +489,5 @@ main()
 # need to come up with a way to select how many troops and from where you'll move them after winning an attack
 # need logic for how many dice you can use after you've lost troops in an attack and the max dice you can use has changed
 # if attack button has been selected, keep it with the white ring to show it's been clicked
+# fix the end turn button now cycling through all players back to p1
+# logic to randomise who goes first
