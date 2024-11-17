@@ -9,6 +9,8 @@ pygame.mixer.init()
 PATH = 'C:\\Users\\Natha\\Documents\\code\\GitHub\\games\\risk\\'
 FPS = 60
 STARTING_TROOPS = 30
+HOVER_MULTIPLIER_CIRCLE = 1.5
+HOVER_MULTIPLIER_FONT = 2
 
 # width and heights
 WIN_WIDTH = 1250
@@ -61,11 +63,11 @@ BUTTON_HOVERED_IMG = image('blue_button_white', BUTTON_WIDTH, BUTTON_HEIGHT)
 pass
 
 # classes
-
 class Player:
-    def __init__(self, name, colour):
+    def __init__(self, name, colour, secondary_colour = WHITE):
         self.name = name
         self.colour = colour
+        self.secondary_colour = secondary_colour
         self.players_turn = False
         self.owned_territories = 0
         self.completed_continents = []
@@ -113,11 +115,11 @@ class Player:
         # add the back button
 
 p1 = Player('P1', BLUE)
-p2 = Player('P2', WHITE)
+p2 = Player('P2', WHITE, BLACK)
 p3 = Player('P3', GREEN)
 p4 = Player('P4', ORANGE)
 
-players = [obj for obj in globals().values() if isinstance(obj, Player)]
+all_players = [obj for obj in globals().values() if isinstance(obj, Player)]
 
 class Territory:
     def __init__(self, name, continent, neighbouring_territories, territory_x, territory_y, territory_width, territory_height):
@@ -131,6 +133,7 @@ class Territory:
         self.troop_count = 1
         self.owner = None
         self.is_selected = False
+        self.is_hovered = False
         self.sel_rect = pygame.Rect(self.territory_x, self.territory_y, self.territory_width, self.territory_height) # might need to make these self.
     
     def add_troops(self, count):
@@ -143,21 +146,68 @@ class Territory:
         self.owner = new_owner
 
     def draw_circle(self):
+        if self.is_hovered:
+            size_multiplier = HOVER_MULTIPLIER_CIRCLE
+        else:
+            size_multiplier = 1
+
         circle_surface = pygame.Surface((self.territory_width, self.territory_height), pygame.SRCALPHA)
         
-        pygame.draw.circle(
-            circle_surface, 
-            self.owner.colour, 
-            (self.territory_width // 2, self.territory_height // 2),  # center of the territory
-            min(self.territory_width, self.territory_height) // 3,  # radius based on territory size
-            BORDER_WIDTH
-        )
+        if self.is_hovered:
+            border_width = 0
+        elif self.owner.players_turn:
+            border_width = 0
+        else:
+            border_width = BORDER_WIDTH
+
+        if attack_button.is_clicked:
+            if self.owner.players_turn: # draw players territories as normal
+                pygame.draw.circle(
+                    circle_surface, 
+                    self.owner.colour, 
+                    (self.territory_width // 2, self.territory_height // 2),  # center of the territory
+                    int(min(self.territory_width, self.territory_height) // 3 * size_multiplier),  # radius based on territory size
+                    border_width
+                )
+            elif self.owner.players_turn == False: # if it's not the territory owners turn
+                for nt in self.neighbouring_territories:
+                    for t in all_territories:
+                        if nt == t.name: # go through each nt and match it to t.name
+                            if (t.owner.players_turn and t.troop_count > 1) or self.is_hovered: # only draw the ring if it can be attacked
+                                pygame.draw.circle(
+                                    circle_surface, 
+                                    self.owner.colour, 
+                                    (self.territory_width // 2, self.territory_height // 2),  # center of the territory
+                                    int(min(self.territory_width, self.territory_height) // 3 * size_multiplier),  # radius based on territory size
+                                    border_width
+                                )
+                                break
+        else:
+            pygame.draw.circle(
+                circle_surface, 
+                self.owner.colour, 
+                (self.territory_width // 2, self.territory_height // 2),  # center of the territory
+                int(min(self.territory_width, self.territory_height) // 3 * size_multiplier),  # radius based on territory size
+                border_width
+            )
         
         WIN.blit(circle_surface, (self.territory_x, self.territory_y))
     
     def draw_troop_count(self):
-        text_surface = pygame.font.Font(None, TROOP_COUNT_FONT_SIZE).render(str(self.troop_count), True, self.owner.colour)
+        if self.is_hovered:
+            size_multiplier = HOVER_MULTIPLIER_FONT
+        else:
+            size_multiplier = 1
+
+        if self.is_hovered:
+            font_colour = self.owner.secondary_colour
+        elif self.owner.players_turn:
+            font_colour = self.owner.secondary_colour
+        else:
+            font_colour = self.owner.colour
         
+        text_surface = pygame.font.Font(None, int(TROOP_COUNT_FONT_SIZE * size_multiplier)).render(str(self.troop_count), True, font_colour)
+    
         text_x = self.territory_x + (self.territory_width - text_surface.get_width()) // 2
         text_y = self.territory_y + (self.territory_height - text_surface.get_height()) // 2
         
@@ -231,13 +281,15 @@ class Button:
         self.rect = pygame.Rect(button_x - button_width/2, button_y - button_height/2, button_width, button_height)
         self.is_clicked = False
         self.is_hovered = False
+        self.is_visible = False
 
     def draw_button(self):
-        if self.is_hovered == False:
-            WIN.blit(self.button_img, self.rect)
-        elif self.is_hovered == True:
-            WIN.blit(self.button_hovered_img, self.rect)
-        self.blit_text()
+        if self.is_visible:
+            if self.is_hovered == False:
+                WIN.blit(self.button_img, self.rect)
+            elif self.is_hovered == True:
+                WIN.blit(self.button_hovered_img, self.rect)
+            self.blit_text()
     
     def blit_text(self):
         font = pygame.font.Font(None, BUTTON_FONT_SIZE)
@@ -245,7 +297,6 @@ class Button:
         text_rect = text_surface.get_rect(center=self.rect.center)
         WIN.blit(text_surface, text_rect)
 
-# end turn, attack, 1 dice, 2 dice, 3 dice, back
 end_turn_button = Button('End Turn', BUTTON_X, END_TURN_Y)
 attack_button = Button('Attack', BUTTON_X, ATTACK_Y)
 back_button = Button('Back', BUTTON_X, BACK_Y)
@@ -256,17 +307,16 @@ three_dice_button = Button('3 Dice', BUTTON_X, THREE_DICE_Y)
 all_buttons = [obj for obj in globals().values() if isinstance(obj, Button)]
 
 # functions
-
 def randomise_territories():
     random.shuffle(all_territories)
 
     for i, territory in enumerate(all_territories):
-        player = players[i % len(players)]  # Select player in a round-robin manner
+        player = all_players[i % len(all_players)]  # Select player in a round-robin manner
         territory.change_owner(player)  # Assign territory to player
         player.owned_territories += 1
         
 def randomise_troop_placement():
-    for player in players:
+    for player in all_players:
         remaining_troops = STARTING_TROOPS - player.owned_territories
         player_territories = []
         for t in all_territories:
@@ -280,27 +330,51 @@ def randomise_troop_placement():
 def new_game_setup():
     randomise_territories()
     randomise_troop_placement()
+    end_turn_button.is_visible = True
+    attack_button.is_visible = True
+    p1.players_turn = True # need to randomise who starts within new_game_setup()
 
-new_game_setup()
-print(f'{egypt.name}\'s owner is {egypt.owner.name} with {egypt.troop_count} troops')
-print(f'{ontario.name}\'s owner is {ontario.owner.name} with {ontario.troop_count} troops')
-print(f'{great_britain.name}\'s owner is {great_britain.owner.name} with {great_britain.troop_count} troops')
-p2.players_turn = True
-        
-def main():
+def next_players_turn(previous_players_turn):
+    previous_players_turn.players_turn = False
+    previous_player_i = 0
+    for p in all_players:
+        if previous_players_turn == p: # might need .name ?
+            break
+        else:
+            previous_player_i += 1
+    no_of_players = len(all_players)
+    if previous_player_i < no_of_players-1:
+        next_player_i = previous_player_i + 1
+    else:
+        next_player_i = 0
+    next_player = all_players[next_player_i]
+    next_player.players_turn = True
 
-    clock = pygame.time.Clock()
-    clicked = False
-    run = True
+def update():
+    WIN.fill(BLACK)
     WIN.blit(GAME_BOARD, (MAP_X, MAP_Y))
-    for player in players:
-        player.show_players_turn()
+    for p in all_players:
+        p.show_players_turn()
     for t in all_territories:
         t.draw_circle()
         t.draw_troop_count()
     for b in all_buttons:
         b.draw_button()
     pygame.display.update()
+
+
+# new_game_setup()
+# print(f'{egypt.name}\'s owner is {egypt.owner.name} with {egypt.troop_count} troops')
+# print(f'{ontario.name}\'s owner is {ontario.owner.name} with {ontario.troop_count} troops')
+# print(f'{great_britain.name}\'s owner is {great_britain.owner.name} with {great_britain.troop_count} troops')
+        
+def main():
+
+    clock = pygame.time.Clock()
+    clicked = False
+    run = True
+    new_game_setup()
+    update()
     while run:
         clock.tick(FPS)
 
@@ -310,17 +384,93 @@ def main():
                 exit()
 
             elif event.type == pygame.MOUSEMOTION:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                # Print the x and y coordinates to the console
-                print(f'Mouse coordinates: X={mouse_x}, Y={mouse_y}')
-
-                for territory in all_territories:
-                    if territory.sel_rect.collidepoint(event.pos):
-                        # print(territory.name)
+                for b in all_buttons:
+                    # show if the button is being hovered over
+                    if b.rect.collidepoint(event.pos) and b.is_hovered == False:
+                        b.is_hovered = True
+                        b.draw_button()
+                        pygame.display.update()
+                    elif b.rect.collidepoint(event.pos) == False and b.is_hovered:
+                        b.is_hovered = False
+                        b.draw_button()
                         pygame.display.update()
 
+                for t in all_territories:
+                    # highlight which territory is being hovered over
+                    if t.sel_rect.collidepoint(event.pos) and t.is_hovered == False:
+                        t.is_hovered = True
+                        update()
+                    elif t.sel_rect.collidepoint(event.pos) == False and t.is_hovered:
+                        t.is_hovered = False
+                        update()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                if clicked == False:
+                    clicked = True
+                    
+                    for p in all_players:
+                        if p.players_turn:
+
+                            if end_turn_button.is_hovered and attack_button.is_clicked == False:
+                                next_players_turn(p)
+                                update()
+
+                            if attack_button.is_hovered and attack_button.is_clicked == False:
+                                attack_button.is_clicked = True
+                                end_turn_button.is_visible = False
+                                back_button.is_visible = True
+                                update()
+                            elif attack_button.is_hovered and attack_button.is_clicked:
+                                attack_button.is_clicked = False
+                                end_turn_button.is_visible = True
+                                back_button.is_visible = False
+                                one_dice_button.is_visible = False
+                                two_dice_button.is_visible = False
+                                three_dice_button.is_visible = False
+                                for t in all_territories:
+                                    t.is_selected = False
+                                update()
+                            
+                            if back_button.is_hovered and attack_button.is_clicked:
+                                attack_button.is_clicked = False
+                                end_turn_button.is_visible = True
+                                back_button.is_visible = False
+                                one_dice_button.is_visible = False
+                                two_dice_button.is_visible = False
+                                three_dice_button.is_visible = False
+                                for t in all_territories:
+                                    t.is_selected = False
+                                update()
+
+                    for t in all_territories:
+                        if t.sel_rect.collidepoint(event.pos) and attack_button.is_clicked and t.is_selected == False: # att button has already been clicked, then you click on a territory that hasn't been clicked before
+                            for territory in all_territories:
+                                territory.is_selected = False # so you set all territories to not be selected
+                            t.is_selected = True # apart from the one you just clicked
+                            available_troops = 0
+                            for nt in t.neighbouring_territories:
+                                for t_nt in all_territories:
+                                    if nt == t_nt.name: # go through each nt and match it to t_nt.name so i can use t_nt (instance) not nt (string)
+                                        if t_nt.owner.players_turn and t_nt.troop_count > 1:
+                                            available_troops += t_nt.troop_count - 1 # count the max no of troops you can attack a territory with
+                            if available_troops == 0 or t.owner.players_turn:
+                                one_dice_button.is_visible = False
+                                two_dice_button.is_visible = False
+                                three_dice_button.is_visible = False
+                            elif available_troops == 1:
+                                one_dice_button.is_visible = True
+                                two_dice_button.is_visible = False # shouldn't include falses here, need another way to do falses after the dice has been rolled
+                                three_dice_button.is_visible = False
+                            elif available_troops == 2:
+                                one_dice_button.is_visible = True
+                                two_dice_button.is_visible = True
+                                three_dice_button.is_visible = False
+                            elif available_troops >= 3:
+                                one_dice_button.is_visible = True
+                                two_dice_button.is_visible = True
+                                three_dice_button.is_visible = True
+                            update()
+
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
@@ -330,3 +480,11 @@ def main():
 
 
 main()
+
+
+# to do...
+
+# need to write the logic for attacking
+# need to come up with a way to select how many troops and from where you'll move them after winning an attack
+# need logic for how many dice you can use after you've lost troops in an attack and the max dice you can use has changed
+# if attack button has been selected, keep it with the white ring to show it's been clicked
