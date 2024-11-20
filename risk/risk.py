@@ -362,6 +362,93 @@ def update():
         b.draw_button()
     pygame.display.update()
 
+def attack(no_of_dice):
+    att_dice_1 = 0
+    att_dice_2 = 0
+    att_dice_3 = 0
+    if no_of_dice == 1:
+        att_dice_1 = random.randint(1, 6)
+    elif no_of_dice == 2:
+        att_dice_1 = random.randint(1, 6)
+        att_dice_2 = random.randint(1, 6)
+    elif no_of_dice == 3:
+        att_dice_1 = random.randint(1, 6)
+        att_dice_2 = random.randint(1, 6)
+        att_dice_3 = random.randint(1, 6)
+
+    all_att_dice = [att_dice_1, att_dice_2, att_dice_3]
+    sorted_att_dice = sorted(all_att_dice, reverse=True)
+
+    for t in all_territories:
+        if t.is_selected == True:
+            t_under_attack = t
+            break
+    
+    def_dice_1 = 0
+    def_dice_2 = 0
+    if t_under_attack.troop_count >= 2:
+        def_dice_1 = random.randint(1, 6)
+        def_dice_2 = random.randint(1, 6)
+    elif t_under_attack.troop_count == 1:
+        def_dice_1 = random.randint(1,6)
+
+    all_def_dice = [def_dice_1, def_dice_2]
+    sorted_def_dice = sorted(all_def_dice, reverse=True)
+
+    if sorted_att_dice[0] > sorted_def_dice[0]:
+        t_under_attack.remove_troops(1)
+    elif sorted_att_dice[0] <= sorted_def_dice[0]:
+        nt_with_most_troops(t_under_attack).remove_troops(1) # need to come up with a way to select what territory to remove troops from
+    
+    if sorted_att_dice[1] > 0 and sorted_def_dice[1] > 0:
+        if sorted_att_dice[1] > sorted_def_dice[1]:
+            t_under_attack.remove_troops(1)
+        elif sorted_att_dice[1] <= sorted_def_dice[1]:
+            nt_with_most_troops(t_under_attack).remove_troops(1) # need to come up with a way to select what territory to remove troops from
+
+    print(f'att dice = {sorted_att_dice}')
+    print(f'def dice = {sorted_def_dice}')
+
+def nt_with_most_troops(t_under_attack):
+    most_troops = 0
+
+    for nt in t_under_attack.neighbouring_territories:
+        for t in all_territories:
+            if nt == t.name: # go through each nt and match it to t.name so i can use t (instance) not nt (string)
+                if t.owner.players_turn:
+                    if t.troop_count > most_troops:
+                        most_troops = t.troop_count
+                        nt_with_most_troops = t
+    
+    return nt_with_most_troops
+
+def update_dice_button_visibility():
+    for t in all_territories:
+        if t.is_selected:
+            t_under_attack = t
+            break
+    available_troops = 0
+    for nt in t_under_attack.neighbouring_territories:
+        for t in all_territories:
+            if nt == t.name: # go through each nt and match it to t.name so i can use t (instance) not nt (string)
+                if t.owner.players_turn and t.troop_count > 1:
+                    available_troops += t.troop_count - 1 # count the max no of troops you can attack a territory with
+    if available_troops == 0 or t_under_attack.owner.players_turn:
+        one_dice_button.is_visible = False
+        two_dice_button.is_visible = False
+        three_dice_button.is_visible = False
+    elif available_troops == 1:
+        one_dice_button.is_visible = True
+        two_dice_button.is_visible = False
+        three_dice_button.is_visible = False
+    elif available_troops == 2:
+        one_dice_button.is_visible = True
+        two_dice_button.is_visible = True
+        three_dice_button.is_visible = False
+    elif available_troops >= 3:
+        one_dice_button.is_visible = True
+        two_dice_button.is_visible = True
+        three_dice_button.is_visible = True
 
 # new_game_setup()
 # print(f'{egypt.name}\'s owner is {egypt.owner.name} with {egypt.troop_count} troops')
@@ -413,14 +500,14 @@ def main():
 
                             if end_turn_button.is_hovered and attack_button.is_clicked == False:
                                 next_players_turn(p)
-                                update()
+                                # update()
                                 break
 
                             if attack_button.is_hovered and attack_button.is_clicked == False:
                                 attack_button.is_clicked = True
                                 end_turn_button.is_visible = False
                                 back_button.is_visible = True
-                                update()
+                                # update()
                             elif attack_button.is_hovered and attack_button.is_clicked:
                                 attack_button.is_clicked = False
                                 end_turn_button.is_visible = True
@@ -430,7 +517,7 @@ def main():
                                 three_dice_button.is_visible = False
                                 for t in all_territories:
                                     t.is_selected = False
-                                update()
+                                # update()
                             
                             if back_button.is_hovered and attack_button.is_clicked:
                                 attack_button.is_clicked = False
@@ -441,41 +528,30 @@ def main():
                                 three_dice_button.is_visible = False
                                 for t in all_territories:
                                     t.is_selected = False
-                                update()
+                                # update()
 
                     for t in all_territories:
                         if t.sel_rect.collidepoint(event.pos) and attack_button.is_clicked and t.is_selected == False: # att button has already been clicked, then you click on a territory that hasn't been clicked before
                             for territory in all_territories:
                                 territory.is_selected = False # so you set all territories to not be selected
                             t.is_selected = True # apart from the one you just clicked
-                            available_troops = 0
-                            for nt in t.neighbouring_territories:
-                                for t_nt in all_territories:
-                                    if nt == t_nt.name: # go through each nt and match it to t_nt.name so i can use t_nt (instance) not nt (string)
-                                        if t_nt.owner.players_turn and t_nt.troop_count > 1:
-                                            available_troops += t_nt.troop_count - 1 # count the max no of troops you can attack a territory with
-                            if available_troops == 0 or t.owner.players_turn:
-                                one_dice_button.is_visible = False
-                                two_dice_button.is_visible = False
-                                three_dice_button.is_visible = False
-                            elif available_troops == 1:
-                                one_dice_button.is_visible = True
-                                two_dice_button.is_visible = False # shouldn't include falses here, need another way to do falses after the dice has been rolled
-                                three_dice_button.is_visible = False
-                            elif available_troops == 2:
-                                one_dice_button.is_visible = True
-                                two_dice_button.is_visible = True
-                                three_dice_button.is_visible = False
-                            elif available_troops >= 3:
-                                one_dice_button.is_visible = True
-                                two_dice_button.is_visible = True
-                                three_dice_button.is_visible = True
-                            update()
+                            update_dice_button_visibility()
+                            # update()
 
+                    if one_dice_button.rect.collidepoint(event.pos) and one_dice_button.is_visible:
+                        attack(1)
+                        update_dice_button_visibility()
+                    elif two_dice_button.rect.collidepoint(event.pos) and two_dice_button.is_visible:
+                        attack(2)
+                        update_dice_button_visibility()
+                    elif three_dice_button.rect.collidepoint(event.pos) and three_dice_button.is_visible:
+                        attack(3)
+                        update_dice_button_visibility()
 
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 if clicked == True:
                     clicked = False
+                    update()
 
         # non button clicking code
 
@@ -485,9 +561,7 @@ main()
 
 # to do...
 
-# need to write the logic for attacking
 # need to come up with a way to select how many troops and from where you'll move them after winning an attack
-# need logic for how many dice you can use after you've lost troops in an attack and the max dice you can use has changed
 # if attack button has been selected, keep it with the white ring to show it's been clicked
-# fix the end turn button now cycling through all players back to p1
+# if territory has been selected that should stay filled in
 # logic to randomise who goes first
