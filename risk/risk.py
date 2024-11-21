@@ -406,6 +406,9 @@ def attack(no_of_dice):
         elif sorted_att_dice[1] <= sorted_def_dice[1]:
             nt_with_most_troops(t_under_attack).remove_troops(1) # need to come up with a way to select what territory to remove troops from
 
+    if t_under_attack.troop_count == 0:
+        attack_victory(t_under_attack, no_of_dice)
+
     print(f'att dice = {sorted_att_dice}')
     print(f'def dice = {sorted_def_dice}')
 
@@ -421,6 +424,31 @@ def nt_with_most_troops(t_under_attack):
                         nt_with_most_troops = t
     
     return nt_with_most_troops
+
+def attack_victory(t_under_attack, no_of_dice):
+    '''Moves troops from the attacking territories into the newly won territory'''
+    available_troops = 0
+    for nt in t_under_attack.neighbouring_territories:
+        for t in all_territories:
+            if nt == t.name:
+                if t.owner.players_turn:
+                    if t.troop_count > 1:
+                        available_troops += t.troop_count - 1
+    
+    if available_troops <= no_of_dice:
+        troops_to_move = available_troops
+    else:
+        troops_to_move = no_of_dice # need to change this so that the player can choose how many troops to move
+    
+    for i in range(troops_to_move):
+        nt_with_most_troops(t_under_attack).remove_troops(1)
+    t_under_attack.add_troops(troops_to_move)
+    for p in all_players:
+        if p.players_turn:
+            new_owner = p
+    t_under_attack.change_owner(new_owner)
+    # need to add/remove 1 to the number of territories for both players
+    # need to run a check to see if new/old owner now owns any completed continents
 
 def update_dice_button_visibility():
     for t in all_territories:
@@ -450,10 +478,6 @@ def update_dice_button_visibility():
         two_dice_button.is_visible = True
         three_dice_button.is_visible = True
 
-# new_game_setup()
-# print(f'{egypt.name}\'s owner is {egypt.owner.name} with {egypt.troop_count} troops')
-# print(f'{ontario.name}\'s owner is {ontario.owner.name} with {ontario.troop_count} troops')
-# print(f'{great_britain.name}\'s owner is {great_britain.owner.name} with {great_britain.troop_count} troops')
         
 def main():
 
@@ -500,14 +524,12 @@ def main():
 
                             if end_turn_button.is_hovered and attack_button.is_clicked == False:
                                 next_players_turn(p)
-                                # update()
                                 break
 
                             if attack_button.is_hovered and attack_button.is_clicked == False:
                                 attack_button.is_clicked = True
                                 end_turn_button.is_visible = False
                                 back_button.is_visible = True
-                                # update()
                             elif attack_button.is_hovered and attack_button.is_clicked:
                                 attack_button.is_clicked = False
                                 end_turn_button.is_visible = True
@@ -517,7 +539,6 @@ def main():
                                 three_dice_button.is_visible = False
                                 for t in all_territories:
                                     t.is_selected = False
-                                # update()
                             
                             if back_button.is_hovered and attack_button.is_clicked:
                                 attack_button.is_clicked = False
@@ -528,7 +549,6 @@ def main():
                                 three_dice_button.is_visible = False
                                 for t in all_territories:
                                     t.is_selected = False
-                                # update()
 
                     for t in all_territories:
                         if t.sel_rect.collidepoint(event.pos) and attack_button.is_clicked and t.is_selected == False: # att button has already been clicked, then you click on a territory that hasn't been clicked before
@@ -536,7 +556,6 @@ def main():
                                 territory.is_selected = False # so you set all territories to not be selected
                             t.is_selected = True # apart from the one you just clicked
                             update_dice_button_visibility()
-                            # update()
 
                     if one_dice_button.rect.collidepoint(event.pos) and one_dice_button.is_visible:
                         attack(1)
@@ -565,3 +584,4 @@ main()
 # if attack button has been selected, keep it with the white ring to show it's been clicked
 # if territory has been selected that should stay filled in
 # logic to randomise who goes first
+# show what dice have been rolled
