@@ -82,37 +82,12 @@ class Player:
             
             # Blit the text onto the main screen at the calculated position
             WIN.blit(text_surface, (text_x, text_y))
+    
+    def count_territories(self):
+        pass
 
-    # select different territories
-    # choose to attack a territory
-    def select_territory_to_att(self, target):
-        max_troops_to_att_with = 0
-        for nt in target.neighbouring_territories:
-            if nt.owner == self.name:
-                max_troops_to_att_with += nt.troop_count - 1
-
-        if target.owner != self.name and max_troops_to_att_with >= 1:
-            # add att button
-            pass
-
-        self.no_of_att_dice(target, max_troops_to_att_with)
-
-    def no_of_att_dice(self, target, max_troops_to_att_with):
-        # max_troops_to_att_with = 0
-        # for nt in target.neighbouring_territories:
-        #     if nt.owner == self.name:
-        #         max_troops_to_att_with += nt.troop_count - 1
-        
-        if max_troops_to_att_with == 1:
-            # add 1 dice button
-            pass
-        elif max_troops_to_att_with == 2:
-            # add 1 and 2 dice button
-            pass
-        elif max_troops_to_att_with >= 3:
-            # add 1, 2 and 3 dice button
-            pass
-        # add the back button
+    def check_for_completed_continents(self):
+        pass
 
 p1 = Player('P1', BLUE)
 p2 = Player('P2', WHITE, BLACK)
@@ -146,14 +121,14 @@ class Territory:
         self.owner = new_owner
 
     def draw_circle(self):
-        if self.is_hovered:
+        if self.is_hovered or self.is_selected:
             size_multiplier = HOVER_MULTIPLIER_CIRCLE
         else:
             size_multiplier = 1
 
         circle_surface = pygame.Surface((self.territory_width, self.territory_height), pygame.SRCALPHA)
         
-        if self.is_hovered:
+        if self.is_hovered or self.is_selected:
             border_width = 0
         elif self.owner.players_turn:
             border_width = 0
@@ -194,12 +169,12 @@ class Territory:
         WIN.blit(circle_surface, (self.territory_x, self.territory_y))
     
     def draw_troop_count(self):
-        if self.is_hovered:
+        if self.is_hovered or self.is_selected:
             size_multiplier = HOVER_MULTIPLIER_FONT
         else:
             size_multiplier = 1
 
-        if self.is_hovered:
+        if self.is_hovered or self.is_selected:
             font_colour = self.owner.secondary_colour
         elif self.owner.players_turn:
             font_colour = self.owner.secondary_colour
@@ -447,20 +422,22 @@ def attack_victory(t_under_attack, no_of_dice):
         if p.players_turn:
             new_owner = p
     t_under_attack.change_owner(new_owner)
+    t_under_attack.is_selected = False
     # need to add/remove 1 to the number of territories for both players
     # need to run a check to see if new/old owner now owns any completed continents
 
 def update_dice_button_visibility():
+    available_troops = 0
     for t in all_territories:
         if t.is_selected:
             t_under_attack = t
+            for nt in t_under_attack.neighbouring_territories:
+                for t in all_territories:
+                    if nt == t.name: # go through each nt and match it to t.name so i can use t (instance) not nt (string)
+                        if t.owner.players_turn and t.troop_count > 1:
+                            available_troops += t.troop_count - 1 # count the max no of troops you can attack a territory with
             break
-    available_troops = 0
-    for nt in t_under_attack.neighbouring_territories:
-        for t in all_territories:
-            if nt == t.name: # go through each nt and match it to t.name so i can use t (instance) not nt (string)
-                if t.owner.players_turn and t.troop_count > 1:
-                    available_troops += t.troop_count - 1 # count the max no of troops you can attack a territory with
+
     if available_troops == 0 or t_under_attack.owner.players_turn:
         one_dice_button.is_visible = False
         two_dice_button.is_visible = False
@@ -554,7 +531,12 @@ def main():
                         if t.sel_rect.collidepoint(event.pos) and attack_button.is_clicked and t.is_selected == False: # att button has already been clicked, then you click on a territory that hasn't been clicked before
                             for territory in all_territories:
                                 territory.is_selected = False # so you set all territories to not be selected
-                            t.is_selected = True # apart from the one you just clicked
+                            if t.owner.players_turn == False:
+                                for nt in t.neighbouring_territories:
+                                    for t2 in all_territories:
+                                        if nt == t2.name and t2.owner.players_turn and t2.troop_count > 1:
+                                            t.is_selected = True # apart from the one you just clicked (as long as it's one that can be attacked)
+                                            break
                             update_dice_button_visibility()
 
                     if one_dice_button.rect.collidepoint(event.pos) and one_dice_button.is_visible:
@@ -582,6 +564,7 @@ main()
 
 # need to come up with a way to select how many troops and from where you'll move them after winning an attack
 # if attack button has been selected, keep it with the white ring to show it's been clicked
-# if territory has been selected that should stay filled in
 # logic to randomise who goes first
 # show what dice have been rolled
+# add logic that counts how many additional troops you get at the start of your turn
+# create a way to place troops at the start of the turn
