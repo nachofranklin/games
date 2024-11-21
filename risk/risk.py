@@ -260,10 +260,10 @@ class Button:
 
     def draw_button(self):
         if self.is_visible:
-            if self.is_hovered == False:
-                WIN.blit(self.button_img, self.rect)
-            elif self.is_hovered == True:
+            if self.is_hovered or self.is_clicked:
                 WIN.blit(self.button_hovered_img, self.rect)
+            elif self.is_hovered == False:
+                WIN.blit(self.button_img, self.rect)
             self.blit_text()
     
     def blit_text(self):
@@ -563,7 +563,6 @@ main()
 # to do...
 
 # need to come up with a way to select how many troops and from where you'll move them after winning an attack
-# if attack button has been selected, keep it with the white ring to show it's been clicked
 # logic to randomise who goes first
 # show what dice have been rolled
 # add logic that counts how many additional troops you get at the start of your turn
