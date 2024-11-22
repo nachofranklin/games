@@ -11,6 +11,7 @@ FPS = 60
 STARTING_TROOPS = 30
 HOVER_MULTIPLIER_CIRCLE = 1.5
 HOVER_MULTIPLIER_FONT = 2
+DELAY = 4000
 
 # width and heights
 WIN_WIDTH = 1250
@@ -23,6 +24,8 @@ BORDER_WIDTH = int(WIN_WIDTH/200)
 TROOP_COUNT_FONT_SIZE = int(WIN_WIDTH/50)
 PLAYER_TURN_FONT_SIZE = int(WIN_WIDTH/20)
 BUTTON_FONT_SIZE = int(BUTTON_WIDTH*2/9)
+DICE_WIDTH = DICE_HEIGHT = min(int(WIN_WIDTH/15), int(WIN_HEIGHT/10))
+DICE_GAP = DICE_WIDTH * 2
 
 # x and y co-ordinates
 MAP_X = WIN_WIDTH/5
@@ -35,6 +38,9 @@ BACK_Y = WIN_HEIGHT * 4/8
 ONE_DICE_Y = WIN_HEIGHT * 5/8
 TWO_DICE_Y = WIN_HEIGHT * 6/8
 THREE_DICE_Y = WIN_HEIGHT * 7/8
+DICE_X = MAP_X + MAP_WIDTH/2 - DICE_WIDTH/2
+ATT_DICE_Y = WIN_HEIGHT * 1/4 - DICE_HEIGHT/2
+DEF_DICE_Y = WIN_HEIGHT * 3/4 - DICE_HEIGHT/2
 
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Risk')
@@ -58,6 +64,18 @@ def image(file_name, img_width, img_height):
 GAME_BOARD = image('risk_map', MAP_WIDTH, MAP_HEIGHT)
 BUTTON_IMG = image('blue_button_black', BUTTON_WIDTH, BUTTON_HEIGHT)
 BUTTON_HOVERED_IMG = image('blue_button_white', BUTTON_WIDTH, BUTTON_HEIGHT)
+D1_BLUE = image('dice1_blue', DICE_WIDTH, DICE_HEIGHT)
+D2_BLUE = image('dice2_blue', DICE_WIDTH, DICE_HEIGHT)
+D3_BLUE = image('dice3_blue', DICE_WIDTH, DICE_HEIGHT)
+D4_BLUE = image('dice4_blue', DICE_WIDTH, DICE_HEIGHT)
+D5_BLUE = image('dice5_blue', DICE_WIDTH, DICE_HEIGHT)
+D6_BLUE = image('dice6_blue', DICE_WIDTH, DICE_HEIGHT)
+D1_RED = image('dice1_red', DICE_WIDTH, DICE_HEIGHT)
+D2_RED = image('dice2_red', DICE_WIDTH, DICE_HEIGHT)
+D3_RED = image('dice3_red', DICE_WIDTH, DICE_HEIGHT)
+D4_RED = image('dice4_red', DICE_WIDTH, DICE_HEIGHT)
+D5_RED = image('dice5_red', DICE_WIDTH, DICE_HEIGHT)
+D6_RED = image('dice6_red', DICE_WIDTH, DICE_HEIGHT)
 
 # sounds
 pass
@@ -351,6 +369,7 @@ def attack(no_of_dice):
         att_dice_2 = random.randint(1, 6)
         att_dice_3 = random.randint(1, 6)
 
+    blit_att_dice(att_dice_1, att_dice_2, att_dice_3)
     all_att_dice = [att_dice_1, att_dice_2, att_dice_3]
     sorted_att_dice = sorted(all_att_dice, reverse=True)
 
@@ -367,6 +386,9 @@ def attack(no_of_dice):
     elif t_under_attack.troop_count == 1:
         def_dice_1 = random.randint(1,6)
 
+    blit_def_dice(def_dice_1, def_dice_2)
+    pygame.display.update()
+    pygame.time.delay(DELAY)
     all_def_dice = [def_dice_1, def_dice_2]
     sorted_def_dice = sorted(all_def_dice, reverse=True)
 
@@ -425,6 +447,89 @@ def attack_victory(t_under_attack, no_of_dice):
     t_under_attack.is_selected = False
     # need to add/remove 1 to the number of territories for both players
     # need to run a check to see if new/old owner now owns any completed continents
+
+def blit_att_dice(d1, d2=0, d3=0):
+    if d1 == 1:
+        d1_img = D1_RED
+    elif d1 == 2:
+        d1_img = D2_RED
+    elif d1 == 3:
+        d1_img = D3_RED
+    elif d1 == 4:
+        d1_img = D4_RED
+    elif d1 == 5:
+        d1_img = D5_RED
+    elif d1 == 6:
+        d1_img = D6_RED
+
+    if d2 == 1:
+        d2_img = D1_RED
+    elif d2 == 2:
+        d2_img = D2_RED
+    elif d2 == 3:
+        d2_img = D3_RED
+    elif d2 == 4:
+        d2_img = D4_RED
+    elif d2 == 5:
+        d2_img = D5_RED
+    elif d2 == 6:
+        d2_img = D6_RED
+
+    if d3 == 1:
+        d3_img = D1_RED
+    elif d3 == 2:
+        d3_img = D2_RED
+    elif d3 == 3:
+        d3_img = D3_RED
+    elif d3 == 4:
+        d3_img = D4_RED
+    elif d3 == 5:
+        d3_img = D5_RED
+    elif d3 == 6:
+        d3_img = D6_RED
+
+    if d3 != 0:
+        WIN.blit(d1_img, (DICE_X - DICE_GAP, ATT_DICE_Y))
+        WIN.blit(d2_img, (DICE_X, ATT_DICE_Y))
+        WIN.blit(d3_img, (DICE_X + DICE_GAP, ATT_DICE_Y))
+    elif d2 != 0:
+        WIN.blit(d1_img, (DICE_X - DICE_GAP/2, ATT_DICE_Y))
+        WIN.blit(d2_img, (DICE_X + DICE_GAP/2, ATT_DICE_Y))
+    else:
+        WIN.blit(d1_img, (DICE_X, ATT_DICE_Y))
+
+def blit_def_dice(d1, d2=0):
+    if d1 == 1:
+        d1_img = D1_BLUE
+    elif d1 == 2:
+        d1_img = D2_BLUE
+    elif d1 == 3:
+        d1_img = D3_BLUE
+    elif d1 == 4:
+        d1_img = D4_BLUE
+    elif d1 == 5:
+        d1_img = D5_BLUE
+    elif d1 == 6:
+        d1_img = D6_BLUE
+
+    if d2 == 1:
+        d2_img = D1_BLUE
+    elif d2 == 2:
+        d2_img = D2_BLUE
+    elif d2 == 3:
+        d2_img = D3_BLUE
+    elif d2 == 4:
+        d2_img = D4_BLUE
+    elif d2 == 5:
+        d2_img = D5_BLUE
+    elif d2 == 6:
+        d2_img = D6_BLUE
+
+    if d2 != 0:
+        WIN.blit(d1_img, (DICE_X - DICE_GAP/2, DEF_DICE_Y))
+        WIN.blit(d2_img, (DICE_X + DICE_GAP/2, DEF_DICE_Y))
+    else:
+        WIN.blit(d1_img, (DICE_X, DEF_DICE_Y))
 
 def update_dice_button_visibility():
     available_troops = 0
