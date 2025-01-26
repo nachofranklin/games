@@ -22,6 +22,8 @@ TILE_WIDTH = GRID_WIDTH/GRID_COLS
 TILE_HEIGHT = GRID_HEIGHT/GRID_ROWS
 BUTTON_WIDTH = WIN_WIDTH/2
 BUTTON_HEIGHT = WIN_HEIGHT/9
+CHANGE_USER_WIDTH = BUTTON_WIDTH
+CHANGE_USER_HEIGHT = BUTTON_HEIGHT
 
 # x and y coordinates
 BUTTON_X = WIN_WIDTH/2
@@ -29,7 +31,7 @@ NEW_GAME_Y = WIN_HEIGHT * 1/5
 YOUR_STATS_Y = WIN_HEIGHT * 2/5
 GLOBAL_STATS_Y = WIN_HEIGHT * 3/5
 CHANGE_USER_Y = WIN_HEIGHT * 4/5
-HOME_Y = WIN_HEIGHT * 1/2 # figure out where to put this
+HOME_Y = WIN_HEIGHT - BUTTON_HEIGHT/2 - WIN_HEIGHT/30
 USERNAME_Y = WIN_HEIGHT/13
 
 # other variables
@@ -62,6 +64,11 @@ default_values = {
     "last_game_result": None,
     "last_to_play": "No",
 }
+change_user_box = pygame.Rect(WIN_WIDTH/2 - CHANGE_USER_WIDTH/2, WIN_HEIGHT/2 - CHANGE_USER_HEIGHT/2, CHANGE_USER_WIDTH, CHANGE_USER_HEIGHT)
+change_user_active = False
+BLANK_USERNAME = ''
+USERNAME_PROMPT = 'Type username here...'
+change_user_font = pygame.font.Font(None, BUTTON_FONT_SIZE)
 
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Minesweeper')
@@ -72,6 +79,7 @@ stats_df.index = stats_df['username']
 stats_df["play_history"] = stats_df["play_history"].apply(ast.literal_eval) # converts the csv str into a python list
 
 def get_user():
+    user = 'Test1' # solves the issue of if someone changes user but closes it down before playing (as last_to_play would be 'No' for everyone)
     for c, r in stats_df.iterrows():
         if r['last_to_play'] == 'Yes':
             user = r['username']
@@ -207,7 +215,6 @@ class Text:
 YOU_LOSE_ONE = Text(GRID_WIDTH/2, TOP_SECTION + GRID_HEIGHT/2, 'You Lose', BLACK)
 YOU_LOSE_TWO = Text(GRID_WIDTH/2, TOP_SECTION + GRID_HEIGHT/2, 'You Lose', PINK)
 YOU_WIN = Text(GRID_WIDTH/2, TOP_SECTION + GRID_HEIGHT/2, 'You Win!!!', BLACK)
-username_text = Text(BUTTON_X, USERNAME_Y, f'User: {user}', text_size=int(BUTTON_FONT_SIZE))
 
 # functions
 
@@ -309,7 +316,23 @@ def start_timer(start_time):
     draw_text(f"{formatted_time}", timer_text_pos)
     pygame.display.update()
 
+def changing_username():
+    WIN.fill(LIGHT_BLUE)
+    home_button.draw_button()
+    pygame.draw.rect(WIN, BLUE if change_user_active else PINK, change_user_box, 5)
+    txt_surface = change_user_font.render(user, True, BLACK)
+    WIN.blit(txt_surface, (WIN_WIDTH/2 - txt_surface.get_width()/2, WIN_HEIGHT/2 - txt_surface.get_height()/2))
+    change_user_box.w = max(CHANGE_USER_WIDTH, txt_surface.get_width() + 20)
+
+def show_username(user, x=BUTTON_X, y=USERNAME_Y):
+    font = pygame.font.Font(None, int(BUTTON_FONT_SIZE))
+    text_surface = font.render(user, True, BLACK)
+    text_rect = text_surface.get_rect(center=pygame.Rect(x, y, 0, 0).center)
+    WIN.blit(text_surface, text_rect)
+
 def change_page(page):
+    global user
+    hide_all_buttons()
     WIN.fill(LIGHT_BLUE)
 
     if page == 'home':
@@ -321,8 +344,7 @@ def change_page(page):
         your_statistics_button.draw_button()
         global_statistics_button.draw_button()
         change_user_button.draw_button()
-        username_text.blit_text(WIN)
-        # also need to write who the current user is
+        show_username(user)
 
     elif page == 'game':
         new_game()
@@ -332,18 +354,19 @@ def change_page(page):
         draw_text(f'{flag_counter} / {no_of_bombs}', flag_text_pos)
 
     elif page == 'your_stats':
-        # need to add the home button
-        pass
+        home_button.is_visible = True
+        home_button.draw_button()
 
     elif page == 'global_stats':
-        # need to add the home button
-        pass
+        home_button.is_visible = True
+        home_button.draw_button()
 
     elif page == 'change_user':
-        # need to add a done button for when they've finished typing
-        # need to set the old users last_to_play to no
+        stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'No'
+        user = USERNAME_PROMPT
+        home_button.is_visible = True
+        changing_username()
         # need to check if they're a new player or not
-        pass
 
     pygame.display.update()
 
@@ -370,15 +393,6 @@ def new_game():
 def hide_all_buttons():
     for b in all_buttons:
         b.is_visible = False
-
-# def get_user():
-#     for c, r in stats_df.iterrows():
-#         if r['last_to_play'] == 'Yes':
-#             user = r['username']
-#             break
-#     return user
-# user = get_user()
-# user = 'nath'
 
 def update_df(last_game='Fail'):
     global user
@@ -433,7 +447,6 @@ def update_df(last_game='Fail'):
     stats_df.loc[stats_df['username'] == user, 'longest_losing_streak'] = longest_loss_streak
     stats_df.loc[stats_df['username'] == user, 'last_game_result'] = last_game
     stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'Yes'
-    # print(stats_df)
     
 
 def main():
@@ -502,11 +515,27 @@ def main():
                 for b in all_buttons:
                     if b.is_visible and b.is_hovered and clicked == False:
                         clicked = True
-                        page = b.page
-                        hide_all_buttons()
-                        change_page(page)
+                        if page == 'change_user' and (user == USERNAME_PROMPT or user == BLANK_USERNAME):
+                            pass # doesn't allow a blank or prompt username
+                        else:
+                            page = b.page
+                            change_page(page)
+                
+                if page == 'change_user':
+                    if change_user_box.collidepoint(event.pos) and clicked == False:
+                        clicked = True
+                        global change_user_active
+                        change_user_active = True # changes the colour of the border when clicked
+                        if user == USERNAME_PROMPT:
+                            user = BLANK_USERNAME # removes the prompt when the box is clicked
+                        changing_username()
+                    else:
+                        clicked = True
+                        change_user_active = False
+                        changing_username()
+                    pygame.display.update()
 
-                if page == 'game':
+                elif page == 'game':
                     if game_over == False and clicked == False:
                         clicked = True
                         # clicking on any tile
@@ -566,6 +595,25 @@ def main():
                             WIN.blit(flag.img, flag_rect)
                             pygame.display.update()
 
+            elif event.type == pygame.KEYDOWN:
+                if change_user_active and page == 'change_user':
+                    if event.key == pygame.K_RETURN:
+                        if page == 'change_user' and (user == USERNAME_PROMPT or user == BLANK_USERNAME):
+                            pass
+                        else:
+                            # print(f"Username saved as: {user}") # delete
+                            page = 'home' # Exit to home screen unless username is blank
+                            change_page(page)
+                            # print(user) # delete
+                    elif event.key == pygame.K_BACKSPACE:
+                        user = user[:-1]
+                        changing_username()
+                    else:
+                        user += event.unicode
+                        changing_username()
+                    pygame.display.flip()
+                    # print(user) # delete
+            
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 clicked = False
 
@@ -595,8 +643,9 @@ main()
 # ellie - 4.52
 # almantas - 1.30
 
-# add a way to change user (input()), a way to view your stats, a way to view everyones top stats
+# add a way to view your stats, a way to view everyones top stats
 # at the end of the game i need to update the csv and make them go back to the home page
-# show current user
 # if changing user then mark the old user as 'No' for last_to_play
 # if playing two in a row i might need to reset some things back to their starting values
+# would a username with a comma mess things up?
+# maybe limit the max characters of a username?
