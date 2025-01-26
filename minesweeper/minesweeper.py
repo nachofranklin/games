@@ -49,10 +49,12 @@ timer_text_pos = (WIN_WIDTH/4, TOP_SECTION/2)
 flag_text_pos = (WIN_WIDTH*3/4, TOP_SECTION/2)
 font_size = int(TOP_SECTION)
 PAGES = ['home', 'game', 'your_stats', 'global_stats', 'change_user']
+PERSONAL_STATS = ['games_played', 'games_won', 'games_lost', 'win_rate', 'best_time', 'avg_time', 'longest_win_streak', 'longest_losing_streak', 'last_game_result']
+GLOBAL_STATS = ['top_10_fastest', 'best_win_rate', 'fastest_avg_time', 'longest_win_streak', 'longest_losing_streak', 'total_games_played', 'total_games_won', 'total_games_lost'] # needs to show category, person and result
 BUTTON_FONT_SIZE = int(WIN_WIDTH/16)
 default_values = {
     "username": None,
-    "play_history": [],
+    "play_history": '[]',
     "games_played": 0,
     "games_won": 0,
     "games_lost": 0,
@@ -76,7 +78,6 @@ pygame.display.set_caption('Minesweeper')
 # csv to df
 stats_df = pd.read_csv(os.path.join(PATH, 'minesweeper_statistics.csv'), delimiter=',')
 stats_df.index = stats_df['username']
-stats_df["play_history"] = stats_df["play_history"].apply(ast.literal_eval) # converts the csv str into a python list
 
 def get_user():
     user = 'Test1' # solves the issue of if someone changes user but closes it down before playing (as last_to_play would be 'No' for everyone)
@@ -400,7 +401,15 @@ def update_df(last_game='Fail'):
         default_values['username'] = user
         stats_df.loc[user] = default_values
 
-    stats_df.loc[stats_df['username'] == user, 'play_history'].iloc[0].append(last_game)
+    play_history = stats_df.loc[stats_df['username'] == user, 'play_history'].apply(ast.literal_eval) # this seems to work by converting all lists into a string either from getting the csv or adding a new user, then this way it only changes it to a list for the current row then it turns it back into a string and that seems to work
+    updated_play_history = play_history.copy() # otherwise .iloc applies the append to everything in the column
+    updated_play_history = updated_play_history[0] # should be able to merge this into the line above
+    updated_play_history.append(last_game)
+    print(updated_play_history)
+    print(type(updated_play_history))
+    print([updated_play_history])
+    print(type([updated_play_history]))
+    stats_df.loc[stats_df['username'] == user, 'play_history'] = f'{updated_play_history}'
     stats_df.loc[stats_df['username'] == user, 'games_played'] += 1
     if last_game != 'Fail':
         stats_df.loc[stats_df['username'] == user, 'games_won'] += 1
@@ -409,7 +418,7 @@ def update_df(last_game='Fail'):
     stats_df.loc[stats_df['username'] == user, 'win_rate'] = round(stats_df.loc[stats_df['username'] == user, 'games_won'] / stats_df.loc[stats_df['username'] == user, 'games_played'] * 100, 1)
     best_time = 100000
     total_time = 0
-    for i in stats_df.loc[stats_df['username'] == user, 'play_history'].iloc[0]:
+    for i in updated_play_history:
         if i == 'Fail':
             continue
         else:
@@ -426,7 +435,7 @@ def update_df(last_game='Fail'):
     longest_loss_streak = 0
     current_streak = 0
     current_type = None
-    for i in stats_df.loc[stats_df['username'] == user, 'play_history'].iloc[0]:
+    for i in updated_play_history:
         if i == 'Fail':
             if current_type == 'loss':
                 current_streak += 1
@@ -435,6 +444,8 @@ def update_df(last_game='Fail'):
             else:
                 current_type = 'loss'
                 current_streak = 1
+                if current_streak > longest_loss_streak:
+                    longest_loss_streak = current_streak
         else:
             if current_type == 'win':
                 current_streak += 1
@@ -443,11 +454,16 @@ def update_df(last_game='Fail'):
             else:
                 current_type = 'win'
                 current_streak = 1
+                if current_streak > longest_win_streak:
+                    longest_win_streak = current_streak
     stats_df.loc[stats_df['username'] == user, 'longest_win_streak'] = longest_win_streak
     stats_df.loc[stats_df['username'] == user, 'longest_losing_streak'] = longest_loss_streak
     stats_df.loc[stats_df['username'] == user, 'last_game_result'] = last_game
     stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'Yes'
-    
+
+def update_csv():
+    stats_df.to_csv(os.path.join(PATH, 'minesweeper_statistics2.csv')) # change this to delete the 2
+
 
 def main():
     clock = pygame.time.Clock()
@@ -469,7 +485,8 @@ def main():
             if event.type == pygame.QUIT:
                 if timer_started and game_over == False:
                     update_df()
-                # print(stats_df)
+                    update_csv()
+                print(stats_df)
                 # need to convert the df back to a csv so that it actually saves
                 run = False
                 exit()
@@ -561,6 +578,9 @@ def main():
                                             you_lose(WIN)
                                             update_df()
                                             game_over = True
+                                            update_csv()
+                                            home_button.is_visible = True
+                                            home_button.draw_button()
                                         elif grid[tile.row][tile.col] == 0:
                                             WIN.blit(zero.img, tile.rect)
                                             reveal_zeros(grid, revealed, tile.row, tile.col) # if it's a zero, this will reveal everything connected until it hits a number
@@ -629,6 +649,10 @@ def main():
                 update_df(total_seconds)
                 you_win(WIN)
                 game_over = True
+                update_csv()
+                home_button.is_visible = True
+                home_button.draw_button()
+                pygame.display.update()
 
             # starting/stopping the timer
             if timer_started and game_over == False:
@@ -649,3 +673,6 @@ main()
 # if playing two in a row i might need to reset some things back to their starting values
 # would a username with a comma mess things up?
 # maybe limit the max characters of a username?
+# don't think win and loss streaks are counting things if only equal to 1?
+# fixed the df issues
+# change it to save to the same csv and test that
