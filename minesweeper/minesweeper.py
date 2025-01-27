@@ -353,7 +353,7 @@ def change_page(page):
             tile.is_flagged = False
             tile.is_hovered = False
             tile.draw_tile(WIN)
-        WIN.blit(flag.img, flag_rect) # is this right? not sure what this is doing or if necessary
+        WIN.blit(flag.img, flag_rect) # blits the top x/17 flag bit
         draw_text(f'{flag_counter} / {no_of_bombs}', flag_text_pos)
 
     elif page == 'your_stats':
@@ -404,13 +404,8 @@ def update_df(last_game='Fail'):
         stats_df.loc[user] = default_values
 
     play_history = stats_df.loc[stats_df['username'] == user, 'play_history'].apply(ast.literal_eval) # this seems to work by converting all lists into a string either from getting the csv or adding a new user, then this way it only changes it to a list for the current row then it turns it back into a string and that seems to work
-    updated_play_history = play_history.copy() # otherwise .iloc applies the append to everything in the column
-    updated_play_history = updated_play_history[0] # should be able to merge this into the line above
+    updated_play_history = play_history[0].copy() # otherwise .iloc applies the append to everything in the column
     updated_play_history.append(last_game)
-    print(updated_play_history)
-    print(type(updated_play_history))
-    print([updated_play_history])
-    print(type([updated_play_history]))
     stats_df.loc[stats_df['username'] == user, 'play_history'] = f'{updated_play_history}'
     stats_df.loc[stats_df['username'] == user, 'games_played'] += 1
     if last_game != 'Fail':
@@ -488,8 +483,7 @@ def main():
                 if timer_started and game_over == False:
                     update_df()
                     update_csv()
-                print(stats_df)
-                # need to convert the df back to a csv so that it actually saves
+                print(stats_df) # delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 run = False
                 exit()
 
@@ -623,10 +617,8 @@ def main():
                         if page == 'change_user' and (user == USERNAME_PROMPT or user == BLANK_USERNAME):
                             pass
                         else:
-                            # print(f"Username saved as: {user}") # delete
-                            page = 'home' # Exit to home screen unless username is blank
+                            page = 'home' # Exit to home screen unless username is blank or prompt
                             change_page(page)
-                            # print(user) # delete
                     elif event.key == pygame.K_BACKSPACE:
                         user = user[:-1]
                         changing_username()
@@ -634,7 +626,6 @@ def main():
                         user += event.unicode
                         changing_username()
                     pygame.display.flip()
-                    # print(user) # delete
             
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
                 clicked = False
@@ -670,9 +661,5 @@ main()
 # almantas - 1.30
 
 # add a way to view your stats, a way to view everyones top stats
-# at the end of the game i need to update the csv and make them go back to the home page
-# if changing user then mark the old user as 'No' for last_to_play
-# if playing two in a row i might need to reset some things back to their starting values
 # would a username with a comma mess things up?
 # maybe limit the max characters of a username?
-# don't think win and loss streaks are counting things if only equal to 1?
