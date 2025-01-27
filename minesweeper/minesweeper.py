@@ -24,6 +24,8 @@ BUTTON_WIDTH = WIN_WIDTH/2
 BUTTON_HEIGHT = WIN_HEIGHT/9
 CHANGE_USER_WIDTH = BUTTON_WIDTH
 CHANGE_USER_HEIGHT = BUTTON_HEIGHT
+TINY_SPACE = WIN_WIDTH/100
+STATS_HEIGHT = WIN_HEIGHT - BUTTON_HEIGHT - WIN_HEIGHT/15 # win space less the home button
 
 # x and y coordinates
 BUTTON_X = WIN_WIDTH/2
@@ -49,9 +51,10 @@ timer_text_pos = (WIN_WIDTH/4, TOP_SECTION/2)
 flag_text_pos = (WIN_WIDTH*3/4, TOP_SECTION/2)
 font_size = int(TOP_SECTION)
 PAGES = ['home', 'game', 'your_stats', 'global_stats', 'change_user']
-PERSONAL_STATS = ['games_played', 'games_won', 'games_lost', 'win_rate', 'best_time', 'avg_time', 'longest_win_streak', 'longest_losing_streak', 'last_game_result']
+PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest losing streak', 'Last game result']
 GLOBAL_STATS = ['top_10_fastest', 'best_win_rate', 'fastest_avg_time', 'longest_win_streak', 'longest_losing_streak', 'total_games_played', 'total_games_won', 'total_games_lost'] # needs to show category, person and result
 BUTTON_FONT_SIZE = int(WIN_WIDTH/16)
+STATS_FONT_SIZE = int(WIN_WIDTH/16)
 default_values = {
     "username": None,
     "play_history": '[]',
@@ -331,6 +334,36 @@ def show_username(user, x=BUTTON_X, y=USERNAME_Y):
     text_rect = text_surface.get_rect(center=pygame.Rect(x, y, 0, 0).center)
     WIN.blit(text_surface, text_rect)
 
+def get_personal_stats_dict(user):
+    # PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest losing streak', 'Last game result']
+    personal_stats_dict = {d: None for d in PERSONAL_STATS}
+    personal_stats_dict['Games played'] = stats_df.loc[user, 'games_played']
+    personal_stats_dict['Games won'] = stats_df.loc[user, 'games_won']
+    personal_stats_dict['Games lost'] = stats_df.loc[user, 'games_lost']
+    personal_stats_dict['Win rate'] = f"{stats_df.loc[user, 'win_rate']}%"
+    personal_stats_dict['Best time'] = stats_df.loc[user, 'best_time'] # convert to mins
+    personal_stats_dict['Average time'] = stats_df.loc[user, 'avg_time'] # convert to mins
+    personal_stats_dict['Longest win streak'] = stats_df.loc[user, 'longest_win_streak']
+    personal_stats_dict['Longest losing streak'] = stats_df.loc[user, 'longest_losing_streak']
+    personal_stats_dict['Last game result'] = stats_df.loc[user, 'last_game_result']
+    return personal_stats_dict
+
+def blit_personal_stats(personal_stats_dict, colour=BLACK):
+    font = pygame.font.Font(None, STATS_FONT_SIZE)
+    x = WIN_WIDTH * 3/5
+    index = 0
+    for i in personal_stats_dict:
+        y = STATS_HEIGHT * (index+1) / (len(personal_stats_dict)+1)
+        index += 1
+        desc_surface = font.render(f'{i} ', True, colour)
+        desc_rect = desc_surface.get_rect()
+        desc_rect.midright = (x, y)
+        WIN.blit(desc_surface, desc_rect) # blits the stat description
+        stat_surface = font.render(f'- {personal_stats_dict[i]}', True, colour)
+        stat_rect = stat_surface.get_rect()
+        stat_rect.midleft = (x, y)
+        WIN.blit(stat_surface, stat_rect) # blits the stat
+
 def change_page(page):
     global user
     hide_all_buttons()
@@ -359,6 +392,7 @@ def change_page(page):
     elif page == 'your_stats':
         home_button.is_visible = True
         home_button.draw_button()
+        blit_personal_stats(get_personal_stats_dict(user))
 
     elif page == 'global_stats':
         home_button.is_visible = True
@@ -483,7 +517,7 @@ def main():
                 if timer_started and game_over == False:
                     update_df()
                     update_csv()
-                print(stats_df) # delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # print(stats_df) # delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 run = False
                 exit()
 
