@@ -350,8 +350,10 @@ def change_page(page):
     elif page == 'game':
         new_game()
         for tile in tile_list:
+            tile.is_flagged = False
+            tile.is_hovered = False
             tile.draw_tile(WIN)
-        WIN.blit(flag.img, flag_rect)
+        WIN.blit(flag.img, flag_rect) # is this right? not sure what this is doing or if necessary
         draw_text(f'{flag_counter} / {no_of_bombs}', flag_text_pos)
 
     elif page == 'your_stats':
@@ -462,7 +464,7 @@ def update_df(last_game='Fail'):
     stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'Yes'
 
 def update_csv():
-    stats_df.to_csv(os.path.join(PATH, 'minesweeper_statistics2.csv')) # change this to delete the 2
+    stats_df.to_csv(os.path.join(PATH, 'minesweeper_statistics.csv'), index=False)
 
 
 def main():
@@ -674,5 +676,3 @@ main()
 # would a username with a comma mess things up?
 # maybe limit the max characters of a username?
 # don't think win and loss streaks are counting things if only equal to 1?
-# fixed the df issues
-# change it to save to the same csv and test that

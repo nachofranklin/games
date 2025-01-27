@@ -1,2 +1,4 @@
 username,play_history,games_played,games_won,games_lost,win_rate,best_time,avg_time,longest_win_streak,longest_losing_streak,last_game_result,last_to_play
-Test1,"[300,'Fail','Fail']",3,1,2,33,300,300,1,2,Fail,Yes
+Test1,"[300, 'Fail', 'Fail', 200, 168, 97, 'Fail', 'Fail']",8,4,4,50.0,97.0,191.2,3,2,Fail,Yes
+farty georgy,"[324, 'Fail']",2,1,1,50.0,324.0,324.0,1,1,Fail,No
+methistime,['Fail'],1,0,1,0.0,,,0,1,Fail,No
