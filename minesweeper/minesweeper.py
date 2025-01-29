@@ -51,8 +51,8 @@ timer_text_pos = (WIN_WIDTH/4, TOP_SECTION/2)
 flag_text_pos = (WIN_WIDTH*3/4, TOP_SECTION/2)
 font_size = int(TOP_SECTION)
 PAGES = ['home', 'game', 'your_stats', 'global_stats', 'change_user']
-PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest losing streak', 'Last game result']
-GLOBAL_STATS = ['top_10_fastest', 'best_win_rate', 'fastest_avg_time', 'longest_win_streak', 'longest_losing_streak', 'total_games_played', 'total_games_won', 'total_games_lost'] # needs to show category, person and result
+PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest loss streak', 'Last game result']
+GLOBAL_STATS = ['Top 10 Times', 'Best win rate', 'Fastest average time', 'Longest win streak', 'Longest loss streak', 'Total games played', 'Total games won', 'Total games lost'] # needs to show category, person and result
 BUTTON_FONT_SIZE = int(WIN_WIDTH/16)
 STATS_FONT_SIZE = int(WIN_WIDTH/16)
 default_values = {
@@ -113,7 +113,7 @@ class Tiles:
         self.rect = pygame.Rect(col * TILE_WIDTH, row * TILE_HEIGHT + TOP_SECTION, TILE_WIDTH, TILE_HEIGHT)
         self.unopened_img = pygame.transform.scale(pygame.image.load(os.path.join(PATH, 'img', 'unopened_square.png')), (img_width, img_height))
         self.hovered_img = pygame.transform.scale(pygame.image.load(os.path.join(PATH, 'img', 'hover_unopened.png')), (img_width, img_height))
-        self.flag_img = pygame.transform.scale(pygame.image.load(os.path.join(PATH, 'img', 'flag.png')), (img_width, img_height))
+        self.flag_img = pygame.transform.scale(pygame.image.load(os.path.join(PATH, 'img', 'flag_pink.png')), (img_width, img_height))
         self.is_hovered = False
         self.is_flagged = False
     
@@ -148,7 +148,7 @@ flag_rect = pygame.Rect(GRID_WIDTH/2 - TILE_WIDTH/2, TOP_SECTION/2 - TILE_HEIGHT
 radius = int(TILE_WIDTH/2)
 circle_width = int(TILE_WIDTH/6)
 bomb = Tile_results('ms_bomb')
-zero = Tile_results('zero')
+zero = Tile_results('zero_green')
 one = Tile_results('one')
 two = Tile_results('two')
 three = Tile_results('three')
@@ -222,8 +222,8 @@ YOU_WIN = Text(GRID_WIDTH/2, TOP_SECTION + GRID_HEIGHT/2, 'You Win!!!', BLACK)
 
 # functions
 
-# function for timer and flag counter / total bombs
 def draw_text(text, position, colour = BLUE, font_size = font_size, screen = WIN):
+    """function for timer and flag counter / total bombs"""
     font = pygame.font.Font(None, font_size)
     max_text_surface = font.render('100 / 100', True, colour)
     max_text_surface.fill(LIGHT_BLUE)
@@ -235,8 +235,8 @@ def draw_text(text, position, colour = BLUE, font_size = font_size, screen = WIN
     screen.blit(max_text_surface, max_text_rect) # blits a blue surface of the length of 100 / 100
     screen.blit(text_surface, text_rect) # blits the text we actually want
 
-# randomises where the bombs are and counts the number of adjacent bombs in every tile
 def add_bombs():
+    """randomises where the bombs are and counts the number of adjacent bombs in every tile"""
     bomb_positions = random.sample(range(GRID_ROWS * GRID_COLS), no_of_bombs)
     for position in bomb_positions:
         row, col = divmod(position, GRID_COLS)
@@ -248,8 +248,8 @@ def add_bombs():
                 if 0 <= row + i < GRID_ROWS and 0 <= col + j < GRID_COLS and grid[row + i][col + j] != 8038:
                     grid[row + i][col + j] += 1
 
-# when a zero is clicked this will reveal all adjacent zeros and the next adjacent non zero values
 def reveal_zeros(grid, revealed, row, col):
+    """when a zero is clicked this will reveal all adjacent zeros and the next adjacent non zero values"""
     if revealed[row][col]:
         return
     revealed[row][col] = 1
@@ -281,6 +281,7 @@ def reveal_zeros(grid, revealed, row, col):
                     reveal_zeros(grid, revealed, new_row, new_col)
 
 def you_lose(screen):
+    """performs the losing animation"""
     EXPLOSION_SOUND.play()
     YOU_LOSE_ONE.blit_text(screen)
     pygame.display.update()
@@ -298,6 +299,7 @@ def you_lose(screen):
     pygame.display.update()
 
 def you_win(screen):
+    """performs the winning animation"""
     bomb_list = []
     for tile in tile_list:
         if grid[tile.row][tile.col] == 8038:
@@ -314,6 +316,7 @@ def you_win(screen):
         pygame.time.delay(750)
 
 def start_timer(start_time):
+    """formats and blits the timer for minesweeper in mins and seconds"""
     timer_seconds = (pygame.time.get_ticks() - start_time) / 1000
     minutes, seconds = divmod(timer_seconds, 60)
     formatted_time = "{:02}:{:02}".format(int(minutes), int(seconds))
@@ -321,6 +324,7 @@ def start_timer(start_time):
     pygame.display.update()
 
 def changing_username():
+    """shows the username a user is typing out as they type it"""
     WIN.fill(LIGHT_BLUE)
     home_button.draw_button()
     pygame.draw.rect(WIN, BLUE if change_user_active else PINK, change_user_box, 5)
@@ -329,13 +333,15 @@ def changing_username():
     change_user_box.w = max(CHANGE_USER_WIDTH, txt_surface.get_width() + 20)
 
 def show_username(user, x=BUTTON_X, y=USERNAME_Y):
+    """blits the current users username"""
     font = pygame.font.Font(None, int(BUTTON_FONT_SIZE))
     text_surface = font.render(user, True, BLACK)
     text_rect = text_surface.get_rect(center=pygame.Rect(x, y, 0, 0).center)
     WIN.blit(text_surface, text_rect)
 
 def get_personal_stats_dict(user):
-    # PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest losing streak', 'Last game result']
+    """retreives stats from stats_df to determine certain best/worst statistics for the current user\n
+    PERSONAL_STATS = ['Games played', 'Games won', 'Games lost', 'Win rate', 'Best time', 'Average time', 'Longest win streak', 'Longest losing streak', 'Last game result']"""
     personal_stats_dict = {d: None for d in PERSONAL_STATS}
     personal_stats_dict['Games played'] = stats_df.loc[user, 'games_played']
     personal_stats_dict['Games won'] = stats_df.loc[user, 'games_won']
@@ -344,11 +350,12 @@ def get_personal_stats_dict(user):
     personal_stats_dict['Best time'] = stats_df.loc[user, 'best_time'] # convert to mins
     personal_stats_dict['Average time'] = stats_df.loc[user, 'avg_time'] # convert to mins
     personal_stats_dict['Longest win streak'] = stats_df.loc[user, 'longest_win_streak']
-    personal_stats_dict['Longest losing streak'] = stats_df.loc[user, 'longest_losing_streak']
+    personal_stats_dict['Longest loss streak'] = stats_df.loc[user, 'longest_losing_streak']
     personal_stats_dict['Last game result'] = stats_df.loc[user, 'last_game_result']
     return personal_stats_dict
 
 def blit_personal_stats(personal_stats_dict, colour=BLACK):
+    """blits each statistic from the personal_stats_dict"""
     font = pygame.font.Font(None, STATS_FONT_SIZE)
     x = WIN_WIDTH * 3/5
     index = 0
@@ -364,7 +371,96 @@ def blit_personal_stats(personal_stats_dict, colour=BLACK):
         stat_rect.midleft = (x, y)
         WIN.blit(stat_surface, stat_rect) # blits the stat
 
+def get_global_stats_dict():
+    """retreives stats from stats_df to determine certain best/worst statistics across all users\n
+    GLOBAL_STATS = ['Top 10 Times', 'Best win rate', 'Fastest average time', 'Longest win streak', 'Longest loss streak', 'Total games played', 'Total games won', 'Total games lost']"""
+    global_stats_dict = {d: None for d in GLOBAL_STATS}
+    # might split the top 10 into two rows of 5 unless i find a better way on codecademy
+    best_times_dict = get_best_times_dict()
+    best_times_list = []
+    for time, list in best_times_dict.items():
+        for user in list:
+            if len(best_times_list) < 10:
+                best_times_list.append(f'{time} - {user}')
+    global_stats_dict['Top 10 Times'] = best_times_list
+    global_stats_dict['Best win rate'] = f"{stats_df['win_rate'].max()}% - {stats_df[stats_df['win_rate'] == stats_df['win_rate'].max()].index[0]}"
+    global_stats_dict['Fastest average time'] = f"{stats_df['avg_time'].min()} - {stats_df[stats_df['avg_time'] == stats_df['avg_time'].min()].index[0]}"
+    global_stats_dict['Longest win streak'] = f"{stats_df['longest_win_streak'].max()} - {stats_df[stats_df['longest_win_streak'] == stats_df['longest_win_streak'].max()].index[0]}"
+    global_stats_dict['Longest loss streak'] = f"{stats_df['longest_losing_streak'].max()} - {stats_df[stats_df['longest_losing_streak'] == stats_df['longest_losing_streak'].max()].index[0]}"
+    global_stats_dict['Total games played'] = f"{stats_df['games_played'].sum()}"
+    global_stats_dict['Total games won'] = f"{stats_df['games_won'].sum()}"
+    global_stats_dict['Total games lost'] = f"{stats_df['games_lost'].sum()}"
+    return global_stats_dict
+
+def blit_global_stats(global_stats_dict, colour=BLACK):
+    """blits each statistic from the global_stats_dict"""
+    font = pygame.font.Font(None, STATS_FONT_SIZE)
+    x = WIN_WIDTH * 3/5 # need to remove this as it's pointless
+    index = 6 # will probably need to change this
+
+    for i in global_stats_dict:
+        if i == 'Top 10 Times':
+            x = WIN_WIDTH/2
+            y = STATS_HEIGHT * 1 / (len(global_stats_dict)+6)
+            top10_surface = font.render(f'{i} / seconds', True, colour)
+            top10_rect = top10_surface.get_rect()
+            top10_rect.center = (x, y)
+            WIN.blit(top10_surface, top10_rect) # blits the top 10 times str
+            ranking = 1
+            for time in global_stats_dict[i]: # this is just iterating through the list of 'fastest times - user'
+                if ranking < (len(global_stats_dict[i])+1) / 2:
+                    x = WIN_WIDTH * 1/4
+                    y = STATS_HEIGHT * (ranking+1) / (len(global_stats_dict)+6)
+                    top10_surface = font.render(f'{ranking}) {time}', True, colour)
+                    top10_rect = top10_surface.get_rect()
+                    top10_rect.center = (x, y)
+                    WIN.blit(top10_surface, top10_rect) # blits the top 1st - 5th times on the left
+                    ranking += 1
+                else:
+                    x = WIN_WIDTH * 3/4
+                    y = STATS_HEIGHT * (ranking+1-5) / (len(global_stats_dict)+6)
+                    top10_surface = font.render(f'{ranking}) {time}', True, colour)
+                    top10_rect = top10_surface.get_rect()
+                    top10_rect.center = (x, y)
+                    WIN.blit(top10_surface, top10_rect) # blits the top 6th - 10th times on the right
+                    ranking += 1
+        else:
+            x = WIN_WIDTH * 1/2
+            y = STATS_HEIGHT * (index+1) / (len(global_stats_dict)+6)
+            index += 1
+            stat_surface = font.render(f'{i} - {global_stats_dict[i]}', True, colour)
+            stat_rect = stat_surface.get_rect()
+            stat_rect.center = (x, y)
+            WIN.blit(stat_surface, stat_rect) # blits the stat
+
+            # below comments is splitting it like personal stats but i don't think it looked as good (x = 4/7)
+            # desc_surface = font.render(f'{i} ', True, colour)
+            # desc_rect = desc_surface.get_rect()
+            # desc_rect.midright = (x, y)
+            # WIN.blit(desc_surface, desc_rect) # blits the stat description
+            # stat_surface = font.render(f'- {global_stats_dict[i]}', True, colour)
+            # stat_rect = stat_surface.get_rect()
+            # stat_rect.midleft = (x, y)
+            # WIN.blit(stat_surface, stat_rect) # blits the stat
+
+def get_best_times_dict():
+    """returns a dict of seconds taken: list(users), sorted quickest to slowest of all users"""
+    times_dict = {}
+    df = stats_df['play_history'].apply(ast.literal_eval)
+    for user in stats_df['username']:
+        for time in df[user]:
+            if time == 'Fail':
+                pass # if fail, skip
+            elif time in times_dict:
+                times_dict[time] += [user] # if the time already exists then add the user to the time
+            else:
+                times_dict[time] = [user] # if the time doesn't already exist then add the user: time
+    best_times_dict = dict(sorted(times_dict.items())) # sorts the dict quickest to slowest
+    return best_times_dict
+
 def change_page(page):
+    """blits all required elements when changing to a new page\n
+    PAGES = ['home', 'game', 'your_stats', 'global_stats', 'change_user']"""
     global user
     hide_all_buttons()
     WIN.fill(LIGHT_BLUE)
@@ -397,6 +493,7 @@ def change_page(page):
     elif page == 'global_stats':
         home_button.is_visible = True
         home_button.draw_button()
+        blit_global_stats(get_global_stats_dict())
 
     elif page == 'change_user':
         stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'No'
@@ -408,6 +505,7 @@ def change_page(page):
     pygame.display.update()
 
 def new_game():
+    """resets everything and generates a new randomised minesweeper game"""
     global grid
     global revealed
     global flag_counter
@@ -428,10 +526,12 @@ def new_game():
     revealed_count = 0
 
 def hide_all_buttons():
+    """sets all buttons visibily (is_visible) to False, awaiting them to be turned on afterwards where needed"""
     for b in all_buttons:
         b.is_visible = False
 
 def update_df(last_game='Fail'):
+    """takes the value of the last game, either a str 'Fail' or an int of number of seconds taken to win and updates the stats_df"""
     global user
     if user not in stats_df['username']:
         default_values['username'] = user
@@ -493,10 +593,12 @@ def update_df(last_game='Fail'):
     stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'Yes'
 
 def update_csv():
+    """overwrites the minesweeper_statistics.csv file with the stats_df data"""
     stats_df.to_csv(os.path.join(PATH, 'minesweeper_statistics.csv'), index=False)
 
 
 def main():
+    """plays minesweeper"""
     clock = pygame.time.Clock()
     global flag_counter
     global flag_hovered
@@ -517,7 +619,6 @@ def main():
                 if timer_started and game_over == False:
                     update_df()
                     update_csv()
-                # print(stats_df) # delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 run = False
                 exit()
 
@@ -694,6 +795,6 @@ main()
 # ellie - 4.52
 # almantas - 1.30
 
-# add a way to view your stats, a way to view everyones top stats
 # would a username with a comma mess things up?
 # maybe limit the max characters of a username?
+# i think if you change user to a new user and check stats before playing a game it crashes
