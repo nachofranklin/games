@@ -323,6 +323,11 @@ def start_timer(start_time):
     draw_text(f"{formatted_time}", timer_text_pos)
     pygame.display.update()
 
+def mins_and_seconds(seconds: float):
+    mins, secs = divmod(seconds, 60)
+    formatted_time = "{}m {:04.1f}s".format(int(mins), secs)
+    return formatted_time
+
 def changing_username():
     """shows the username a user is typing out as they type it"""
     WIN.fill(LIGHT_BLUE)
@@ -347,8 +352,8 @@ def get_personal_stats_dict(user):
     personal_stats_dict['Games won'] = stats_df.loc[user, 'games_won']
     personal_stats_dict['Games lost'] = stats_df.loc[user, 'games_lost']
     personal_stats_dict['Win rate'] = f"{stats_df.loc[user, 'win_rate']}%"
-    personal_stats_dict['Best time'] = stats_df.loc[user, 'best_time'] # convert to mins
-    personal_stats_dict['Average time'] = stats_df.loc[user, 'avg_time'] # convert to mins
+    personal_stats_dict['Best time'] = f"{mins_and_seconds(stats_df.loc[user, 'best_time'])}"
+    personal_stats_dict['Average time'] = f"{mins_and_seconds(stats_df.loc[user, 'avg_time'])}"
     personal_stats_dict['Longest win streak'] = stats_df.loc[user, 'longest_win_streak']
     personal_stats_dict['Longest loss streak'] = stats_df.loc[user, 'longest_losing_streak']
     personal_stats_dict['Last game result'] = stats_df.loc[user, 'last_game_result']
@@ -375,16 +380,15 @@ def get_global_stats_dict():
     """retreives stats from stats_df to determine certain best/worst statistics across all users\n
     GLOBAL_STATS = ['Top 10 Times', 'Best win rate', 'Fastest average time', 'Longest win streak', 'Longest loss streak', 'Total games played', 'Total games won', 'Total games lost']"""
     global_stats_dict = {d: None for d in GLOBAL_STATS}
-    # might split the top 10 into two rows of 5 unless i find a better way on codecademy
     best_times_dict = get_best_times_dict()
     best_times_list = []
     for time, list in best_times_dict.items():
         for user in list:
             if len(best_times_list) < 10:
-                best_times_list.append(f'{time} - {user}')
+                best_times_list.append(f'{mins_and_seconds(time)} - {user}')
     global_stats_dict['Top 10 Times'] = best_times_list
     global_stats_dict['Best win rate'] = f"{stats_df['win_rate'].max()}% - {stats_df[stats_df['win_rate'] == stats_df['win_rate'].max()].index[0]}"
-    global_stats_dict['Fastest average time'] = f"{stats_df['avg_time'].min()} - {stats_df[stats_df['avg_time'] == stats_df['avg_time'].min()].index[0]}"
+    global_stats_dict['Fastest average time'] = f"{mins_and_seconds(stats_df['avg_time'].min())} - {stats_df[stats_df['avg_time'] == stats_df['avg_time'].min()].index[0]}"
     global_stats_dict['Longest win streak'] = f"{stats_df['longest_win_streak'].max()} - {stats_df[stats_df['longest_win_streak'] == stats_df['longest_win_streak'].max()].index[0]}"
     global_stats_dict['Longest loss streak'] = f"{stats_df['longest_losing_streak'].max()} - {stats_df[stats_df['longest_losing_streak'] == stats_df['longest_losing_streak'].max()].index[0]}"
     global_stats_dict['Total games played'] = f"{stats_df['games_played'].sum()}"
@@ -589,7 +593,10 @@ def update_df(last_game='Fail'):
                     longest_win_streak = current_streak
     stats_df.loc[stats_df['username'] == user, 'longest_win_streak'] = longest_win_streak
     stats_df.loc[stats_df['username'] == user, 'longest_losing_streak'] = longest_loss_streak
-    stats_df.loc[stats_df['username'] == user, 'last_game_result'] = last_game
+    if last_game == 'Fail':
+        stats_df.loc[stats_df['username'] == user, 'last_game_result'] = last_game
+    else:
+        stats_df.loc[stats_df['username'] == user, 'last_game_result'] = mins_and_seconds(last_game)
     stats_df.loc[stats_df['username'] == user, 'last_to_play'] = 'Yes'
 
 def update_csv():
@@ -773,7 +780,7 @@ def main():
                     revealed_count += 1
             if revealed_count == GRID_ROWS * GRID_COLS - no_of_bombs and game_over == False:
                 end_time = pygame.time.get_ticks()
-                total_seconds = round((end_time - start_time) / 1000)
+                total_seconds = round((end_time - start_time) / 1000, 1)
                 update_df(total_seconds)
                 you_win(WIN)
                 game_over = True
@@ -798,3 +805,6 @@ main()
 # would a username with a comma mess things up?
 # maybe limit the max characters of a username?
 # i think if you change user to a new user and check stats before playing a game it crashes
+# make it so that if you click a button make all buttons to be not hovered over to avoid being able to click straight away to go home
+# need to change it in case someone checks their stats while not having won a game
+# change it so that all usernames are .upper -ed
