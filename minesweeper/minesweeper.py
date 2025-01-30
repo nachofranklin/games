@@ -324,6 +324,7 @@ def start_timer(start_time):
     pygame.display.update()
 
 def mins_and_seconds(seconds: float):
+    """converts seconds into a minutes and seconds format"""
     mins, secs = divmod(seconds, 60)
     formatted_time = "{}m {:04.1f}s".format(int(mins), secs)
     return formatted_time
@@ -533,6 +534,7 @@ def hide_all_buttons():
     """sets all buttons visibily (is_visible) to False, awaiting them to be turned on afterwards where needed"""
     for b in all_buttons:
         b.is_visible = False
+        b.is_hovered = False
 
 def update_df(last_game='Fail'):
     """takes the value of the last game, either a str 'Fail' or an int of number of seconds taken to win and updates the stats_df"""
@@ -765,8 +767,9 @@ def main():
                         user = user[:-1]
                         changing_username()
                     else:
-                        user += event.unicode
-                        changing_username()
+                        if len(user) < 10:
+                            user += event.unicode.upper()
+                            changing_username()
                     pygame.display.flip()
             
             elif event.type == pygame.MOUSEBUTTONUP: # prevents one click doing multiple actions
@@ -802,9 +805,6 @@ main()
 # ellie - 4.52
 # almantas - 1.30
 
-# would a username with a comma mess things up?
-# maybe limit the max characters of a username?
 # i think if you change user to a new user and check stats before playing a game it crashes
-# make it so that if you click a button make all buttons to be not hovered over to avoid being able to click straight away to go home
 # need to change it in case someone checks their stats while not having won a game
-# change it so that all usernames are .upper -ed
+# maybe add in current win and loss streak to personal stats (changing the longest win streak to longest (current) win streak)

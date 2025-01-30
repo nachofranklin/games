@@ -5,6 +5,8 @@ methistime,['Fail'],1,0,1,0.0,,,0,1,Fail,No
 test2,"['Fail', 'Fail', 'Fail']",3,0,3,0.0,,,0,3,Fail,No
 julia,"['Fail', 'Fail']",2,0,2,0.0,,,0,2,Fail,No
 Mark,"[789, 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 852, 497, 656]",10,4,6,40.0,497.0,698.5,3,6,656,No
-nacho,"[300, 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 110, 'Fail', 'Fail', 'Fail', 94, 73, 164, 'Fail', 'Fail', 137, 'Fail', 'Fail', 274, 'Fail', 161, 'Fail', 74, 89, 'Fail', 'Fail', 130, 'Fail', 132, 'Fail', 'Fail', 'Fail', 'Fail', 125.8, 86.2]",35,14,21,40.0,73.0,139.3,3,5,1m 26.2s,Yes
+nacho,"[300, 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 110, 'Fail', 'Fail', 'Fail', 94, 73, 164, 'Fail', 'Fail', 137, 'Fail', 'Fail', 274, 'Fail', 161, 'Fail', 74, 89, 'Fail', 'Fail', 130, 'Fail', 132, 'Fail', 'Fail', 'Fail', 'Fail', 125.8, 86.2]",35,14,21,40.0,73.0,139.3,3,5,1m 26.2s,No
 Julia,"['Fail', 'Fail', 'Fail', 'Fail', 586]",5,1,4,20.0,586.0,586.0,1,4,586,No
 test1,"['Fail', 'Fail', 'Fail']",3,0,3,0.0,,,0,3,Fail,No
+"comma, man, lol",[45.5],1,1,0,100.0,45.5,45.5,1,0,0m 45.5s,No
+ABC,['Fail'],1,0,1,0.0,,,0,1,Fail,Yes
