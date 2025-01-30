@@ -353,8 +353,12 @@ def get_personal_stats_dict(user):
     personal_stats_dict['Games won'] = stats_df.loc[user, 'games_won']
     personal_stats_dict['Games lost'] = stats_df.loc[user, 'games_lost']
     personal_stats_dict['Win rate'] = f"{stats_df.loc[user, 'win_rate']}%"
-    personal_stats_dict['Best time'] = f"{mins_and_seconds(stats_df.loc[user, 'best_time'])}"
-    personal_stats_dict['Average time'] = f"{mins_and_seconds(stats_df.loc[user, 'avg_time'])}"
+    if stats_df.loc[user, 'games_won'] > 0:
+        personal_stats_dict['Best time'] = f"{mins_and_seconds(stats_df.loc[user, 'best_time'])}"
+        personal_stats_dict['Average time'] = f"{mins_and_seconds(stats_df.loc[user, 'avg_time'])}"
+    else:
+        personal_stats_dict['Best time'] = stats_df.loc[user, 'best_time']
+        personal_stats_dict['Average time'] = stats_df.loc[user, 'avg_time']
     personal_stats_dict['Longest win streak'] = stats_df.loc[user, 'longest_win_streak']
     personal_stats_dict['Longest loss streak'] = stats_df.loc[user, 'longest_losing_streak']
     personal_stats_dict['Last game result'] = stats_df.loc[user, 'last_game_result']
@@ -407,7 +411,7 @@ def blit_global_stats(global_stats_dict, colour=BLACK):
         if i == 'Top 10 Times':
             x = WIN_WIDTH/2
             y = STATS_HEIGHT * 1 / (len(global_stats_dict)+6)
-            top10_surface = font.render(f'{i} / seconds', True, colour)
+            top10_surface = font.render(f'{i}', True, colour)
             top10_rect = top10_surface.get_rect()
             top10_rect.center = (x, y)
             WIN.blit(top10_surface, top10_rect) # blits the top 10 times str
@@ -493,7 +497,8 @@ def change_page(page):
     elif page == 'your_stats':
         home_button.is_visible = True
         home_button.draw_button()
-        blit_personal_stats(get_personal_stats_dict(user))
+        if user in stats_df['username']: # stops a new user who hasn't played before from trying to get stats and crashing the game
+            blit_personal_stats(get_personal_stats_dict(user))
 
     elif page == 'global_stats':
         home_button.is_visible = True
@@ -798,13 +803,5 @@ def main():
 
 main()
 
-# best scores (10x10 with 17 bombs)
 
-# nathan - 1.17, 1.28, 1.30
-# georgie - 0.00, 0.18
-# ellie - 4.52
-# almantas - 1.30
-
-# i think if you change user to a new user and check stats before playing a game it crashes
-# need to change it in case someone checks their stats while not having won a game
 # maybe add in current win and loss streak to personal stats (changing the longest win streak to longest (current) win streak)
