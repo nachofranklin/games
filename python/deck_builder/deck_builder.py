@@ -7,7 +7,8 @@ pygame.font.init()
 pygame.mixer.init()
 
 # variables
-PATH = '/home/nacho/repos/games/deck_builder/'
+# PATH = '/home/nacho/repos/games/deck_builder/'
+PATH =  'C:/Users/Nacho/code/GitHub/games/python/deck_builder/'
 
 FPS = 60
 MAX_CARDS_IN_HAND = 10
@@ -123,7 +124,7 @@ FRAIL = image('frail')
 POISON = image('poison')
 THORNS = image('thorns')
 ADDITIONAL_ENERGY = image('energy')
-ADDITIONAL_DRAW_IMG = image('drawing_cards')
+ADDITIONAL_DRAW_IMG = image('drawing_cards') # doesn't work because the images must be on my old laptop :(
 CONFIDENCE_IMG = image('confidence')
 COWARDICE_IMG = image('cowardice')
 DEATH_STRENGTH_IMG = image('milkshake')
