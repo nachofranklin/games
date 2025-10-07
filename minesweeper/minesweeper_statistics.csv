@@ -1,5 +1,0 @@
-username,play_history,games_played,games_won,games_lost,win_rate,best_time,avg_time,longest_win_streak,longest_losing_streak,last_game_result,last_to_play
-GEORGIE,"[324, 'Fail', 'Fail', 'Fail', 'Fail', 278, 'Fail', 'Fail', 'Fail']",9,2,7,22.2,278.0,301.0,1,4,Fail,No
-MARK,"[789, 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 852, 497, 656]",10,4,6,40.0,497.0,698.5,3,6,656,No
-NACHO,"[300, 'Fail', 'Fail', 'Fail', 'Fail', 'Fail', 110, 'Fail', 'Fail', 'Fail', 94, 73, 164, 'Fail', 'Fail', 137, 'Fail', 'Fail', 274, 'Fail', 161, 'Fail', 74, 89, 'Fail', 'Fail', 130, 'Fail', 132, 'Fail', 'Fail', 'Fail', 'Fail', 125.8, 86.2]",35,14,21,40.0,73.0,139.3,3,5,1m 26.2s,Yes
-JULIA,"['Fail', 'Fail', 'Fail', 'Fail', 586]",5,1,4,20.0,586.0,586.0,1,4,586,No

@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://n2bpi3re72a4"]
+
+[ext_resource type="Texture2D" uid="uid://dfdlbhf18twes" path="res://assets/graphics/objects/infestation/small_2.png" id="1_ntbdt"]
+[ext_resource type="Texture2D" uid="uid://d1esog4tk5lbo" path="res://assets/graphics/objects/infestation/large.png" id="2_1rkgd"]
+[ext_resource type="Texture2D" uid="uid://co83rniuw28ld" path="res://assets/graphics/objects/infestation/medium.png" id="3_k53gs"]
+[ext_resource type="Texture2D" uid="uid://cm7pnryxrpsdl" path="res://assets/graphics/objects/infestation/small.png" id="4_il28r"]
+[ext_resource type="Texture2D" uid="uid://qgxejv1gyktf" path="res://assets/graphics/objects/infestation/small_3.png" id="5_i6jmv"]
+[ext_resource type="Texture2D" uid="uid://d008s3dkqjysn" path="res://assets/graphics/objects/infestation/small_4.png" id="6_yr588"]
+[ext_resource type="Texture2D" uid="uid://bwwu4btbf0jk0" path="res://assets/graphics/objects/infestation/spikes.png" id="7_mo8ai"]
+
+[node name="Infestation" type="Node2D"]
+
+[node name="EggSac4" type="Sprite2D" parent="."]
+position = Vector2(-55, -21)
+texture = ExtResource("1_ntbdt")
+
+[node name="EggSac" type="Sprite2D" parent="."]
+texture = ExtResource("2_1rkgd")
+
+[node name="EggSac2" type="Sprite2D" parent="."]
+position = Vector2(-59, 74)
+texture = ExtResource("3_k53gs")
+
+[node name="EggSac3" type="Sprite2D" parent="."]
+position = Vector2(67, 23)
+texture = ExtResource("4_il28r")
+
+[node name="EggSac5" type="Sprite2D" parent="."]
+position = Vector2(113, 65)
+texture = ExtResource("5_i6jmv")
+
+[node name="EggSac6" type="Sprite2D" parent="."]
+position = Vector2(-56, 44)
+texture = ExtResource("6_yr588")
+
+[node name="EggSac7" type="Sprite2D" parent="."]
+position = Vector2(19, 80)
+texture = ExtResource("7_mo8ai")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 11
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-46, -51, -63, -47, -75, -29, -68, 2, -67, 21, -77, 42, -94, 69, -88, 102, -54, 111, -22, 83, -11, 103, -16, 126, 7, 116, 48, 112, 59, 91, 60, 81, 80, 59, 93, 61, 93, 82, 109, 98, 130, 88, 132, 53, 109, 33, 95, 48, 79, 49, 79, 28, 85, -8, 77, -30, 60, -28, 48, -54, 20, -69, -13, -69, -33, -62)
