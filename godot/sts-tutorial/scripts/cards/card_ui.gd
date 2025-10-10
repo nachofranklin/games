@@ -5,14 +5,24 @@ class_name CardUI
 @warning_ignore('UNUSED_SIGNAL')
 signal reparent_requested(which_card_ui: CardUI)
 
+@export var card: Card
+
 @onready var colour: ColorRect = $Colour
 @onready var state: Label = $State
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
 @onready var card_area: Area2D = $CardArea
 @onready var targets: Array[Node] = []
 
+var parent: Control
+var tween: Tween
+
 func _ready() -> void:
 	card_state_machine.init(self)
+
+func animate_to_position(new_position: Vector2, duration: float):
+	tween = create_tween().set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	#tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT) # different arrow shape option
+	tween.tween_property(self, 'global_position', new_position, duration)
 
 func _input(event: InputEvent) -> void:
 	card_state_machine.on_input(event)

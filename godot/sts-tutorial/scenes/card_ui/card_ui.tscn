@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bip3q1iwo32k3"]
+[gd_scene load_steps=10 format=3 uid="uid://bip3q1iwo32k3"]
 
 [ext_resource type="Theme" uid="uid://ct8u880b0h3no" path="res://main_theme.tres" id="1_gy3gl"]
 [ext_resource type="Script" uid="uid://d22hdr2o6i007" path="res://scripts/cards/card_ui.gd" id="2_els2s"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://cw1ifaf846pcu" path="res://scripts/cards/card_states/card_clicked_state.gd" id="5_yxx8x"]
 [ext_resource type="Script" uid="uid://c0agn5lpi7es3" path="res://scripts/cards/card_states/card_dragging_state.gd" id="6_ci03s"]
 [ext_resource type="Script" uid="uid://255304o4l2bt" path="res://scripts/cards/card_states/card_released_state.gd" id="7_js3ux"]
+[ext_resource type="Script" uid="uid://cw8h73obhrx0q" path="res://scripts/cards/card_states/card_aiming_state.gd" id="8_yxx8x"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gy3gl"]
 size = Vector2(25, 30)
@@ -71,6 +72,10 @@ state = 2
 [node name="CardReleasedState" type="Node" parent="CardStateMachine"]
 script = ExtResource("7_js3ux")
 state = 4
+
+[node name="CardAimingState" type="Node" parent="CardStateMachine"]
+script = ExtResource("8_yxx8x")
+state = 3
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

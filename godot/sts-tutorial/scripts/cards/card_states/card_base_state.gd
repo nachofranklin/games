@@ -4,6 +4,9 @@ func enter():
 	if not card_ui.is_node_ready():
 		await card_ui.ready
 	
+	if card_ui.tween and card_ui.tween.is_running(): # this is to prevent a bug of the position of a select enemy att card getting stuck in the slightly higher up pos if you move down quickly enough after selecting it due to the tween of moving it into that position taking 0.3 seconds 
+		card_ui.tween.kill()
+	
 	card_ui.reparent_requested.emit(card_ui)
 	card_ui.colour.color = Color.WEB_GREEN
 	card_ui.state.text = 'BASE'
