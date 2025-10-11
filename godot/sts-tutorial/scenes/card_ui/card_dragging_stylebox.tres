@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxFlat" format=3 uid="uid://d3m1acnb1i073"]
+
+[resource]
+bg_color = Color(0.44743, 0.186504, 0.126029, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.756863, 0.682353, 0.4, 0.866667)
+shadow_color = Color(0.756863, 0.682353, 0.4, 0.588235)
+shadow_size = 2

@@ -3,8 +3,6 @@ extends CardState
 const MOUSE_Y_SNAPBACK_THRESHOLD: int = 138 # should come up with a better way of getting this number
 
 func enter():
-	card_ui.colour.color = Color.WEB_PURPLE
-	card_ui.state.text = 'AIMING'
 	card_ui.targets.clear()
 	var offset: Vector2 = Vector2(card_ui.parent.size.x / 2 - card_ui.size.x / 2, -card_ui.size.y / 2) # half the size of the hand container - half the card to make it centered, then minus half the height of the card to make it slightly higher than the rest of the hand
 	card_ui.animate_to_position(card_ui.parent.global_position + offset, 0.3)
