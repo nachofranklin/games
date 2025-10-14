@@ -1,5 +1,4 @@
 extends Node
-
 class_name CardState
 
 enum State {BASE, CLICKED, DRAGGING, AIMING, RELEASED}

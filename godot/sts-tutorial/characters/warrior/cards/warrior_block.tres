@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="Card" load_steps=3 format=3 uid="uid://c7kfp2f0vt7pj"]
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://c7kfp2f0vt7pj"]
 
 [ext_resource type="Texture2D" uid="uid://oe7v35ii8vrs" path="res://art/tile_0102.png" id="1_5nea4"]
-[ext_resource type="Script" uid="uid://burr81esph2p0" path="res://custom_resources/card.gd" id="1_ti8q0"]
+[ext_resource type="Script" uid="uid://frofnx3d6mij" path="res://scripts/cards/warrior_cards/warrior_block.gd" id="2_5nea4"]
 
 [resource]
-script = ExtResource("1_ti8q0")
+script = ExtResource("2_5nea4")
 id = "warrior_block"
 type = 1
 target = 0

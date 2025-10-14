@@ -19,7 +19,7 @@ func reset_mana():
 	self.mana = max_mana
 
 func can_play_card(card: Card) -> bool:
-	return mana >= card.cost
+	return mana >= card.energy_cost
 
 func create_instance() -> Resource:
 	var instance: CharacterStats = self.duplicate()

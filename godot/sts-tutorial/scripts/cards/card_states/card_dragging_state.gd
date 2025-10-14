@@ -9,10 +9,14 @@ func enter():
 		card_ui.reparent(ui_layer)
 	
 	card_ui.panel.set('theme_override_styles/panel', card_ui.DRAG_STYLEBOX)
+	Events.card_drag_started.emit(card_ui)
 	
 	min_drag_time_elapsed = false
 	var threshold_timer: SceneTreeTimer = get_tree().create_timer(DRAG_MIN_THRESHOLD, false)
 	threshold_timer.timeout.connect(func(): min_drag_time_elapsed = true)
+
+func exit():
+	Events.card_drag_ended.emit(card_ui)
 
 func on_input(event:InputEvent):
 	var mouse_motion := event is InputEventMouseMotion

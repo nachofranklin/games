@@ -8,8 +8,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pll4o"]
 size = Vector2(16, 16)
 
-[node name="Enemy" type="Node2D" groups=["enemies"]]
+[node name="EnemyArea" type="Area2D" groups=["enemies"]]
+collision_layer = 4
 script = ExtResource("1_tjssy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_pll4o")
 
 [node name="EnemyImage" type="Sprite2D" parent="."]
 texture = ExtResource("1_4a83h")
@@ -20,15 +24,9 @@ position = Vector2(16, 0)
 rotation = -1.5708
 texture = ExtResource("2_40wdo")
 
-[node name="EnemyArea" type="Area2D" parent="."]
-collision_layer = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyArea"]
-shape = SubResource("RectangleShape2D_pll4o")
-
 [node name="StatsUI" parent="." instance=ExtResource("3_tjssy")]
 offset_top = 8.0
 offset_bottom = 24.0
 
-[connection signal="area_entered" from="EnemyArea" to="." method="_on_enemy_area_area_entered"]
-[connection signal="area_exited" from="EnemyArea" to="." method="_on_enemy_area_area_exited"]
+[connection signal="area_entered" from="." to="." method="_on_enemy_area_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_enemy_area_area_exited"]

@@ -16,3 +16,31 @@ enum Target {SELF, SINGLE_ENEMY, ALL_ENEMIES, EVERYONE}
 
 func is_single_targeted() -> bool:
 	return target == Target.SINGLE_ENEMY # returns target to be true/false if the card needs you to choose an enemy
+
+func _get_targets(targets: Array[Node]):
+	if not targets:
+		return []
+	
+	var tree := targets[0].get_tree()
+	
+	match target:
+		Target.SELF:
+			return tree.get_nodes_in_group('player')
+		Target.ALL_ENEMIES:
+			return tree.get_nodes_in_group('enemies')
+		Target.EVERYONE:
+			return tree.get_nodes_in_group('player') + tree.get_nodes_in_group('enemies')
+		_:
+			return []
+
+func play(targets: Array[Node], char_stats: CharacterStats):
+	Events.card_played.emit(self)
+	char_stats.mana -= energy_cost
+	
+	if is_single_targeted():
+		apply_effects(targets)
+	else:
+		apply_effects(_get_targets(targets))
+
+func apply_effects(_targets: Array[Node]):
+	pass

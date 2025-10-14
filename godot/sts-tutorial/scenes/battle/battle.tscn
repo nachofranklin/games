@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=13 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="PackedScene" uid="uid://503n8qdfc87m" path="res://scenes/enemy/enemy.tscn" id="2_agsc7"]
@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://dvpjaybblj3rv" path="res://characters/warrior/cards/warrior_axe_attack.tres" id="4_h0kxc"]
 [ext_resource type="Resource" uid="uid://bnkh57626hdhj" path="res://characters/warrior/warrior.tres" id="4_oiw7q"]
 [ext_resource type="Resource" uid="uid://c7kfp2f0vt7pj" path="res://characters/warrior/cards/warrior_block.tres" id="5_fh7rg"]
+[ext_resource type="PackedScene" uid="uid://d06y278lsu07e" path="res://scenes/ui/mana_ui.tscn" id="11_fisqk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7gynk"]
 size = Vector2(256, 100)
@@ -28,10 +29,12 @@ metadata/_edit_lock_ = true
 [node name="CardDropArea" type="Area2D" parent="Areas"]
 collision_layer = 2
 collision_mask = 2
+metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/CardDropArea"]
 position = Vector2(128, 50)
 shape = SubResource("RectangleShape2D_7gynk")
+metadata/_edit_lock_ = true
 
 [node name="Enemies" type="Node2D" parent="."]
 
@@ -62,19 +65,28 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 script = ExtResource("2_xd4uy")
+metadata/_edit_lock_ = true
 
 [node name="CardUI" parent="BattleUI/Hand" instance=ExtResource("2_ffvsa")]
 layout_mode = 2
 card = ExtResource("4_h0kxc")
+char_stats = ExtResource("4_oiw7q")
 
 [node name="CardUI2" parent="BattleUI/Hand" instance=ExtResource("2_ffvsa")]
 layout_mode = 2
 card = ExtResource("4_h0kxc")
+char_stats = ExtResource("4_oiw7q")
 
 [node name="CardUI3" parent="BattleUI/Hand" instance=ExtResource("2_ffvsa")]
 layout_mode = 2
 card = ExtResource("5_fh7rg")
+char_stats = ExtResource("4_oiw7q")
 
 [node name="CardUI4" parent="BattleUI/Hand" instance=ExtResource("2_ffvsa")]
 layout_mode = 2
 card = ExtResource("5_fh7rg")
+char_stats = ExtResource("4_oiw7q")
+
+[node name="ManaUI" parent="BattleUI" instance=ExtResource("11_fisqk")]
+char_stats = ExtResource("4_oiw7q")
+metadata/_edit_lock_ = true
