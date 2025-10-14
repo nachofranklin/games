@@ -7,3 +7,4 @@
 default_font = ExtResource("1_470mv")
 default_font_size = 6
 Panel/styles/panel = ExtResource("1_a2l2q")
+PanelContainer/styles/panel = ExtResource("1_a2l2q")

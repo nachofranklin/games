@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=14 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="PackedScene" uid="uid://503n8qdfc87m" path="res://scenes/enemy/enemy.tscn" id="2_agsc7"]
@@ -11,6 +11,7 @@
 [ext_resource type="Resource" uid="uid://bnkh57626hdhj" path="res://characters/warrior/warrior.tres" id="4_oiw7q"]
 [ext_resource type="Resource" uid="uid://c7kfp2f0vt7pj" path="res://characters/warrior/cards/warrior_block.tres" id="5_fh7rg"]
 [ext_resource type="PackedScene" uid="uid://d06y278lsu07e" path="res://scenes/ui/mana_ui.tscn" id="11_fisqk"]
+[ext_resource type="PackedScene" uid="uid://6h5vn72ttmqd" path="res://scenes/ui/tooltip.tscn" id="12_mxe8n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7gynk"]
 size = Vector2(256, 100)
@@ -25,6 +26,7 @@ centered = false
 metadata/_edit_lock_ = true
 
 [node name="Areas" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
 
 [node name="CardDropArea" type="Area2D" parent="Areas"]
 collision_layer = 2
@@ -37,6 +39,7 @@ shape = SubResource("RectangleShape2D_7gynk")
 metadata/_edit_lock_ = true
 
 [node name="Enemies" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
 
 [node name="Enemy" parent="Enemies" instance=ExtResource("2_agsc7")]
 position = Vector2(214, 71)
@@ -47,6 +50,7 @@ position = Vector2(49, 68)
 stats = ExtResource("4_oiw7q")
 
 [node name="CardTargetSelector" parent="." instance=ExtResource("3_pll4o")]
+metadata/_edit_lock_ = true
 
 [node name="BattleUI" type="CanvasLayer" parent="." groups=["ui_layer"]]
 
@@ -89,4 +93,9 @@ char_stats = ExtResource("4_oiw7q")
 
 [node name="ManaUI" parent="BattleUI" instance=ExtResource("11_fisqk")]
 char_stats = ExtResource("4_oiw7q")
+metadata/_edit_lock_ = true
+
+[node name="Tooltip" parent="BattleUI" instance=ExtResource("12_mxe8n")]
+offset_top = 4.0
+offset_bottom = 40.0
 metadata/_edit_lock_ = true

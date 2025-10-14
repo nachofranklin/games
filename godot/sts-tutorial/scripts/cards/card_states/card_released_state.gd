@@ -7,6 +7,7 @@ func enter():
 	if not card_ui.targets.is_empty(): # if the card does have a target when its released...
 		played = true
 		card_ui.play()
+		Events.tooltip_hide_requested.emit()
 
 func on_input(_event: InputEvent):
 	if played:
