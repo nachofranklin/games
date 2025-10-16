@@ -15,3 +15,11 @@ signal card_played(card: Card)
 signal card_tooltip_requested(card: Card)
 @warning_ignore('UNUSED_SIGNAL')
 signal tooltip_hide_requested
+
+# Player-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal player_hand_drawn
+@warning_ignore('UNUSED_SIGNAL')
+signal player_turn_ended
+@warning_ignore('UNUSED_SIGNAL')
+signal player_hand_discarded
