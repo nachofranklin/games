@@ -18,8 +18,8 @@ const DRAG_STYLEBOX := preload("res://scenes/card_ui/card_dragging_stylebox.tres
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
 @onready var card_area: Area2D = $CardArea
 @onready var targets: Array[Node] = []
-@onready var original_index := self.get_index()
 
+var original_index: int = 0
 var parent: Control
 var tween: Tween
 var playable: bool = true : set = _set_playable # based on if mana is available to play the card or not

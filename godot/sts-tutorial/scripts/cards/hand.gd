@@ -5,18 +5,6 @@ class_name Hand
 
 @onready var card_ui: PackedScene = preload("res://scenes/card_ui/card_ui.tscn")
 
-var cards_played_this_turn: int = 0
-
-
-func _ready() -> void:
-	Events.card_played.connect(_on_card_played)
-	
-	# we now get the cards from code from the battle management (battleui) and so there are no longer default children cards
-	#for child in get_children():
-		#var card_ui := child as CardUI
-		#card_ui.parent = self
-		#card_ui.reparent_requested.connect(_on_card_ui_reparent_requested)
-
 
 func add_card(card: Card):
 	var new_card_ui := card_ui.instantiate()
@@ -36,11 +24,7 @@ func disable_hand():
 		card.disabled = true
 
 
-func _on_card_played(_card: Card):
-	cards_played_this_turn += 1
-
-
 func _on_card_ui_reparent_requested(child: CardUI):
 	child.reparent(self)
-	var new_index := clampi(child.original_index - cards_played_this_turn, 0, get_child_count()) # clampi is probably overkill but whatever
+	var new_index := clampi(child.original_index, 0, get_child_count()) # clampi is probably overkill but whatever
 	move_child.call_deferred(child, new_index)

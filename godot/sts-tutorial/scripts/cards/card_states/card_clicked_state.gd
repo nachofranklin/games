@@ -5,6 +5,7 @@ func enter():
 		await card_ui.ready
 	
 	card_ui.card_area.monitoring = true
+	card_ui.original_index = card_ui.get_index()
 
 func on_input(event: InputEvent):
 	if event is InputEventMouseMotion:

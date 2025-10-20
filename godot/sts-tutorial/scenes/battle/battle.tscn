@@ -92,3 +92,5 @@ metadata/_edit_lock_ = true
 
 [node name="EndTurnButton" parent="BattleUI" instance=ExtResource("13_icoan")]
 metadata/_edit_lock_ = true
+
+[connection signal="child_order_changed" from="EnemyHandler" to="." method="_on_enemy_handler_child_order_changed"]
