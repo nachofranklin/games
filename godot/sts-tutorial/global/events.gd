@@ -23,3 +23,9 @@ signal player_hand_drawn
 signal player_turn_ended
 @warning_ignore('UNUSED_SIGNAL')
 signal player_hand_discarded
+
+# Enemy-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal enemy_action_completed(enemy: Enemy)
+@warning_ignore('UNUSED_SIGNAL')
+signal enemy_turn_ended # this is for when all enemies have done their turn

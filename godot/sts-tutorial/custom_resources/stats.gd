@@ -21,10 +21,10 @@ func take_damage(damage: int):
 	if damage <= 0:
 		return
 	
-	var initial_damage = damage # this is pointless if no later changes
-	#damage = clampi(damage - block, 0, damage)
-	self.block = clampi(block - initial_damage, 0, block)
-	self.health -= clampi(damage - block, 0, damage)
+	var initial_damage = damage
+	var damage_after_block = clampi(damage - block, 0, damage)
+	self.block -= clampi(initial_damage, 0, block)
+	self.health -= clampi(damage_after_block, 0, damage)
 
 func heal(amount: int):
 	self.health += amount

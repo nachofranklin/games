@@ -1,13 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=16 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="Script" uid="uid://rhvecsak06i3" path="res://scripts/battle/battle.gd" id="1_kd6yx"]
 [ext_resource type="PackedScene" uid="uid://503n8qdfc87m" path="res://scenes/enemy/enemy.tscn" id="2_agsc7"]
 [ext_resource type="Script" uid="uid://y2nyfbet4kux" path="res://scripts/cards/hand.gd" id="2_xd4uy"]
 [ext_resource type="PackedScene" uid="uid://c1d8yp5u432ih" path="res://scenes/player/player.tscn" id="3_agsc7"]
-[ext_resource type="Resource" uid="uid://d8kptr8hfdvi" path="res://enemies/crab/test_enemy.tres" id="3_oiw7q"]
 [ext_resource type="PackedScene" uid="uid://bqphl7serdv0f" path="res://scenes/card_target_selector/card_target_selector.tscn" id="3_pll4o"]
+[ext_resource type="Script" uid="uid://d4e01jk1m8q5p" path="res://scripts/enemy/enemy_handler.gd" id="4_kd6yx"]
 [ext_resource type="Resource" uid="uid://bnkh57626hdhj" path="res://characters/warrior/warrior.tres" id="4_oiw7q"]
+[ext_resource type="Resource" uid="uid://lx25o7pr4bcn" path="res://enemies/crab/crab_enemy.tres" id="5_icoan"]
 [ext_resource type="Script" uid="uid://duspglrfgpqmc" path="res://scripts/player/player_handler.gd" id="8_mxe8n"]
 [ext_resource type="Script" uid="uid://6nlcn7e7bey7" path="res://scripts/ui/battle_ui.gd" id="8_t1kk3"]
 [ext_resource type="PackedScene" uid="uid://d06y278lsu07e" path="res://scenes/ui/mana_ui.tscn" id="11_fisqk"]
@@ -41,12 +42,13 @@ position = Vector2(128, 50)
 shape = SubResource("RectangleShape2D_7gynk")
 metadata/_edit_lock_ = true
 
-[node name="Enemies" type="Node2D" parent="."]
+[node name="EnemyHandler" type="Node2D" parent="."]
+script = ExtResource("4_kd6yx")
 metadata/_edit_lock_ = true
 
-[node name="Enemy" parent="Enemies" instance=ExtResource("2_agsc7")]
+[node name="Enemy" parent="EnemyHandler" instance=ExtResource("2_agsc7")]
 position = Vector2(214, 71)
-stats = ExtResource("3_oiw7q")
+stats = ExtResource("5_icoan")
 
 [node name="Player" parent="." instance=ExtResource("3_agsc7")]
 position = Vector2(49, 68)
