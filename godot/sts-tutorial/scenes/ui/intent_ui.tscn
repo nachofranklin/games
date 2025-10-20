@@ -25,6 +25,6 @@ stretch_mode = 5
 [node name="Number" type="Label" parent="."]
 layout_mode = 2
 size_flags_vertical = 1
-text = "7"
+text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
