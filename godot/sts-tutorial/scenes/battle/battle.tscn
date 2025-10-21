@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=18 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="Script" uid="uid://rhvecsak06i3" path="res://scripts/battle/battle.gd" id="1_kd6yx"]
 [ext_resource type="PackedScene" uid="uid://503n8qdfc87m" path="res://scenes/enemy/enemy.tscn" id="2_agsc7"]
 [ext_resource type="Script" uid="uid://y2nyfbet4kux" path="res://scripts/cards/hand.gd" id="2_xd4uy"]
 [ext_resource type="PackedScene" uid="uid://c1d8yp5u432ih" path="res://scenes/player/player.tscn" id="3_agsc7"]
+[ext_resource type="AudioStream" uid="uid://dpdenqqbovwfq" path="res://art/8_bit_iced_village_lofi.mp3" id="3_n6gaa"]
 [ext_resource type="PackedScene" uid="uid://bqphl7serdv0f" path="res://scenes/card_target_selector/card_target_selector.tscn" id="3_pll4o"]
 [ext_resource type="Script" uid="uid://d4e01jk1m8q5p" path="res://scripts/enemy/enemy_handler.gd" id="4_kd6yx"]
 [ext_resource type="Resource" uid="uid://bnkh57626hdhj" path="res://characters/warrior/warrior.tres" id="4_oiw7q"]
@@ -22,6 +23,7 @@ size = Vector2(256, 100)
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_kd6yx")
 char_stats = ExtResource("4_oiw7q")
+music = ExtResource("3_n6gaa")
 metadata/_edit_lock_ = true
 
 [node name="Background" type="Sprite2D" parent="."]
