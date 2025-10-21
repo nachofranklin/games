@@ -18,6 +18,7 @@ config/icon="uid://bbitr850dsxfi"
 [autoload]
 
 Events="*res://global/events.gd"
+Shaker="*res://global/shaker.gd"
 
 [display]
 
