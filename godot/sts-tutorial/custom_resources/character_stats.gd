@@ -31,3 +31,10 @@ func create_instance() -> Resource:
 	instance.discard = CardPile.new()
 	#instance.exhaust_pile = CardPile.new()
 	return instance
+
+
+func take_damage(damage: int):
+	var initial_health := health
+	super.take_damage(damage) # super means to call a function from the script we extend from (Stats). Seems a bit complicated for me
+	if initial_health > health:
+		Events.player_hit.emit()

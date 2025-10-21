@@ -2,6 +2,7 @@ extends Node2D
 class_name Enemy
 
 const ARROW_OFFSET: int = 5
+const WHITE_SPRITE_MATERIAL: ShaderMaterial = preload("res://art/white_sprite_material.tres")
 
 @export var stats: EnemyStats : set = set_enemy_stats
 
@@ -85,13 +86,17 @@ func take_damage(damage: int):
 	if stats.health <= 0:
 		return
 	
+	enemy_image.material = WHITE_SPRITE_MATERIAL
+	
 	var tween := create_tween()
 	tween.tween_callback(Shaker.shake.bind(self, 16, 0.15))
 	tween.tween_callback(stats.take_damage.bind(damage))
-	tween.tween_interval(0.2)
+	tween.tween_interval(0.18) # slightly less than the length of the tween
 	
 	tween.finished.connect(
 		func():
+			enemy_image.material = null # remove the WHITE_SPRITE_MATERIAL
+			
 			if stats.health <= 0:
 				queue_free()
 	)

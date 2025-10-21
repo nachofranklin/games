@@ -24,6 +24,8 @@ signal player_turn_ended
 @warning_ignore('UNUSED_SIGNAL')
 signal player_hand_discarded
 @warning_ignore('UNUSED_SIGNAL')
+signal player_hit
+@warning_ignore('UNUSED_SIGNAL')
 signal player_died
 
 # Enemy-related events
