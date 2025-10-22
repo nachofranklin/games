@@ -33,3 +33,7 @@ signal player_died
 signal enemy_action_completed(enemy: Enemy)
 @warning_ignore('UNUSED_SIGNAL')
 signal enemy_turn_ended # this is for when all enemies have done their turn
+
+# Battle-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal battle_over_screen_requested(text: String, type: BattleOverPanel.Type)

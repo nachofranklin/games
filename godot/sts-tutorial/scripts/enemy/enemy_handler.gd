@@ -4,12 +4,6 @@ class_name EnemyHandler
 
 func _ready() -> void:
 	Events.enemy_action_completed.connect(_on_enemy_action_completed)
-	
-	var enemy: Enemy
-	for child in get_children():
-		enemy = child as Enemy
-		enemy.update_action()
-		enemy.set_current_action(enemy.current_action)
 
 
 func reset_enemy_actions():

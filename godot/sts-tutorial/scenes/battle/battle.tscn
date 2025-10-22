@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=19 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="Script" uid="uid://rhvecsak06i3" path="res://scripts/battle/battle.gd" id="1_kd6yx"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://6h5vn72ttmqd" path="res://scenes/ui/tooltip.tscn" id="12_mxe8n"]
 [ext_resource type="PackedScene" uid="uid://bqlx0cvelc7hi" path="res://scenes/ui/buttons/end_turn_button.tscn" id="13_icoan"]
 [ext_resource type="Script" uid="uid://cwun3ghrsbqbb" path="res://scenes/ui/red_flash.gd" id="15_t1kk3"]
+[ext_resource type="PackedScene" uid="uid://ce4erbkx5nor1" path="res://scenes/ui/battle_over_panel.tscn" id="17_6ofp8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7gynk"]
 size = Vector2(256, 100)
@@ -111,6 +112,11 @@ color = Color(1, 0, 0, 0)
 [node name="Timer" type="Timer" parent="RedFlash"]
 wait_time = 0.1
 one_shot = true
+
+[node name="BattleOverLayer" type="CanvasLayer" parent="."]
+
+[node name="BattleOverPanel" parent="BattleOverLayer" instance=ExtResource("17_6ofp8")]
+visible = false
 
 [connection signal="child_order_changed" from="EnemyHandler" to="." method="_on_enemy_handler_child_order_changed"]
 [connection signal="timeout" from="RedFlash/Timer" to="RedFlash" method="_on_timer_timeout"]
