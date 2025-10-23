@@ -1,6 +1,12 @@
-class_name CharacterStats
 extends Stats
+class_name CharacterStats
 
+@export_group('Visuals')
+@export var character_name: String
+@export_multiline var description: String
+@export var portrait: Texture
+
+@export_group('Gameplay Data')
 @export var starting_deck: CardPile
 @export var cards_per_turn: int
 @export var max_mana: int
@@ -11,15 +17,19 @@ var discard: CardPile
 var draw_pile: CardPile
 #var exhaust_pile: CardPile # not included in tutorial :(
 
+
 func set_mana(value: int):
 	mana = value
 	stats_changed.emit()
 
+
 func reset_mana():
 	self.mana = max_mana
 
+
 func can_play_card(card: Card) -> bool:
 	return mana >= card.energy_cost
+
 
 func create_instance() -> Resource:
 	var instance: CharacterStats = self.duplicate()

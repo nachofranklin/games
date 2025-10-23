@@ -37,3 +37,25 @@ signal enemy_turn_ended # this is for when all enemies have done their turn
 # Battle-related events
 @warning_ignore('UNUSED_SIGNAL')
 signal battle_over_screen_requested(text: String, type: BattleOverPanel.Type)
+@warning_ignore('UNUSED_SIGNAL')
+signal battle_won
+
+# Map-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal map_exited
+
+# Shop-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal shop_exited
+
+# Campfire-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal campfire_exited
+
+# Battle Reward-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal battle_reward_exited
+
+# Treasure Room-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal treasure_room_exited
