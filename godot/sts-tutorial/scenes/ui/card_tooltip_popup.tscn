@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://cav7reoqu8vsa"]
+
+[ext_resource type="Script" uid="uid://bvac7gfp0shk2" path="res://scripts/ui/card_tooltip_popup.gd" id="1_xpdyn"]
+[ext_resource type="PackedScene" uid="uid://c35yjn2ynyypf" path="res://scenes/ui/card_menu_ui.tscn" id="2_khfwb"]
+
+[sub_resource type="Gradient" id="Gradient_xpdyn"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.282353)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_khfwb"]
+gradient = SubResource("Gradient_xpdyn")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="CardTooltipPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xpdyn")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_khfwb")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -26.0
+offset_right = 75.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TooltipCard" type="CenterContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CardMenuUI" parent="VBoxContainer/TooltipCard" instance=ExtResource("2_khfwb")]
+layout_mode = 2
+
+[node name="CardDescription" type="RichTextLabel" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "Card Description Card Description Card Description
+Card Description Card Description"
+fit_content = true
+horizontal_alignment = 1
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

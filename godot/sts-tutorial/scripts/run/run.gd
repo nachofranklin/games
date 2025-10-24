@@ -11,6 +11,9 @@ const TREASURE_SCENE := preload('res://scenes/treasure_room/treasure_room.tscn')
 @export var run_startup: RunStartup
 
 @onready var current_view: Node = $CurrentView
+@onready var deck_button: CardPileOpener = %DeckButton
+@onready var deck_view: CardPileView = %DeckView
+
 @onready var map_button: Button = %MapButton
 @onready var battle_button: Button = %BattleButton
 @onready var shop_button: Button = %ShopButton
@@ -35,6 +38,7 @@ func _ready() -> void:
 
 func _start_run():
 	_setup_event_connections()
+	_setup_top_bar()
 	print('To Do: procedurally generate map')
 
 
@@ -61,6 +65,12 @@ func _setup_event_connections():
 	rewards_button.pressed.connect(_change_view.bind(BATTLE_REWARD_SCENE))
 	shop_button.pressed.connect(_change_view.bind(SHOP_SCENE))
 	treasure_button.pressed.connect(_change_view.bind(TREASURE_SCENE))
+
+
+func _setup_top_bar():
+	deck_button.card_pile = character.deck
+	deck_view.card_pile = character.deck
+	deck_button.pressed.connect(deck_view.show_current_view.bind('Deck'))
 
 
 func _on_map_exited():
