@@ -12,9 +12,7 @@ const DRAG_STYLEBOX := preload("res://scenes/card_ui/card_dragging_stylebox.tres
 @export var card: Card : set = _set_card
 @export var char_stats: CharacterStats : set = _set_char_stats
 
-@onready var panel: Panel = $Panel
-@onready var energy_cost: Label = $EnergyCost
-@onready var icon: TextureRect = $Icon
+@onready var card_visuals: CardVisuals = $CardVisuals
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
 @onready var card_area: Area2D = $CardArea
 @onready var targets: Array[Node] = []
@@ -61,17 +59,16 @@ func _set_card(value: Card):
 		await ready
 	
 	card = value
-	energy_cost.text = str(card.energy_cost)
-	icon.texture = card.icon
+	card_visuals.card = card
 
 func _set_playable(value: bool):
 	playable = value
 	if not playable:
-		energy_cost.add_theme_color_override('font_color', Color.RED)
-		icon.modulate = Color(1, 1, 1, 0.5)
+		card_visuals.energy_cost.add_theme_color_override('font_color', Color.RED)
+		card_visuals.icon.modulate = Color(1, 1, 1, 0.5)
 	else:
-		energy_cost.remove_theme_color_override('font_color')
-		icon.modulate = Color(1, 1, 1, 1)
+		card_visuals.energy_cost.remove_theme_color_override('font_color')
+		card_visuals.icon.modulate = Color(1, 1, 1, 1)
 
 func _set_char_stats(value: CharacterStats):
 	char_stats = value

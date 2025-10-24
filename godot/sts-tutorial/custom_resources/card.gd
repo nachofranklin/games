@@ -3,12 +3,20 @@ extends Resource
 
 enum Type {ATTACK, SKILL, POWER}
 enum Target {SELF, SINGLE_ENEMY, ALL_ENEMIES, EVERYONE}
+enum Rarity {COMMON, UNCOMMON, RARE}
+
+const RARITY_COLOURS := {
+	Card.Rarity.COMMON: Color.GRAY,
+	Card.Rarity.UNCOMMON: Color.CORNFLOWER_BLUE,
+	Card.Rarity.RARE: Color.GOLD
+}
 
 @export_group('Card Attributes')
 @export var id: String
 @export var type: Type
 @export var target: Target
 @export var energy_cost: int
+@export var rarity: Rarity
 
 @export_group('Card Visuals')
 @export var icon: Texture
