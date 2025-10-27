@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://dinktjstl31vt"]
+
+[ext_resource type="Script" uid="uid://da6vlrrtatafa" path="res://scripts/ui/gold_ui.gd" id="1_h4fjr"]
+[ext_resource type="Texture2D" uid="uid://b3lkwdox71lxu" path="res://art/gold.png" id="1_xf85s"]
+
+[node name="GoldUI" type="HBoxContainer"]
+offset_right = 32.0
+offset_bottom = 8.0
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+script = ExtResource("1_h4fjr")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+texture = ExtResource("1_xf85s")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="."]
+layout_mode = 2
+size_flags_vertical = 1
+text = "9876"
+vertical_alignment = 1
