@@ -42,7 +42,7 @@ signal battle_won
 
 # Map-related events
 @warning_ignore('UNUSED_SIGNAL')
-signal map_exited
+signal map_exited(room: Room)
 
 # Shop-related events
 @warning_ignore('UNUSED_SIGNAL')
