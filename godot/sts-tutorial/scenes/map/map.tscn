@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bnbksu4a8jckl"]
+[gd_scene load_steps=3 format=3 uid="uid://bnbksu4a8jckl"]
 
 [ext_resource type="Script" uid="uid://c4kgpyeuvumrp" path="res://scripts/map/map.gd" id="1_sxf4j"]
+[ext_resource type="Script" uid="uid://dw6jatexskvwx" path="res://scripts/map/map_generator.gd" id="2_tqkkf"]
 
 [node name="Map" type="Control"]
 layout_mode = 3
@@ -46,5 +47,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 text = "Go Back"
+
+[node name="MapGenerator" type="Node" parent="."]
+script = ExtResource("2_tqkkf")
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
