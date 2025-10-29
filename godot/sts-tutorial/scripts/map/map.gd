@@ -22,6 +22,9 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+	
 	if event.is_action_pressed("scroll_up"):
 		camera_2d.position.y -= SCROLL_SPEED
 	if event.is_action_pressed("scroll_down"):
