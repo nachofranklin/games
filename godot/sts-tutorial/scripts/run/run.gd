@@ -11,6 +11,7 @@ const TREASURE_SCENE := preload('res://scenes/treasure_room/treasure_room.tscn')
 
 @onready var map: Map = $Map
 @onready var current_view: Node = $CurrentView
+@onready var health_ui: HealthUI = %HealthUI
 @onready var gold_ui: GoldUI = %GoldUI
 @onready var deck_button: CardPileOpener = %DeckButton
 @onready var deck_view: CardPileView = %DeckView
@@ -84,6 +85,8 @@ func _setup_event_connections():
 
 
 func _setup_top_bar():
+	character.stats_changed.connect(health_ui.update_stats.bind(character))
+	health_ui.update_stats(character)
 	gold_ui.run_stats = stats
 	deck_button.card_pile = character.deck
 	deck_view.card_pile = character.deck
@@ -106,6 +109,12 @@ func _on_battle_won():
 	reward_scene.add_card_reward()
 
 
+func _on_campfire_entered():
+	var campfire := _change_view(CAMPFIRE_SCENE) as Campfire
+	campfire.char_stats = character
+	# need to make the animation player reset as the background stays the same at the end of the animation on the next campfire
+
+
 func _on_map_exited(room: Room):
 	match room.type:
 		Room.Type.MONSTER:
@@ -113,7 +122,7 @@ func _on_map_exited(room: Room):
 		Room.Type.TREASURE:
 			_change_view(TREASURE_SCENE)
 		Room.Type.CAMPFIRE:
-			_change_view(CAMPFIRE_SCENE)
+			_on_campfire_entered()
 		Room.Type.SHOP:
 			_change_view(SHOP_SCENE)
 		Room.Type.BOSS:

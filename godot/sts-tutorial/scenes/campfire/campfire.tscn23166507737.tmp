@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://bhiyipgbroer0"]
+[gd_scene load_steps=14 format=3 uid="uid://bhiyipgbroer0"]
 
 [ext_resource type="Script" uid="uid://s5462f2qe72f" path="res://scripts/campfire/campfire.gd" id="1_mfytg"]
-[ext_resource type="Resource" uid="uid://bnkh57626hdhj" path="res://characters/warrior/warrior.tres" id="2_5yci7"]
 [ext_resource type="Texture2D" uid="uid://brc3exdfbbfp1" path="res://art/line.png" id="2_56ahn"]
 
 [sub_resource type="Gradient" id="Gradient_5yci7"]
@@ -75,33 +74,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [PackedColorArray(0.44743, 0.186504, 0.126029, 1, 0.0383972, 0.0383972, 0.0383972, 1, 0, 0, 0, 1), PackedColorArray(0.0475275, 0.00813891, 0.00403285, 1, 0, 0, 0, 1, 0, 0, 0, 1)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(1),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"_on_fade_out_finished"
-}]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("UILayer/VBoxContainer:modulate")
-tracks/3/interp = 2
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+"values": [PackedColorArray(0.44743, 0.186504, 0.126029, 1, 0.0383972, 0.0383972, 0.0383972, 1, 0, 0, 0, 1), PackedColorArray(0.150615, 0.0431963, 0.0214737, 1, 0, 0, 0, 1, 0, 0, 0, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_5yci7"]
@@ -130,18 +103,6 @@ tracks/1/keys = {
 "update": 0,
 "values": [PackedColorArray(0.44743, 0.186504, 0.126029, 1, 0.0383972, 0.0383972, 0.0383972, 1, 0, 0, 0, 1)]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("UILayer/VBoxContainer:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vcaur"]
 _data = {
@@ -158,7 +119,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_mfytg")
-char_stats = ExtResource("2_5yci7")
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
 

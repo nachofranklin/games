@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcm44i7oypbry"]
+[gd_scene load_steps=9 format=3 uid="uid://bcm44i7oypbry"]
 
 [ext_resource type="PackedScene" uid="uid://bnbksu4a8jckl" path="res://scenes/map/map.tscn" id="1_8rlou"]
 [ext_resource type="Script" uid="uid://dqrfedvob3ui3" path="res://scripts/run/run.gd" id="1_l7o68"]
 [ext_resource type="Resource" uid="uid://blluua76edi7v" path="res://scenes/run/run_startup.tres" id="2_wdonh"]
 [ext_resource type="PackedScene" uid="uid://dinktjstl31vt" path="res://scenes/ui/gold_ui.tscn" id="4_0tt4g"]
 [ext_resource type="PackedScene" uid="uid://wcdx127md7cu" path="res://scenes/ui/buttons/card_pile_opener.tscn" id="4_5o40y"]
+[ext_resource type="PackedScene" uid="uid://b743ijpgwau0p" path="res://scenes/ui/health_ui.tscn" id="4_wo0nw"]
 [ext_resource type="Texture2D" uid="uid://dklgcy1dmc8ki" path="res://art/deck.png" id="5_0tt4g"]
 [ext_resource type="PackedScene" uid="uid://c4y4v47st1ueq" path="res://scenes/ui/card_pile_view.tscn" id="6_wo0nw"]
 
@@ -71,6 +72,11 @@ custom_minimum_size = Vector2(0, 16)
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
+
+[node name="HealthUI" parent="TopBar/HBoxContainer" instance=ExtResource("4_wo0nw")]
+unique_name_in_owner = true
+layout_mode = 2
+show_max_hp = true
 
 [node name="GoldUI" parent="TopBar/HBoxContainer" instance=ExtResource("4_0tt4g")]
 unique_name_in_owner = true
