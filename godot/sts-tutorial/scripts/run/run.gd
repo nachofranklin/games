@@ -112,7 +112,6 @@ func _on_battle_won():
 func _on_campfire_entered():
 	var campfire := _change_view(CAMPFIRE_SCENE) as Campfire
 	campfire.char_stats = character
-	# need to make the animation player reset as the background stays the same at the end of the animation on the next campfire
 
 
 func _on_map_exited(room: Room):
