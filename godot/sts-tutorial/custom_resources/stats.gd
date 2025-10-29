@@ -23,11 +23,11 @@ func take_damage(damage: int):
 	
 	var initial_damage = damage
 	var damage_after_block = clampi(damage - block, 0, damage)
-	self.block -= clampi(initial_damage, 0, block)
-	self.health -= clampi(damage_after_block, 0, damage)
+	block -= clampi(initial_damage, 0, block)
+	health -= clampi(damage_after_block, 0, damage)
 
 func heal(amount: int):
-	self.health += amount
+	health += amount
 
 func create_instance() -> Resource:
 	var instance: Stats = self.duplicate()

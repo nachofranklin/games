@@ -25,7 +25,7 @@ func set_mana(value: int):
 
 
 func reset_mana():
-	self.mana = max_mana
+	mana = max_mana
 
 
 func can_play_card(card: Card) -> bool:

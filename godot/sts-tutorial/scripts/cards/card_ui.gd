@@ -89,7 +89,7 @@ func _on_card_drag_or_aiming_started(used_card: CardUI):
 
 func _on_card_drag_or_aim_ended(_card: CardUI):
 	disabled = false
-	self.playable = char_stats.can_play_card(card) # sets playable to true/false if mana is greater/smaller than the card's cost
+	playable = char_stats.can_play_card(card) # sets playable to true/false if mana is greater/smaller than the card's cost
 
 func _on_char_stats_changed():
-	self.playable = char_stats.can_play_card(card)
+	playable = char_stats.can_play_card(card)

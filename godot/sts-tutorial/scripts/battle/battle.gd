@@ -1,6 +1,8 @@
 extends Node2D
+class_name Battle
 
 @export var char_stats: CharacterStats
+@export var battle_stats: BattleStats
 @export var music: AudioStream
 
 @onready var battle_ui: BattleUI = $BattleUI
@@ -10,25 +12,22 @@ extends Node2D
 
 
 func _ready() -> void:
-	# temporary code as normally we'd want to keep our stats from the run rather than start from the base every battle
-	var new_stats: CharacterStats = char_stats.create_instance()
-	battle_ui.char_stats = new_stats
-	player.stats = new_stats
-	
 	Events.player_turn_ended.connect(player_handler.end_turn)
 	Events.player_hand_discarded.connect(enemy_handler.start_turn)
 	Events.enemy_turn_ended.connect(_on_enemy_turn_ended)
 	Events.player_died.connect(_on_player_died)
-	
-	start_battle(new_stats)
-	battle_ui.initialise_card_pile_ui()
 
 
-func start_battle(stats: CharacterStats):
+func start_battle():
 	get_tree().paused = false
 	MusicPlayer.play(music, true)
+	
+	battle_ui.char_stats = char_stats
+	player.stats = char_stats
+	enemy_handler.setup_enemies(battle_stats)
 	enemy_handler.reset_enemy_actions()
-	player_handler.start_battle(stats)
+	player_handler.start_battle(char_stats)
+	battle_ui.initialise_card_pile_ui()
 
 
 func _on_enemy_turn_ended():
