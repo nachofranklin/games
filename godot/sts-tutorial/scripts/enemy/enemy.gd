@@ -10,6 +10,7 @@ const WHITE_SPRITE_MATERIAL: ShaderMaterial = preload("res://art/white_sprite_ma
 @onready var arrow: Sprite2D = $Arrow
 @onready var stats_ui: StatsUI = $StatsUI as StatsUI
 @onready var intent_ui: IntentUI = $IntentUI as IntentUI
+@onready var status_handler: StatusHandler = $StatusHandler
 
 var enemy_action_picker: EnemyActionPicker
 var current_action: EnemyAction : set = set_current_action
@@ -98,7 +99,8 @@ func take_damage(damage: int):
 			enemy_image.material = null # remove the WHITE_SPRITE_MATERIAL
 			
 			if stats.health <= 0:
-				queue_free()
+				Events.enemy_died.emit(self)
+				queue_free() # is this still needed after i do the enemy died signal?
 	)
 
 

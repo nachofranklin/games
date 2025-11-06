@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="VulnerableStatus" load_steps=3 format=3 uid="uid://cb2iouqt0876m"]
+
+[ext_resource type="Texture2D" uid="uid://bjgib47fdhmqm" path="res://art/expose.png" id="1_f25os"]
+[ext_resource type="Script" uid="uid://ch1ha7xekffg7" path="res://statuses/vulnerable.gd" id="2_f25os"]
+
+[resource]
+script = ExtResource("2_f25os")
+id = "vulnerable"
+when_type = 0
+stack_type = 2
+can_expire = true
+duration = 1
+stacks = 0
+icon = ExtResource("1_f25os")
+tooltip = "todo"
+metadata/_custom_type_script = "uid://cb0tendunkh1x"

@@ -1,5 +1,5 @@
-class_name Player
 extends Node2D
+class_name Player
 
 const WHITE_SPRITE_MATERIAL: ShaderMaterial = preload("res://art/white_sprite_material.tres")
 
@@ -7,6 +7,8 @@ const WHITE_SPRITE_MATERIAL: ShaderMaterial = preload("res://art/white_sprite_ma
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var stats_ui: StatsUI = $StatsUI as StatsUI
+@onready var status_handler: StatusHandler = $StatusHandler
+
 
 func set_character_stats(value: CharacterStats):
 	stats = value
@@ -15,6 +17,7 @@ func set_character_stats(value: CharacterStats):
 		stats.stats_changed.connect(update_stats)
 	
 	update_player()
+
 
 func update_player():
 	if not stats is CharacterStats:
@@ -25,8 +28,10 @@ func update_player():
 	sprite_2d.texture = stats.art
 	update_stats()
 
+
 func update_stats():
 	stats_ui.update_stats(stats)
+
 
 func take_damage(damage: int):
 	if stats.health <= 0:

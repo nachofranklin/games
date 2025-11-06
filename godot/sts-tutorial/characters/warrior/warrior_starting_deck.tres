@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://l0nfkfe0dsvo" path="res://characters/warrior/cards/warrior_slash_attack.tres" id="3_mt3oe"]
 [ext_resource type="Resource" uid="uid://c7kfp2f0vt7pj" path="res://characters/warrior/cards/warrior_block.tres" id="3_ne0bc"]
 [ext_resource type="Resource" uid="uid://8k0180jgw4ha" path="res://characters/warrior/cards/warrior_big_slam.tres" id="5_7axcj"]
-[ext_resource type="Resource" uid="uid://bt2ebp6di16fa" path="res://characters/warrior/cards/warrior_true_strength.tres" id="6_g62ox"]
+[ext_resource type="Resource" uid="uid://bt2ebp6di16fa" path="res://characters/warrior/cards/warrior_demon_form.tres" id="6_g62ox"]
 
 [resource]
 script = ExtResource("2_2wma6")

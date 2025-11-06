@@ -4,6 +4,7 @@ class_name PlayerHandler
 const HAND_DRAW_INTERVAL: float = 0.25
 const HAND_DISCARD_INTERVAL: float = 0.25
 
+@export var player: Player
 @export var hand: Hand
 
 var character: CharacterStats
@@ -19,18 +20,19 @@ func start_battle(char_stats: CharacterStats):
 	character.draw_pile.shuffle()
 	character.discard = CardPile.new()
 	#character.exhaust_pile = CardPile.new()
+	player.status_handler.statuses_applied.connect(_on_statuses_applied)
 	start_turn()
 
 
 func start_turn():
 	character.block = 0
 	character.reset_mana()
-	draw_cards(character.cards_per_turn)
+	player.status_handler.apply_statuses_by_type(Status.WhenType.START_OF_TURN)
 
 
 func end_turn():
 	hand.disable_hand()
-	discard_cards()
+	player.status_handler.apply_statuses_by_type(Status.WhenType.END_OF_TURN)
 
 
 func draw_card():
@@ -46,10 +48,6 @@ func draw_cards(amount: int):
 		tween.tween_interval(HAND_DRAW_INTERVAL)
 	
 	tween.finished.connect(func(): Events.player_hand_drawn.emit()) # why is this a func?
-
-
-#func  discard_card(card: Card):
-	#pass
 
 
 func discard_cards():
@@ -80,4 +78,15 @@ func reshuffle_deck_from_discard():
 
 
 func _on_card_played(card: Card):
+	if card.exhausts or card.type == Card.Type.POWER:
+		return
+	
 	character.discard.add_card(card)
+
+
+func _on_statuses_applied(when_type: Status.WhenType):
+	match when_type:
+		Status.WhenType.START_OF_TURN:
+			draw_cards(character.cards_per_turn)
+		Status.WhenType.END_OF_TURN:
+			discard_cards()

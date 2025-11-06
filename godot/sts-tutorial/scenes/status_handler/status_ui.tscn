@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://ub7ub6ggfhti"]
+
+[ext_resource type="Texture2D" uid="uid://d0edy7thj8ce6" path="res://art/heart.png" id="1_7scyp"]
+[ext_resource type="Script" uid="uid://b5ph125bnotn7" path="res://scripts/status_handler/status_ui.gd" id="1_r24ij"]
+[ext_resource type="Resource" uid="uid://boajr8tgajrq1" path="res://statuses/strength.tres" id="2_vm08l"]
+
+[node name="StatusUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_r24ij")
+status = ExtResource("2_vm08l")
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 10.0
+offset_bottom = 10.0
+texture = ExtResource("1_7scyp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = 8.0
+use_top_left = true
+
+[node name="DurationLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StacksLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+vertical_alignment = 1

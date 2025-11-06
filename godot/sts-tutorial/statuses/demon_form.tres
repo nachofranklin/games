@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DemonFormStatus" load_steps=3 format=3 uid="uid://bvsohi0iwt5jo"]
+
+[ext_resource type="Texture2D" uid="uid://cn2c1psh561cc" path="res://art/tile_0127.png" id="1_7cqe7"]
+[ext_resource type="Script" uid="uid://bbpepbbfjxb2i" path="res://statuses/demon_form.gd" id="2_7cqe7"]
+
+[resource]
+script = ExtResource("2_7cqe7")
+stacks_per_turn = 2
+id = "demon_form"
+when_type = 0
+stack_type = 0
+can_expire = false
+duration = 0
+stacks = 0
+icon = ExtResource("1_7cqe7")
+tooltip = "todo"
+metadata/_custom_type_script = "uid://cb0tendunkh1x"
