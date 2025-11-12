@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="Sts Tutorial"
-run/main_scene="uid://ye2tbvt72sjq"
-config/features=PackedStringArray("4.4", "Mobile")
+run/main_scene="uid://bcm44i7oypbry"
+config/features=PackedStringArray("4.5", "Mobile")
 config/icon="uid://bbitr850dsxfi"
 
 [autoload]

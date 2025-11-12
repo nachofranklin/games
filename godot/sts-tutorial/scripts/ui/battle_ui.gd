@@ -8,8 +8,10 @@ class_name BattleUI
 @onready var end_turn_button: Button = $EndTurnButton # i didn't make it a unique name like the tutorial so if something goes wrong that's probably why
 @onready var draw_pile_button: CardPileOpener = %DrawPileButton
 @onready var discard_pile_button: CardPileOpener = %DiscardPileButton
+@onready var exhaust_pile_button: CardPileOpener = %ExhaustPileButton
 @onready var draw_pile_view: CardPileView = %DrawPileView
 @onready var discard_pile_view: CardPileView = %DiscardPileView
+@onready var exhaust_pile_view: CardPileView = %ExhaustPileView
 
 
 func _ready() -> void:
@@ -17,13 +19,17 @@ func _ready() -> void:
 	end_turn_button.pressed.connect(_on_end_turn_button_pressed)
 	draw_pile_button.pressed.connect(draw_pile_view.show_current_view.bind('Draw Pile', true))
 	discard_pile_button.pressed.connect(discard_pile_view.show_current_view.bind('Discard Pile'))
+	exhaust_pile_button.pressed.connect(exhaust_pile_view.show_current_view.bind('Exhaust Pile'))
+	exhaust_pile_button.visible = false
 
 
 func initialise_card_pile_ui():
 	draw_pile_button.card_pile = char_stats.draw_pile
 	draw_pile_view.card_pile = char_stats.draw_pile
-	discard_pile_button.card_pile = char_stats.discard
-	discard_pile_view.card_pile = char_stats.discard
+	discard_pile_button.card_pile = char_stats.discard_pile
+	discard_pile_view.card_pile = char_stats.discard_pile
+	exhaust_pile_button.card_pile = char_stats.exhaust_pile
+	exhaust_pile_view.card_pile = char_stats.exhaust_pile
 
 
 func _set_char_stats(value: CharacterStats):

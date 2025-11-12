@@ -14,9 +14,9 @@ class_name CharacterStats
 
 var mana: int : set = set_mana
 var deck: CardPile
-var discard: CardPile
+var discard_pile: CardPile
 var draw_pile: CardPile
-#var exhaust_pile: CardPile # not included in tutorial :(
+var exhaust_pile: CardPile
 
 
 func set_mana(value: int):
@@ -39,8 +39,8 @@ func create_instance() -> Resource:
 	instance.reset_mana()
 	instance.deck = instance.starting_deck.duplicate()
 	instance.draw_pile = CardPile.new()
-	instance.discard = CardPile.new()
-	#instance.exhaust_pile = CardPile.new()
+	instance.discard_pile = CardPile.new()
+	instance.exhaust_pile = CardPile.new()
 	return instance
 
 

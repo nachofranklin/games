@@ -7,6 +7,8 @@ const HAND_DISCARD_INTERVAL: float = 0.25
 @export var player: Player
 @export var hand: Hand
 
+@onready var exhaust_pile_button: CardPileOpener = %ExhaustPileButton
+
 var character: CharacterStats
 
 
@@ -18,8 +20,8 @@ func start_battle(char_stats: CharacterStats):
 	character = char_stats
 	character.draw_pile = character.deck.duplicate(true)
 	character.draw_pile.shuffle()
-	character.discard = CardPile.new()
-	#character.exhaust_pile = CardPile.new()
+	character.discard_pile = CardPile.new()
+	character.exhaust_pile = CardPile.new()
 	player.status_handler.statuses_applied.connect(_on_statuses_applied)
 	start_turn()
 
@@ -57,7 +59,7 @@ func discard_cards():
 	
 	var tween: Tween = create_tween()
 	for card_ui in hand.get_children():
-		tween.tween_callback(character.discard.add_card.bind(card_ui.card)) # bind?
+		tween.tween_callback(character.discard_pile.add_card.bind(card_ui.card)) # bind?
 		tween.tween_callback(hand.discard_card.bind(card_ui))
 		tween.tween_interval(HAND_DISCARD_INTERVAL)
 	
@@ -71,17 +73,21 @@ func reshuffle_deck_from_discard():
 	if not character.draw_pile.empty():
 		return
 	
-	while not character.discard.empty():
-		character.draw_pile.add_card(character.discard.draw_card())
+	while not character.discard_pile.empty():
+		character.draw_pile.add_card(character.discard_pile.draw_card())
 	
 	character.draw_pile.shuffle()
 
 
 func _on_card_played(card: Card):
-	if card.exhausts or card.type == Card.Type.POWER:
+	if card.type == Card.Type.POWER:
 		return
-	
-	character.discard.add_card(card)
+	elif card.exhausts:
+		character.exhaust_pile.add_card(card)
+		if exhaust_pile_button.visible == false:
+			exhaust_pile_button.visible = true
+	else:
+		character.discard_pile.add_card(card)
 
 
 func _on_statuses_applied(when_type: Status.WhenType):
