@@ -17,7 +17,7 @@ func set_block(value: int):
 	block = clampi(value, 0, 999)
 	stats_changed.emit()
 
-func take_damage(damage: int):
+func take_damage(damage: int): # doesn't this need modifier type as an argument?
 	if damage <= 0:
 		return
 	

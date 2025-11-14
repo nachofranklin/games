@@ -11,6 +11,7 @@ const DRAG_STYLEBOX := preload("res://scenes/card_ui/card_dragging_stylebox.tres
 
 @export var card: Card : set = _set_card
 @export var char_stats: CharacterStats : set = _set_char_stats
+@export var player_modifiers: ModifierHandler
 
 @onready var card_visuals: CardVisuals = $CardVisuals
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
@@ -39,7 +40,7 @@ func play():
 	if not card:
 		return
 	
-	card.play(targets, char_stats)
+	card.play(targets, char_stats, player_modifiers)
 	queue_free()
 
 func _input(event: InputEvent) -> void:

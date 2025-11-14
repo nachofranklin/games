@@ -44,7 +44,7 @@ func create_instance() -> Resource:
 	return instance
 
 
-func take_damage(damage: int):
+func take_damage(damage: int): # doesn't this need modifier type as an argument?
 	var initial_health := health
 	super.take_damage(damage) # super means to call a function from the script we extend from (Stats). Seems a bit complicated for me
 	if initial_health > health:

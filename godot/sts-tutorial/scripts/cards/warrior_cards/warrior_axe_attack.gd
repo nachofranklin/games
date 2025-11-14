@@ -1,7 +1,10 @@
 extends Card
 
-func apply_effects(targets: Array[Node]):
+var base_damage: int = 6
+
+
+func apply_effects(targets: Array[Node], modifiers: ModifierHandler):
 	var damage_effect := DamageEffect.new()
-	damage_effect.amount = 6
+	damage_effect.amount = modifiers.get_modified_value(base_damage, Modifier.Type.DMG_DEALT)
 	damage_effect.sound = sound
 	damage_effect.execute(targets)

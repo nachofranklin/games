@@ -8,6 +8,7 @@ const WHITE_SPRITE_MATERIAL: ShaderMaterial = preload("res://art/white_sprite_ma
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var stats_ui: StatsUI = $StatsUI as StatsUI
 @onready var status_handler: StatusHandler = $StatusHandler
+@onready var modifier_handler: ModifierHandler = $ModifierHandler
 
 
 func set_character_stats(value: CharacterStats):
@@ -33,15 +34,16 @@ func update_stats():
 	stats_ui.update_stats(stats)
 
 
-func take_damage(damage: int):
+func take_damage(damage: int, which_modifier: Modifier.Type):
 	if stats.health <= 0:
 		return
 	
 	sprite_2d.material = WHITE_SPRITE_MATERIAL
+	var modified_damage: int = modifier_handler.get_modified_value(damage, which_modifier)
 	
 	var tween := create_tween()
 	tween.tween_callback(Shaker.shake.bind(self, 16, 0.15))
-	tween.tween_callback(stats.take_damage.bind(damage))
+	tween.tween_callback(stats.take_damage.bind(modified_damage))
 	tween.tween_interval(0.18)
 	
 	tween.finished.connect(

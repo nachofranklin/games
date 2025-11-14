@@ -6,9 +6,9 @@ var base_damage: int = 5
 var vulnerable_duration: int = 2
 
 
-func apply_effects(targets: Array[Node]) -> void:
+func apply_effects(targets: Array[Node], modifiers: ModifierHandler) -> void:
 	var damage_effect := DamageEffect.new()
-	damage_effect.amount = base_damage
+	damage_effect.amount = modifiers.get_modified_value(base_damage, Modifier.Type.DMG_DEALT)
 	damage_effect.sound = sound
 	damage_effect.execute(targets)
 	
