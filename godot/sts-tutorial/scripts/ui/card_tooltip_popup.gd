@@ -17,7 +17,7 @@ func show_tooltip(card: Card):
 	tooltip_card.add_child(new_card)
 	new_card.card = card
 	new_card.tooltip_requested.connect(hide_tooltip.unbind(1)) # this is saying that if you click on the card then it will hide the tooltip (because at this point the tooltip is already showing). But i don't understand what unbind(1) is?
-	card_description.text = card.tooltip_text
+	card_description.text = card.get_default_tooltip()
 	show()
 
 

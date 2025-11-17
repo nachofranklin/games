@@ -8,3 +8,11 @@ func apply_effects(targets: Array[Node], _modifiers: ModifierHandler):
 	block_effect.amount = base_block
 	block_effect.sound = sound
 	block_effect.execute(targets)
+
+
+func get_default_tooltip() -> String:
+	return tooltip_text % base_block
+
+
+func get_updated_tooltip(_player_modifiers: ModifierHandler, _enemy_modifiers: ModifierHandler) -> String:
+	return tooltip_text % base_block

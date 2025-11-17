@@ -7,6 +7,7 @@ var acting_enemies: Array[Enemy] = []
 func _ready() -> void:
 	Events.enemy_action_completed.connect(_on_enemy_action_completed)
 	Events.enemy_died.connect(_on_enemy_died)
+	Events.player_hand_drawn.connect(_on_player_hand_drawn)
 
 
 func setup_enemies(battle_stats: BattleStats):
@@ -72,3 +73,8 @@ func _on_enemy_died(enemy: Enemy): # this prevents a locking state if the enemy 
 	
 	if is_enemy_turn:
 		_start_next_enemy_turn()
+
+
+func _on_player_hand_drawn():
+	for enemy: Enemy in get_children():
+		enemy.update_intent()

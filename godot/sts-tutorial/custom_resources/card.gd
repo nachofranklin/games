@@ -1,5 +1,5 @@
-class_name Card
 extends Resource
+class_name Card
 
 enum Type {ATTACK, SKILL, POWER}
 enum Target {SELF, SINGLE_ENEMY, ALL_ENEMIES, EVERYONE}
@@ -24,8 +24,10 @@ const RARITY_COLOURS := {
 @export_multiline var tooltip_text: String
 @export var sound: AudioStream
 
+
 func is_single_targeted() -> bool:
 	return target == Target.SINGLE_ENEMY # returns target to be true/false if the card needs you to choose an enemy
+
 
 func _get_targets(targets: Array[Node]):
 	if not targets:
@@ -43,6 +45,7 @@ func _get_targets(targets: Array[Node]):
 		_:
 			return []
 
+
 func play(targets: Array[Node], char_stats: CharacterStats, modifiers: ModifierHandler):
 	Events.card_played.emit(self)
 	char_stats.mana -= energy_cost
@@ -52,5 +55,14 @@ func play(targets: Array[Node], char_stats: CharacterStats, modifiers: ModifierH
 	else:
 		apply_effects(_get_targets(targets), modifiers)
 
+
 func apply_effects(_targets: Array[Node], _modifiers: ModifierHandler):
 	pass
+
+
+func get_default_tooltip() -> String:
+	return tooltip_text
+
+
+func get_updated_tooltip(_player_modifiers: ModifierHandler, _enemy_modifiers: ModifierHandler) -> String:
+	return tooltip_text

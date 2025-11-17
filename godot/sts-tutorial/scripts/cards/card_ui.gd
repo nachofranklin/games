@@ -1,5 +1,4 @@
 extends Control
-
 class_name CardUI
 
 @warning_ignore('UNUSED_SIGNAL')
@@ -24,6 +23,7 @@ var tween: Tween
 var playable: bool = true : set = _set_playable # based on if mana is available to play the card or not
 var disabled: bool = false # based on if one card is being played then all others should be disabled
 
+
 func _ready() -> void:
 	Events.card_aim_started.connect(_on_card_drag_or_aiming_started)
 	Events.card_drag_started.connect(_on_card_drag_or_aiming_started)
@@ -31,10 +31,12 @@ func _ready() -> void:
 	Events.card_drag_ended.connect(_on_card_drag_or_aim_ended)
 	card_state_machine.init(self)
 
+
 func animate_to_position(new_position: Vector2, duration: float):
 	tween = create_tween().set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 	#tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT) # different arrow shape option
 	tween.tween_property(self, 'global_position', new_position, duration)
+
 
 func play():
 	if not card:
@@ -43,17 +45,35 @@ func play():
 	card.play(targets, char_stats, player_modifiers)
 	queue_free()
 
+
+func get_active_enemy_modifiers() -> ModifierHandler:
+	if targets.is_empty() or targets.size() > 1 or not targets[0] is Enemy:
+		return null
+	
+	return targets[0].modifier_handler
+
+
+func request_tooltip():
+	var enemy_modifiers := get_active_enemy_modifiers()
+	var updated_tooltip: String = card.get_updated_tooltip(player_modifiers, enemy_modifiers)
+	Events.card_tooltip_requested.emit(card.icon, updated_tooltip)
+
+
 func _input(event: InputEvent) -> void:
 	card_state_machine.on_input(event)
+
 
 func _on_gui_input(event: InputEvent):
 	card_state_machine.on_gui_input(event)
 
+
 func _on_mouse_entered():
 	card_state_machine.on_mouse_entered()
 
+
 func _on_mouse_exited():
 	card_state_machine.on_mouse_exited()
+
 
 func _set_card(value: Card):
 	if not is_node_ready():
@@ -61,6 +81,7 @@ func _set_card(value: Card):
 	
 	card = value
 	card_visuals.card = card
+
 
 func _set_playable(value: bool):
 	playable = value
@@ -71,16 +92,20 @@ func _set_playable(value: bool):
 		card_visuals.energy_cost.remove_theme_color_override('font_color')
 		card_visuals.icon.modulate = Color(1, 1, 1, 1)
 
+
 func _set_char_stats(value: CharacterStats):
 	char_stats = value
 	char_stats.stats_changed.connect(_on_char_stats_changed)
+
 
 func _on_card_area_area_entered(area: Area2D) -> void:
 	if not targets.has(area):
 		targets.append(area)
 
+
 func _on_card_area_area_exited(area: Area2D) -> void:
 	targets.erase(area)
+
 
 func _on_card_drag_or_aiming_started(used_card: CardUI):
 	if used_card == self:
@@ -88,9 +113,11 @@ func _on_card_drag_or_aiming_started(used_card: CardUI):
 	
 	disabled = true
 
+
 func _on_card_drag_or_aim_ended(_card: CardUI):
 	disabled = false
 	playable = char_stats.can_play_card(card) # sets playable to true/false if mana is greater/smaller than the card's cost
+
 
 func _on_char_stats_changed():
 	playable = char_stats.can_play_card(card)
