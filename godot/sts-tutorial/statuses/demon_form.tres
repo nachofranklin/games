@@ -7,11 +7,6 @@
 script = ExtResource("2_7cqe7")
 stacks_per_turn = 2
 id = "demon_form"
-when_type = 0
-stack_type = 0
-can_expire = false
-duration = 0
-stacks = 0
 icon = ExtResource("1_7cqe7")
-tooltip = "todo"
+tooltip = "Demon Form: at the start of turn, gain 2 Strength."
 metadata/_custom_type_script = "uid://cb0tendunkh1x"

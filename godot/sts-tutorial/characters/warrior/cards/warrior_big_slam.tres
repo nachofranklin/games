@@ -12,6 +12,6 @@ energy_cost = 2
 rarity = 1
 exhausts = true
 icon = ExtResource("1_odk1c")
-tooltip_text = "Deal [color='ff0000']%s damage[/color] and apply [color='ffdf00']2 Exposed[/color]."
+tooltip_text = "Deal [color='ff0000']%s damage[/color] and apply [color='ffdf00']2 Vulnerable[/color]."
 sound = ExtResource("3_0qbpi")
 metadata/_custom_type_script = "uid://burr81esph2p0"

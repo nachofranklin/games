@@ -41,6 +41,8 @@ signal enemy_died(enemy: Enemy)
 signal battle_over_screen_requested(text: String, type: BattleOverPanel.Type)
 @warning_ignore('UNUSED_SIGNAL')
 signal battle_won
+@warning_ignore('UNUSED_SIGNAL')
+signal status_tooltip_requested(statuses: Array[Status])
 
 # Map-related events
 @warning_ignore('UNUSED_SIGNAL')

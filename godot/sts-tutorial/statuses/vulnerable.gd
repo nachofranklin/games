@@ -4,6 +4,10 @@ class_name VulnerableStatus
 const MODIFIER: float = 0.5
 
 
+func get_tooltip() -> String:
+	return tooltip % duration
+
+
 func initialise_status(target: Node):
 	# sets a variable for the existing dmg taken modifier under player/enemy -> ModifierHandler -> DamageTakenModifier
 	var dmg_taken_modifier: Modifier = target.modifier_handler.get_modifier(Modifier.Type.DMG_TAKEN)

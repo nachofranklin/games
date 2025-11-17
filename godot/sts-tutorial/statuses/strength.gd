@@ -2,6 +2,10 @@ extends Status
 class_name StrengthStatus
 
 
+func get_tooltip() -> String:
+	return tooltip % stacks
+
+
 func initialise_status(target: Node):
 	status_changed.connect(_on_status_changed.bind(target))
 	_on_status_changed(target)

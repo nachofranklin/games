@@ -7,7 +7,10 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 grow_horizontal = 2
+mouse_filter = 0
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 6
 script = ExtResource("1_7of5l")
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

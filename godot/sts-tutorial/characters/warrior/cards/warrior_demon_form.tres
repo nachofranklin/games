@@ -8,11 +8,9 @@
 script = ExtResource("2_uvd05")
 id = "warrior_true_strength"
 type = 2
-target = 0
 energy_cost = 3
 rarity = 2
-exhausts = false
 icon = ExtResource("1_gigmm")
-tooltip_text = "At the start of your turn, gain [color='ffdf00']2 Muscle[/color]."
+tooltip_text = "At the start of your turn, gain [color='ffdf00']2 Strength[/color]."
 sound = ExtResource("3_kd0g3")
 metadata/_custom_type_script = "uid://burr81esph2p0"

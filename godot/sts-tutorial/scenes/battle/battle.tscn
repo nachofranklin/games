@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://ye2tbvt72sjq"]
+[gd_scene load_steps=25 format=3 uid="uid://ye2tbvt72sjq"]
 
 [ext_resource type="Texture2D" uid="uid://cp4iq5fd6j8be" path="res://art/background.png" id="1_7gynk"]
 [ext_resource type="Script" uid="uid://rhvecsak06i3" path="res://scripts/battle/battle.gd" id="1_kd6yx"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://bqn5hl4cn6ysg" path="res://art/discard.png" id="18_sgdsx"]
 [ext_resource type="Texture2D" uid="uid://c3tj5gvgikgay" path="res://art/coupons.png" id="19_5moxy"]
 [ext_resource type="PackedScene" uid="uid://c4y4v47st1ueq" path="res://scenes/ui/card_pile_view.tscn" id="21_sgdsx"]
+[ext_resource type="PackedScene" uid="uid://b5iruxx2doigl" path="res://scenes/ui/status_view.tscn" id="23_156m4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7gynk"]
 size = Vector2(256, 100)
@@ -49,6 +50,7 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/CardDropArea"]
 position = Vector2(128, 50)
 shape = SubResource("RectangleShape2D_7gynk")
+debug_color = Color(0, 0.6, 0.69803923, 0.27450982)
 metadata/_edit_lock_ = true
 
 [node name="EnemyHandler" type="Node2D" parent="."]
@@ -237,6 +239,12 @@ visible = false
 
 [node name="ExhaustPileView" parent="CardPileViews" instance=ExtResource("21_sgdsx")]
 unique_name_in_owner = true
+visible = false
+
+[node name="StatusViewLayer" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="StatusView" parent="StatusViewLayer" instance=ExtResource("23_156m4")]
 visible = false
 
 [connection signal="child_order_changed" from="EnemyHandler" to="." method="_on_enemy_handler_child_order_changed"]
