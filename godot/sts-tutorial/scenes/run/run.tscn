@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcm44i7oypbry"]
+[gd_scene load_steps=11 format=3 uid="uid://bcm44i7oypbry"]
 
 [ext_resource type="PackedScene" uid="uid://bnbksu4a8jckl" path="res://scenes/map/map.tscn" id="1_8rlou"]
 [ext_resource type="Script" uid="uid://dqrfedvob3ui3" path="res://scripts/run/run.gd" id="1_l7o68"]
@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://wcdx127md7cu" path="res://scenes/ui/buttons/card_pile_opener.tscn" id="4_5o40y"]
 [ext_resource type="PackedScene" uid="uid://b743ijpgwau0p" path="res://scenes/ui/health_ui.tscn" id="4_wo0nw"]
 [ext_resource type="Texture2D" uid="uid://dklgcy1dmc8ki" path="res://art/deck.png" id="5_0tt4g"]
+[ext_resource type="PackedScene" uid="uid://dgjiyeht7bld6" path="res://scenes/relic_handler/relic_handler.tscn" id="6_ux63y"]
 [ext_resource type="PackedScene" uid="uid://c4y4v47st1ueq" path="res://scenes/ui/card_pile_view.tscn" id="6_wo0nw"]
+[ext_resource type="PackedScene" uid="uid://dw6yxkny2ai4l" path="res://scenes/ui/relic_tooltip_popup.tscn" id="7_yeia0"]
 
 [node name="Run" type="Node"]
 script = ExtResource("1_l7o68")
@@ -82,9 +84,13 @@ show_max_hp = true
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Placeholder" type="Control" parent="TopBar/HBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="TopBar/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="RelicHandler" parent="TopBar/HBoxContainer/CenterContainer" instance=ExtResource("6_ux63y")]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="DeckButton" parent="TopBar/HBoxContainer" node_paths=PackedStringArray("counter") instance=ExtResource("4_5o40y")]
 unique_name_in_owner = true
@@ -107,5 +113,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DeckView" parent="TopBar" instance=ExtResource("6_wo0nw")]
+unique_name_in_owner = true
+visible = false
+
+[node name="RelicTooltipPopup" parent="TopBar" instance=ExtResource("7_yeia0")]
 unique_name_in_owner = true
 visible = false

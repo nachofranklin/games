@@ -4,6 +4,7 @@ class_name Battle
 @export var char_stats: CharacterStats
 @export var battle_stats: BattleStats
 @export var music: AudioStream
+@export var relic_handler: RelicHandler
 
 @onready var battle_ui: BattleUI = $BattleUI
 @onready var player_handler: PlayerHandler = $PlayerHandler
@@ -24,10 +25,12 @@ func start_battle():
 	
 	battle_ui.char_stats = char_stats
 	player.stats = char_stats
+	player_handler.relic_handler = relic_handler
 	enemy_handler.setup_enemies(battle_stats)
 	enemy_handler.reset_enemy_actions()
-	player_handler.start_battle(char_stats)
-	battle_ui.initialise_card_pile_ui()
+	
+	relic_handler.relics_activated.connect(_on_relics_activated)
+	relic_handler.activate_relics_by_when_type(Relic.WhenType.START_OF_COMBAT)
 
 
 func _on_enemy_turn_ended():
@@ -36,9 +39,18 @@ func _on_enemy_turn_ended():
 
 
 func _on_enemy_handler_child_order_changed() -> void:
-	if enemy_handler.get_child_count() == 0:
-		Events.battle_over_screen_requested.emit('Victorious!', BattleOverPanel.Type.WIN)
+	if enemy_handler.get_child_count() == 0 and is_instance_valid(relic_handler): # the is instance valid is needed so that we don't get an error message when we close it all down and things are deleted but it still tries to call a func
+		relic_handler.activate_relics_by_when_type(Relic.WhenType.END_OF_COMBAT)
 
 
 func _on_player_died():
 	Events.battle_over_screen_requested.emit('Game Over!', BattleOverPanel.Type.LOSE)
+
+
+func _on_relics_activated(when_type: Relic.WhenType):
+	match when_type:
+		Relic.WhenType.START_OF_COMBAT:
+			player_handler.start_battle(char_stats)
+			battle_ui.initialise_card_pile_ui()
+		Relic.WhenType.END_OF_COMBAT:
+			Events.battle_over_screen_requested.emit('Victorious!', BattleOverPanel.Type.WIN)

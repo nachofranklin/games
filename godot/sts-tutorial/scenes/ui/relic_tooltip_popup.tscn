@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=3 uid="uid://dw6yxkny2ai4l"]
+
+[ext_resource type="Script" uid="uid://bb7yta3w4oqum" path="res://scripts/ui/relic_tooltip_popup.gd" id="1_7c800"]
+[ext_resource type="Texture2D" uid="uid://bxa8pkakcodgw" path="res://art/tile_0082.png" id="2_30qvk"]
+
+[sub_resource type="Gradient" id="Gradient_xpdyn"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.282353)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_khfwb"]
+gradient = SubResource("Gradient_xpdyn")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="RelicTooltipPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7c800")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_khfwb")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -26.0
+offset_right = 75.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RelicIcon" type="TextureRect" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("2_30qvk")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RelicDescription" type="RichTextLabel" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "Relic Description Relic Description Relic Description
+Relic Description Relic Description"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -45.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = 21.0
+grow_horizontal = 0
+text = "Back"
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
