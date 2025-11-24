@@ -50,6 +50,10 @@ signal map_exited(room: Room)
 
 # Shop-related events
 @warning_ignore('UNUSED_SIGNAL')
+signal shop_relic_bought(relic: Relic, gold_cost: int)
+@warning_ignore('UNUSED_SIGNAL')
+signal shop_card_bought(card: Card, gold_cost: int)
+@warning_ignore('UNUSED_SIGNAL')
 signal shop_exited
 
 # Campfire-related events
