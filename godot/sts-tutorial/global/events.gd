@@ -68,7 +68,7 @@ signal battle_reward_exited
 
 # Treasure Room-related events
 @warning_ignore('UNUSED_SIGNAL')
-signal treasure_room_exited
+signal treasure_room_exited(treasure_relic: Relic)
 
 # Relic-related events
 @warning_ignore('UNUSED_SIGNAL')

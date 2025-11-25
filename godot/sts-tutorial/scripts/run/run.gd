@@ -76,7 +76,7 @@ func _setup_event_connections():
 	Events.campfire_exited.connect(_show_map)
 	Events.map_exited.connect(_on_map_exited)
 	Events.shop_exited.connect(_show_map)
-	Events.treasure_room_exited.connect(_show_map)
+	Events.treasure_room_exited.connect(_on_treasure_room_exited)
 	
 	battle_button.pressed.connect(_change_view.bind(BATTLE_SCENE))
 	campfire_button.pressed.connect(_change_view.bind(CAMPFIRE_SCENE))
@@ -109,9 +109,26 @@ func _on_battle_won():
 	var reward_scene := _change_view(BATTLE_REWARD_SCENE) as BattleReward # to inject the run and character stats needed for the battle reward scene we have to set it as a variable to change the view as BattleReward, then we can pass the stats below
 	reward_scene.run_stats = stats
 	reward_scene.character_stats = character
+	#reward_scene.relic_handler = relic_handler # is this needed now i've added a relic handler export var?
 	
 	reward_scene.add_gold_reward(map.last_room.battle_stats.roll_gold_reward())
 	reward_scene.add_card_reward()
+
+
+func _on_treasure_room_entered():
+	var treasure_scene := _change_view(TREASURE_SCENE) as Treasure
+	treasure_scene.relic_handler = relic_handler
+	treasure_scene.char_stats = character
+	treasure_scene.generate_relic()
+
+
+func _on_treasure_room_exited(relic: Relic):
+	var reward_scene := _change_view(BATTLE_REWARD_SCENE) as BattleReward
+	reward_scene.run_stats = stats
+	reward_scene.character_stats = character
+	reward_scene.relic_handler = relic_handler
+	
+	reward_scene.add_relic_reward(relic)
 
 
 func _on_campfire_entered():
@@ -133,7 +150,7 @@ func _on_map_exited(room: Room):
 		Room.Type.MONSTER:
 			_on_battle_room_entered(room)
 		Room.Type.TREASURE:
-			_change_view(TREASURE_SCENE)
+			_on_treasure_room_entered()
 		Room.Type.CAMPFIRE:
 			_on_campfire_entered()
 		Room.Type.SHOP:
