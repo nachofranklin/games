@@ -121,6 +121,7 @@ func _on_campfire_entered():
 
 func _on_shop_entered():
 	var shop := _change_view(SHOP_SCENE) as Shop
+	Events.shop_entered.emit(shop)
 	shop.char_stats = character
 	shop.run_stats = stats
 	shop.relic_handler = relic_handler

@@ -14,6 +14,7 @@ const SHOP_RELIC = preload('res://scenes/shop/shop_relic.tscn')
 @onready var cards_h_box: HBoxContainer = %CardsHBox
 @onready var relics_h_box: HBoxContainer = %RelicsHBox
 @onready var card_tooltip_popup: CardTooltipPopup = %CardTooltipPopup
+@onready var modifier_handler: ModifierHandler = $ModifierHandler
 
 
 func _ready() -> void:
@@ -51,6 +52,7 @@ func _generate_shop_cards():
 		cards_h_box.add_child(new_shop_card)
 		new_shop_card.card = card
 		new_shop_card.current_card_ui.tooltip_requested.connect(card_tooltip_popup.show_tooltip)
+		new_shop_card.gold_cost = _get_updated_shop_cost(new_shop_card.gold_cost)
 		new_shop_card.update(run_stats)
 
 
@@ -70,7 +72,12 @@ func _generate_shop_relics():
 		var new_shop_relic := SHOP_RELIC.instantiate() as ShopRelic
 		relics_h_box.add_child(new_shop_relic)
 		new_shop_relic.relic = relic
+		new_shop_relic.gold_cost = _get_updated_shop_cost(new_shop_relic.gold_cost)
 		new_shop_relic.update(run_stats)
+
+
+func _get_updated_shop_cost(original_gold_cost: int) -> int:
+	return modifier_handler.get_modified_value(original_gold_cost, Modifier.Type.SHOP_COST)
 
 
 func _on_shop_card_bought(card: Card, gold_cost: int):
@@ -82,7 +89,13 @@ func _on_shop_card_bought(card: Card, gold_cost: int):
 func _on_shop_relic_bought(relic: Relic, gold_cost: int):
 	relic_handler.add_relic(relic)
 	run_stats.gold -= gold_cost
-	_update_items()
+		
+	if relic.id == 'coupons':
+		var coupons_relic := relic as Relic
+		coupons_relic.add_shop_modifier(self)
+		_update_item_costs()
+	else:
+		_update_items()
 
 
 func _update_items():
@@ -90,6 +103,16 @@ func _update_items():
 		shop_card.update(run_stats)
 	
 	for shop_relic: ShopRelic in relics_h_box.get_children():
+		shop_relic.update(run_stats)
+
+
+func _update_item_costs():
+	for shop_card: ShopCard in cards_h_box.get_children():
+		shop_card.gold_cost = _get_updated_shop_cost(shop_card.gold_cost)
+		shop_card.update(run_stats)
+	
+	for shop_relic: ShopRelic in relics_h_box.get_children():
+		shop_relic.gold_cost = _get_updated_shop_cost(shop_relic.gold_cost)
 		shop_relic.update(run_stats)
 
 
