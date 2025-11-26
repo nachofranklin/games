@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BattleStats" load_steps=3 format=3 uid="uid://c66s3b24nfdlo"]
+
+[ext_resource type="PackedScene" uid="uid://u36m2hoc7c5d" path="res://battles/tier_2_boss/2_toxic_ghost.tscn" id="1_h4idp"]
+[ext_resource type="Script" uid="uid://calvfjqxaekwt" path="res://custom_resources/battle_stats.gd" id="1_takgy"]
+
+[resource]
+script = ExtResource("1_takgy")
+battle_tier = 2
+weight = 1.0
+enemies = ExtResource("1_h4idp")
+metadata/_custom_type_script = "uid://calvfjqxaekwt"

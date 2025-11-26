@@ -6,6 +6,7 @@ const BATTLE_REWARD_SCENE := preload('res://scenes/battle_reward/battle_reward.t
 const CAMPFIRE_SCENE := preload('res://scenes/campfire/campfire.tscn')
 const SHOP_SCENE := preload('res://scenes/shop/shop.tscn')
 const TREASURE_SCENE := preload('res://scenes/treasure_room/treasure_room.tscn')
+const WIN_SCREEN_SCENE := preload('res://scenes/win_screen/win_screen.tscn')
 
 @export var run_startup: RunStartup
 
@@ -97,6 +98,15 @@ func _setup_top_bar():
 	deck_button.pressed.connect(deck_view.show_current_view.bind('Deck'))
 
 
+func _show_regular_battle_rewards():
+	var reward_scene := _change_view(BATTLE_REWARD_SCENE) as BattleReward # to inject the run and character stats needed for the battle reward scene we have to set it as a variable to change the view as BattleReward, then we can pass the stats below
+	reward_scene.run_stats = stats
+	reward_scene.character_stats = character
+	
+	reward_scene.add_gold_reward(map.last_room.battle_stats.roll_gold_reward())
+	reward_scene.add_card_reward()
+
+
 func _on_battle_room_entered(room: Room):
 	var battle_scene: Battle = _change_view(BATTLE_SCENE) as Battle
 	battle_scene.char_stats = character
@@ -106,13 +116,11 @@ func _on_battle_room_entered(room: Room):
 
 
 func _on_battle_won():
-	var reward_scene := _change_view(BATTLE_REWARD_SCENE) as BattleReward # to inject the run and character stats needed for the battle reward scene we have to set it as a variable to change the view as BattleReward, then we can pass the stats below
-	reward_scene.run_stats = stats
-	reward_scene.character_stats = character
-	#reward_scene.relic_handler = relic_handler # is this needed now i've added a relic handler export var?
-	
-	reward_scene.add_gold_reward(map.last_room.battle_stats.roll_gold_reward())
-	reward_scene.add_card_reward()
+	if map.floors_climbed == MapGenerator.FLOORS:
+		var win_screen := _change_view(WIN_SCREEN_SCENE) as WinScreen
+		win_screen.character = character
+	else:
+		_show_regular_battle_rewards()
 
 
 func _on_treasure_room_entered():

@@ -11,8 +11,6 @@ const STRENGTH_STATUS = preload("res://statuses/strength.tres")
 
 
 func apply_status(target: Node):
-	print('applied demon form')
-	
 	var status_effect := StatusEffect.new()
 	var strength := STRENGTH_STATUS.duplicate()
 	strength.stacks = stacks_per_turn

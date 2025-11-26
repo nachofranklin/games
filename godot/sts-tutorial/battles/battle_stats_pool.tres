@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BattleStatsPool" load_steps=7 format=3 uid="uid://b2lv3oe86ib0e"]
+[gd_resource type="Resource" script_class="BattleStatsPool" load_steps=8 format=3 uid="uid://b2lv3oe86ib0e"]
 
 [ext_resource type="Script" uid="uid://calvfjqxaekwt" path="res://custom_resources/battle_stats.gd" id="1_c4ej1"]
 [ext_resource type="Script" uid="uid://ds1488u3osrqi" path="res://custom_resources/battle_stats_pool.gd" id="2_42yw1"]
@@ -6,8 +6,9 @@
 [ext_resource type="Resource" uid="uid://cuj07rc7d420e" path="res://battles/tier_0_enemy/0_crab.tres" id="3_s5wuo"]
 [ext_resource type="Resource" uid="uid://d0mshyjrgquy" path="res://battles/tier_1_mini_boss/1_bats3.tres" id="4_7ckf5"]
 [ext_resource type="Resource" uid="uid://cm7s1c6yddafi" path="res://battles/tier_1_mini_boss/1_bat_crab.tres" id="5_hpysq"]
+[ext_resource type="Resource" uid="uid://c66s3b24nfdlo" path="res://battles/tier_2_boss/2_toxic_ghost.tres" id="6_s5wuo"]
 
 [resource]
 script = ExtResource("2_42yw1")
-pool = Array[ExtResource("1_c4ej1")]([ExtResource("2_lrvlq"), ExtResource("3_s5wuo"), ExtResource("4_7ckf5"), ExtResource("5_hpysq")])
+pool = Array[ExtResource("1_c4ej1")]([ExtResource("2_lrvlq"), ExtResource("3_s5wuo"), ExtResource("4_7ckf5"), ExtResource("5_hpysq"), ExtResource("6_s5wuo")])
 metadata/_custom_type_script = "uid://ds1488u3osrqi"
