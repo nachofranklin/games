@@ -17,7 +17,7 @@ func generate_relic():
 			var already_had_it: bool = relic_handler.has_relic(relic.id)
 			return can_appear and not already_had_it
 	)
-	treasure_relic = available_relics.pick_random()
+	treasure_relic = RNG.array_pick_random(available_relics)
 
 
 # called from the 'open' animation in the animation player

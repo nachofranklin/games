@@ -9,7 +9,7 @@ const RELIC_UI = preload('res://scenes/relic_handler/relic_ui.tscn')
 @onready var price_h_box: HBoxContainer = %PriceHBox
 @onready var price_label: Label = %PriceLabel
 @onready var buy_button: Button = %BuyButton
-@onready var gold_cost: int = randi_range(100, 300)
+@onready var gold_cost: int = RNG.instance.randi_range(100, 300)
 
 
 func update(run_stats: RunStats):

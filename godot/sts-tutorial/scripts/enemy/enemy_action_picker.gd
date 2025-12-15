@@ -37,7 +37,7 @@ func get_first_conditional_action() -> EnemyAction:
 
 func get_chance_based_action() -> EnemyAction:
 	var action: EnemyAction
-	var roll: float = randf_range(0.0, total_weight)
+	var roll: float = RNG.instance.randf_range(0.0, total_weight)
 	
 	for child in get_children():
 		action = child as EnemyAction

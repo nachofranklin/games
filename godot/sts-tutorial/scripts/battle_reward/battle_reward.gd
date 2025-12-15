@@ -64,7 +64,7 @@ func _show_card_rewards():
 	
 	for i in run_stats.card_rewards: # by default this is set to return 3 card rewards
 		_setup_card_chances()
-		var roll: float = randf_range(0.0, card_reward_total_weight)
+		var roll: float = RNG.instance.randf_range(0.0, card_reward_total_weight) # i don't fully understand why this should be RNG.instance.randf_range rather than randf_range as surely we're only doing this once and so it's not something that can be rerolled by reloading the game? I guess it's for consistency so that two people could play the same seed, but in that case i think i'd need a specific rng instance just for card rewards?
 		
 		for rarity: Card.Rarity in card_rarity_weights:
 			if card_rarity_weights[rarity] > roll:
@@ -97,7 +97,7 @@ func _get_random_available_card(available_cards: Array[Card], with_rarity: Card.
 		func(card: Card):
 			return card.rarity == with_rarity
 	)
-	return all_possible_cards.pick_random()
+	return RNG.array_pick_random(all_possible_cards)
 
 
 func _on_gold_reward_taken(amount: int):
