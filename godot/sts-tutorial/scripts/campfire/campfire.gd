@@ -4,7 +4,7 @@ class_name Campfire
 @export var char_stats: CharacterStats
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-@onready var rest_button: Button = $UILayer/VBoxContainer/RestButton
+@onready var rest_button: Button = %RestButton
 
 
 func _ready() -> void:
