@@ -5,24 +5,50 @@ signal card_pile_size_changed(cards_amount)
 
 @export var cards: Array[Card] = []
 
+
 func empty() -> bool:
 	return cards.is_empty()
+
 
 func draw_card() -> Card:
 	var card = cards.pop_front()
 	card_pile_size_changed.emit(cards.size())
 	return card
 
+
 func add_card(card: Card):
 	cards.append(card)
 	card_pile_size_changed.emit(cards.size())
 
+
 func shuffle():
 	RNG.array_shuffle(cards)
+
 
 func clear():
 	cards.clear()
 	card_pile_size_changed.emit(cards.size())
+
+
+# this function is needed due to a Godot issue with Resource.duplicate(true)
+# https://github.com/godotengine/godot/issues/74918
+func duplicate_cards() -> Array[Card]:
+	var new_array: Array[Card] = []
+	
+	for card: Card in cards:
+		new_array.append(card.duplicate())
+	
+	return new_array
+
+
+# this function is needed due to a Godot issue with Resource.duplicate(true)
+# https://github.com/godotengine/godot/issues/74918
+func custom_duplicate() -> CardPile:
+	var new_card_pile: CardPile = CardPile.new()
+	new_card_pile.cards = duplicate_cards()
+	
+	return new_card_pile
+
 
 func _to_string() -> String:
 	var _card_strings: PackedStringArray = []

@@ -60,7 +60,8 @@ func _show_card_rewards():
 	card_rewards.card_reward_selected.connect(_on_card_reward_taken)
 	
 	var card_reward_array: Array[Card] = [] # this will eventually be the three cards we can choose from
-	var available_cards: Array[Card] = character_stats.draftable_cards.cards.duplicate(true) # not sure why (true) at the end?
+	#var available_cards: Array[Card] = character_stats.draftable_cards.cards.duplicate(true) # not sure why (true) at the end?
+	var available_cards: Array[Card] = character_stats.draftable_cards.duplicate_cards()
 	
 	for i in run_stats.card_rewards: # by default this is set to return 3 card rewards
 		_setup_card_chances()

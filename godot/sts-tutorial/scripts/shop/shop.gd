@@ -43,7 +43,8 @@ func populate_shop():
 
 func _generate_shop_cards():
 	var shop_card_array: Array[Card] = []
-	var available_cards := char_stats.draftable_cards.cards.duplicate(true)
+	#var available_cards: Array[Card] = char_stats.draftable_cards.cards.duplicate(true)
+	var available_cards: Array[Card] = char_stats.draftable_cards.duplicate_cards()
 	RNG.array_shuffle(available_cards)
 	shop_card_array = available_cards.slice(0, 3)
 	

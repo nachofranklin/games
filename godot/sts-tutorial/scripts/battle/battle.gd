@@ -19,6 +19,14 @@ func _ready() -> void:
 	Events.player_died.connect(_on_player_died)
 
 
+# bug test code due to https://github.com/godotengine/godot/issues/74918 - workaround in card_pile.gd
+#func _input(event: InputEvent) -> void: # bug test code
+	#if event.is_action_pressed('ui_accept'):
+		#var card_ui = player_handler.hand.get_child(0) as CardUI
+		#card_ui.card.energy_cost -= 1
+		#card_ui.card = card_ui.card
+
+
 func start_battle():
 	get_tree().paused = false
 	MusicPlayer.play(music, true)

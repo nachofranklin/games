@@ -28,7 +28,8 @@ func _ready() -> void:
 
 func start_battle(char_stats: CharacterStats):
 	character = char_stats
-	character.draw_pile = character.deck.duplicate(true)
+	#character.draw_pile = character.deck.duplicate(true)
+	character.draw_pile = character.deck.custom_duplicate()
 	character.draw_pile.shuffle()
 	character.discard_pile = CardPile.new()
 	character.exhaust_pile = CardPile.new()
