@@ -1,0 +1,6 @@
+- [ ] [[Main Game Loop]]
+- [ ] [[Important Bits]]
+- [ ] [[Core Systems]]
+- [ ] [[Data Needs]]
+- [ ] [[Won't Build (yet)]]
+- [ ] [[Software]]

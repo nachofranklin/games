@@ -1,0 +1,31 @@
+{
+  "new-line-trigger": "shift-enter",
+  "date-display-format": "DD/MM ddd",
+  "date-picker-week-start": 1,
+  "show-relative-date": true,
+  "full-list-lane-width": false,
+  "date-colors": [
+    {
+      "distance": 1,
+      "unit": "days",
+      "direction": "after",
+      "isBefore": true,
+      "color": "rgba(217, 0, 0, 1)"
+    },
+    {
+      "distance": null,
+      "unit": "days",
+      "direction": "after",
+      "isToday": true,
+      "color": "rgba(255, 133, 0, 1)"
+    },
+    {
+      "isToday": false,
+      "distance": 7,
+      "unit": "days",
+      "direction": "after",
+      "color": "rgba(254, 255, 0, 1)"
+    }
+  ],
+  "move-dates": true
+}
