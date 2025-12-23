@@ -1,6 +1,6 @@
 Decide what you will not build (yet)
 
-- no save system
-- no settings menu
-- no animations beyond placeholders
-- no sound
+- a records/leaderboards page
+- settings options (beyond home, resume, quit)
+- multiple characters
+- event rooms (question mark rooms)

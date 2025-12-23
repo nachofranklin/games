@@ -1,9 +1,10 @@
-Bullet point systems
-
-e.g.
-- Turn system
+- Enemy move selector (conditional or random weighted)
+- Battle turn system (see [[Main Game Loop]])
 - Energy system
-- Card / action system
-- Enemy AI
-- Map / board representation
-- UI layer (very basic)
+- Card state machine
+- Discard pile -> Draw pile -> shuffled
+- Map generation
+- Available rooms to select
+- Card pile view
+- Modifiers (damage, gold cost, energy, card draw, healing)
+- Top UI banner (showing health/max hp, gold, potions, list of relics, current floor/max floors, deck view button, settings button)

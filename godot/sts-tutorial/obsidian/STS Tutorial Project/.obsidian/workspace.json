@@ -6,38 +6,29 @@
       {
         "id": "4222b5da80467a6c",
         "type": "tabs",
-        "dimension": 68.25117370892019,
         "children": [
           {
             "id": "23e63a80a4742e34",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "02 - Kanban - STS Tutorial.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": [
-                    false,
-                    false,
-                    false,
-                    false
-                  ]
-                }
+                "file": "00 - STS Tutorial Project.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-trello",
-              "title": "02 - Kanban - STS Tutorial"
+              "icon": "lucide-file",
+              "title": "00 - STS Tutorial Project"
             }
           }
         ]
       },
       {
-        "id": "2512f344b35fe0b8",
+        "id": "e965328cf28cdd1b",
         "type": "tabs",
-        "dimension": 31.748826291079812,
         "children": [
           {
-            "id": "afab5d27a9700fe4",
+            "id": "c0f01b8064fba84e",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -211,17 +202,17 @@
   },
   "active": "23e63a80a4742e34",
   "lastOpenFiles": [
+    "Plan/Won't Build (yet).md",
+    "Plan/Main Game Loop.md",
+    "Plan/Software.md",
+    "Plan/Core Systems.md",
     "00 - STS Tutorial Project.md",
     "02 - Kanban - STS Tutorial.md",
-    "01 - Markdown Cheat Sheet.md",
-    "Welcome.md",
-    "Plan/Won't Build (yet).md",
-    "Plan/Software.md",
     "Plan/Plan.md",
-    "Plan/Main Game Loop.md",
-    "Plan/Important Bits.md",
+    "01 - Markdown Cheat Sheet.md",
     "Plan/Data Needs.md",
-    "Plan/Core Systems.md",
+    "Plan/Core Design.md",
+    "Welcome.md",
     "Plan",
     "Untitled.base"
   ]
