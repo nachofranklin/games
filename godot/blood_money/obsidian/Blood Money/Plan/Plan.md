@@ -1,0 +1,6 @@
+- [x] [[Main Game Loop]]
+- [x] [[Core Design]]
+- [x] [[Core Systems]]
+- [x] [[Data Needs]]
+- [x] [[Won't Build (yet)]]
+- [x] [[Software]]

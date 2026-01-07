@@ -3,8 +3,7 @@ What data does a system need to exist? Or what data should a component show? (Cu
 ##### A card needs:
 - name
 - energy cost
-- effect type
-- effect value
+- effect
 - rarity indicator
 - type indicator (att, skill, power, curse)
 - image
@@ -12,17 +11,16 @@ What data does a system need to exist? Or what data should a component show? (Cu
 - sound
 - target (one, all, random, player)
 - exhausts (bool)
+- if it's a starter card or should be available for rewards/shops (can't think of any other scenario as curse and status cards don't qualify as either)
 
 ##### Player needs:
 - name
-- max hp
+- max hp (aka soul?)
+- health (aka lifeforce?)
 - starting deck
 - starting relic
-- starting gold
-- gold
 - potions
 - modifiers
-- health
 - deck
 - discard pile
 - draw pile
@@ -49,6 +47,8 @@ What data does a system need to exist? Or what data should a component show? (Cu
 - block
 - statuses
 - ai (move selector)
+- resistances
+- weaknesses
 
 ##### A relic needs:
 - name
@@ -57,8 +57,10 @@ What data does a system need to exist? Or what data should a component show? (Cu
 - if it's a starter relic (bool)
 - image
 - tooltip
-- shop cost
 
+##### An effect needs:
+- a list of targets it applies to
+- what the effect is (block, damage, etc)
 ##### A status needs:
 - name
 - when it activates
@@ -68,6 +70,7 @@ What data does a system need to exist? Or what data should a component show? (Cu
 - the stacks
 - image
 - tooltip
+- tooltip text colour
 
 ##### A room needs:
 - type of room (monster, treasure, campfire, shop, boss, event)
@@ -95,7 +98,15 @@ What data does a system need to exist? Or what data should a component show? (Cu
 ##### The possible groups of enemies you could fight needs:
 - the tier of the fight (eg tier 0 could be the first floor, tier 1 could be every other non boss fight in act 1, tier 2 could be all mini boss fights in act 1, tier 3 would be the main boss in act 1, etc)
 - the weight of how more or less rare the opponent would be
-- gold reward min
-- gold reward max
+- health reward min
+- health reward max
 - enemies (as a PackedScene)
 - the accumulated weight
+
+##### Card pile needs:
+- list of cards
+- access to the card AI
+
+##### Intents need:
+- icon
+- text

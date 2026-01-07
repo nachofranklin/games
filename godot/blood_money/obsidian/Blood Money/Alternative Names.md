@@ -1,0 +1,4 @@
+- Blood Money
+- Pay in Blood
+- Paid in Blood
+- Lifeforce Spent

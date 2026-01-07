@@ -1,0 +1,3 @@
+- spend blood to block entire instances of damage, like costs three health and then three blood blobs would pop if they soaked up any unblocked damage
+- a way to make each attack that turn do a cumulative +1 damage on each hit
+- event room could be like a blood loan, it takes away health but then 5 turns later if you're still alive it gives you a boost like increased max hp and half your health back, or heals you to max hp, or the next purchase in the shop is free

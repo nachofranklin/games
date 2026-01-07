@@ -1,0 +1,5 @@
+- Replace the default godot icon.svg with our own icon.
+- Project - project settings - general - application - config - icon (click the folder) - select the new icon
+- Project - project settings - general - display - window - size - viewport width and height to 256 and 144
+- Project - project settings - general - display - window - stretch - change to viewport (scales up for bigger screens)
+- Project - project settings - general - display - window - size - select advanced setting (top right) - window width and height override to 1280 and 720

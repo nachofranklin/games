@@ -1,0 +1,142 @@
+{
+  "presetFields": [
+    {
+      "type": "Boolean",
+      "tagName": "boolean",
+      "icon": "toggle-left",
+      "tooltip": "Accepts true or false",
+      "colorClass": "boolean",
+      "options": {},
+      "name": "exhausts",
+      "id": "ornF16",
+      "path": ""
+    },
+    {
+      "type": "Select",
+      "tagName": "select",
+      "icon": "right-triangle",
+      "tooltip": "Accepts a single value from a list",
+      "colorClass": "select",
+      "options": {
+        "sourceType": "ValuesList",
+        "valuesList": {
+          "1": "Attack",
+          "2": "Skill",
+          "3": "Power",
+          "4": "Status",
+          "5": "Curse"
+        }
+      },
+      "name": "card_type",
+      "id": "0aQIDP",
+      "path": ""
+    },
+    {
+      "type": "Select",
+      "tagName": "select",
+      "icon": "right-triangle",
+      "tooltip": "Accepts a single value from a list",
+      "colorClass": "select",
+      "options": {
+        "sourceType": "ValuesList",
+        "valuesList": {
+          "1": "need_to_create_characters"
+        }
+      },
+      "name": "available_to",
+      "id": "eLmF1f",
+      "path": ""
+    },
+    {
+      "type": "Number",
+      "tagName": "number",
+      "icon": "plus-minus-glyph",
+      "tooltip": "Accepts a number",
+      "colorClass": "number",
+      "options": {},
+      "name": "energy_cost",
+      "id": "xaKQ0R",
+      "path": ""
+    },
+    {
+      "type": "Select",
+      "tagName": "select",
+      "icon": "right-triangle",
+      "tooltip": "Accepts a single value from a list",
+      "colorClass": "select",
+      "options": {
+        "sourceType": "ValuesList",
+        "valuesList": {
+          "1": "Common",
+          "2": "Uncommon",
+          "3": "Rare"
+        }
+      },
+      "name": "rarity",
+      "id": "py9c8O",
+      "path": ""
+    },
+    {
+      "type": "Select",
+      "tagName": "select",
+      "icon": "right-triangle",
+      "tooltip": "Accepts a single value from a list",
+      "colorClass": "select",
+      "options": {
+        "sourceType": "ValuesList",
+        "valuesList": {
+          "1": "Self",
+          "2": "Single Enemy",
+          "3": "All Enemies",
+          "4": "Everyone"
+        }
+      },
+      "name": "target",
+      "id": "b8UKCw",
+      "path": ""
+    },
+    {
+      "type": "Input",
+      "tagName": "single",
+      "icon": "pencil",
+      "tooltip": "Accepts any value",
+      "colorClass": "single",
+      "options": {},
+      "name": "effect",
+      "id": "2rv88B",
+      "path": ""
+    }
+  ],
+  "fileClassQueries": [],
+  "displayFieldsInContextMenu": true,
+  "globallyIgnoredFields": [],
+  "classFilesPath": null,
+  "isAutosuggestEnabled": true,
+  "fileClassAlias": "fileClass",
+  "settingsVersion": "5.7",
+  "firstDayOfWeek": 1,
+  "enableLinks": true,
+  "enableTabHeader": true,
+  "enableEditor": true,
+  "enableBacklinks": true,
+  "enableStarred": true,
+  "enableFileExplorer": true,
+  "enableSearch": true,
+  "enableProperties": true,
+  "tableViewMaxRecords": 20,
+  "frontmatterListDisplay": "asArray",
+  "fileClassExcludedFolders": [],
+  "showIndexingStatusInStatusBar": true,
+  "fileIndexingExcludedFolders": [],
+  "fileIndexingExcludedExtensions": [
+    ".excalidraw.md"
+  ],
+  "fileIndexingExcludedRegex": [],
+  "frontmatterOnly": false,
+  "showFileClassSelectInModal": true,
+  "chooseFileClassAtFileCreation": false,
+  "autoInsertFieldsAtFileClassInsertion": false,
+  "fileClassIcon": "package",
+  "isAutoCalculationEnabled": true,
+  "disableDataviewPrompt": false
+}

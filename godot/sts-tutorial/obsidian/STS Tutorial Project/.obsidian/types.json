@@ -1,0 +1,12 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "card_type": "text",
+    "rarity": "text",
+    "target": "text",
+    "exhausts": "checkbox",
+    "energy_cost": "number"
+  }
+}

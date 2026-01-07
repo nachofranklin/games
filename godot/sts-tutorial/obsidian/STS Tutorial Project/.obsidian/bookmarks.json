@@ -2,8 +2,21 @@
   "items": [
     {
       "type": "file",
+      "ctime": 1767032364229,
+      "path": "00 - STS Tutorial Project.md",
+      "title": "Project Overview"
+    },
+    {
+      "type": "file",
       "ctime": 1766416136861,
-      "path": "01 - Markdown Cheat Sheet.md"
+      "path": "01 - Markdown Cheat Sheet.md",
+      "title": "Markdown Cheat Sheet"
+    },
+    {
+      "type": "file",
+      "ctime": 1767032218993,
+      "path": "02 - Kanban - STS Tutorial.md",
+      "title": "Kanban"
     }
   ]
 }
