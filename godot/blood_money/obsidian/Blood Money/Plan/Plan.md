@@ -4,3 +4,4 @@
 - [x] [[Data Needs]]
 - [x] [[Won't Build (yet)]]
 - [x] [[Software]]
+- [x] [[Godot Settings]]

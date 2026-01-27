@@ -1,0 +1,8 @@
+- Replace the default godot icon.svg with our own icon.
+- Project - project settings - general - application - config - icon (click the folder) - select the new icon
+- Project - project settings - general - display - window - size - viewport width and height to 992 and 558 (if 8px is smallest readable font size, then a card width needs ~90px width, so screen width needs ~1000px) - this doesn't work, text doesn't look right scaling at 1.3
+- Project - project settings - general - display - window - stretch - mode - change to viewport (scales up for bigger screens)
+- Project - project settings - general - display - window - size - select advanced setting (top right) - window width and height override to 1280 and 720
+- Project - project settings - general - rendering - textures - canvas textures - set default texture filter to nearest
+- Project - project settings - general - gui - theme - custom - set a saved theme (create one)
+- Project - project settings - general - gui - theme - custom font - set

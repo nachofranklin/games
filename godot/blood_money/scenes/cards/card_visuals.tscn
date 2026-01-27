@@ -1,0 +1,179 @@
+[gd_scene load_steps=7 format=3 uid="uid://cnr4myswklihm"]
+
+[ext_resource type="Theme" uid="uid://dkwqc1id4uk4k" path="res://art/theme/cards_theme.tres" id="1_jffxk"]
+[ext_resource type="Texture2D" uid="uid://bwguxv40ihu6d" path="res://art/heart.png" id="3_5nhxd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iurty"]
+bg_color = Color(0.64705884, 0.19607843, 0.20784314, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.64705884, 0.19607843, 0.20784314, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_psaan"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8784314, 0.85882354, 0.5411765, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 1
+shadow_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sl4ta"]
+bg_color = Color(0.29411766, 0.29411766, 0.29411766, 0.9019608)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.3137255)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_348bg"]
+bg_color = Color(0.64705884, 0.19607843, 0.20784314, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[node name="CardVisuals" type="Control"]
+custom_minimum_size = Vector2(126, 168)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 80.0
+offset_bottom = 120.0
+theme = ExtResource("1_jffxk")
+
+[node name="BackgroundPanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_iurty")
+
+[node name="ContentVBox" type="VBoxContainer" parent="BackgroundPanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="IconPanelContainer" type="PanelContainer" parent="BackgroundPanelContainer/ContentVBox"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_psaan")
+
+[node name="Icon" type="TextureRect" parent="BackgroundPanelContainer/ContentVBox/IconPanelContainer"]
+layout_mode = 2
+texture = ExtResource("3_5nhxd")
+stretch_mode = 5
+
+[node name="TextPanel" type="Panel" parent="BackgroundPanelContainer/ContentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_sl4ta")
+
+[node name="TextVBox" type="VBoxContainer" parent="BackgroundPanelContainer/ContentVBox/TextPanel"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="CardDescription" type="RichTextLabel" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox"]
+layout_mode = 2
+size_flags_vertical = 4
+bbcode_enabled = true
+text = "Everyone has the righ
+Add 4 Shivs into your hand."
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExhaustsLabel" type="Label" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox"]
+layout_mode = 2
+text = "Exhausts."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NamePanel" type="Panel" parent="BackgroundPanelContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_sl4ta")
+
+[node name="CardNameLabel" type="Label" parent="BackgroundPanelContainer/NamePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -46.0
+offset_top = -8.0
+offset_right = 46.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Card Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnergyCost" type="Control" parent="."]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 1
+anchors_preset = 0
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 18.0
+offset_bottom = 18.0
+
+[node name="EnergyBackground" type="Panel" parent="EnergyCost"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_348bg")
+
+[node name="EnergyLabel" type="Label" parent="EnergyCost"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 16
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1

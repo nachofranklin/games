@@ -1,0 +1,88 @@
+[gd_scene load_steps=13 format=3 uid="uid://bljn4kfekyqdc"]
+
+[ext_resource type="Theme" uid="uid://dkwqc1id4uk4k" path="res://art/theme/cards_theme.tres" id="1_psaan"]
+[ext_resource type="Script" uid="uid://cqc0jw2ouqqll" path="res://scenes/cards/card_ui.gd" id="2_els2s"]
+[ext_resource type="PackedScene" uid="uid://cnr4myswklihm" path="res://scenes/cards/card_visuals.tscn" id="3_05fhy"]
+[ext_resource type="Script" uid="uid://eubqgfklchhe" path="res://scenes/cards/card_states/card_state_machine.gd" id="4_d10lw"]
+[ext_resource type="Script" uid="uid://cpl1vqp418plb" path="res://scenes/cards/card_states/base_state.gd" id="5_s5ng1"]
+[ext_resource type="Script" uid="uid://b12676m7b64b5" path="res://scenes/cards/card_states/hovered_state.gd" id="6_bn1a1"]
+[ext_resource type="Script" uid="uid://cmysp54mn6iok" path="res://scenes/cards/card_states/clicked_state.gd" id="7_xvatb"]
+[ext_resource type="Script" uid="uid://c162xshqmd2go" path="res://scenes/cards/card_states/dragging_state.gd" id="8_oi4ts"]
+[ext_resource type="Script" uid="uid://pby0vmnaupw0" path="res://scenes/cards/card_states/aiming_state.gd" id="9_iyv3s"]
+[ext_resource type="Script" uid="uid://c0c2df5h2lb3h" path="res://scenes/cards/card_states/released_state.gd" id="10_4y25s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d10lw"]
+size = Vector2(126, 168)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gomaj"]
+radius = 12.0
+
+[node name="CardUI" type="Control"]
+custom_minimum_size = Vector2(126, 168)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 80.0
+offset_bottom = 120.0
+theme = ExtResource("1_psaan")
+script = ExtResource("2_els2s")
+
+[node name="CardVisuals" parent="." instance=ExtResource("3_05fhy")]
+layout_mode = 0
+offset_right = 126.0
+offset_bottom = 168.0
+mouse_filter = 2
+mouse_behavior_recursive = 1
+
+[node name="CardArea" type="Area2D" parent="."]
+monitoring = false
+
+[node name="CardCS" type="CollisionShape2D" parent="CardArea"]
+position = Vector2(63, 84)
+shape = SubResource("RectangleShape2D_d10lw")
+
+[node name="ManaCS" type="CollisionShape2D" parent="CardArea"]
+position = Vector2(6, 6)
+shape = SubResource("CircleShape2D_gomaj")
+
+[node name="CardStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("4_d10lw")
+initial_state = NodePath("BaseState")
+
+[node name="BaseState" type="Node" parent="CardStateMachine"]
+script = ExtResource("5_s5ng1")
+
+[node name="HoveredState" type="Node" parent="CardStateMachine"]
+script = ExtResource("6_bn1a1")
+state = 1
+
+[node name="ClickedState" type="Node" parent="CardStateMachine"]
+script = ExtResource("7_xvatb")
+state = 2
+
+[node name="DraggingState" type="Node" parent="CardStateMachine"]
+script = ExtResource("8_oi4ts")
+state = 3
+
+[node name="AimingState" type="Node" parent="CardStateMachine"]
+script = ExtResource("9_iyv3s")
+state = 4
+
+[node name="ReleasedState" type="Node" parent="CardStateMachine"]
+script = ExtResource("10_4y25s")
+state = 5
+
+[node name="StateLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "test"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

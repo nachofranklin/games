@@ -1,0 +1,95 @@
+[gd_scene load_steps=10 format=3 uid="uid://38o7jmgkpmbg"]
+
+[ext_resource type="Texture2D" uid="uid://b8vbh00bjbxry" path="res://art/To The Moon.png" id="1_7gynk"]
+[ext_resource type="Texture2D" uid="uid://0y27tqnbvla4" path="res://art/not made by me/fight_arena.png" id="1_ffvsa"]
+[ext_resource type="PackedScene" uid="uid://bee15sjrol4dm" path="res://scenes/player/player.tscn" id="3_h0kxc"]
+[ext_resource type="Texture2D" uid="uid://dlnuqa5aa7j1q" path="res://art/ellie.png" id="4_fh7rg"]
+[ext_resource type="Texture2D" uid="uid://dl7bt2sjem7fp" path="res://art/georgie.png" id="5_pll4o"]
+[ext_resource type="PackedScene" uid="uid://bljn4kfekyqdc" path="res://scenes/cards/card_ui.tscn" id="6_fh7rg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
+size = Vector2(1280, 512)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h0kxc"]
+size = Vector2(16, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fh7rg"]
+size = Vector2(16, 31)
+
+[node name="Battle" type="Node2D"]
+
+[node name="Background" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(2.0447285, 1.7266186)
+texture = ExtResource("1_ffvsa")
+centered = false
+
+[node name="Background2" type="Sprite2D" parent="."]
+scale = Vector2(2.495127, 1.3980583)
+texture = ExtResource("1_7gynk")
+centered = false
+
+[node name="Areas" type="Node2D" parent="."]
+
+[node name="CardDropArea" type="Area2D" parent="Areas"]
+collision_layer = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/CardDropArea"]
+position = Vector2(640, 256)
+shape = SubResource("RectangleShape2D_py4tk")
+
+[node name="Player" parent="." instance=ExtResource("3_h0kxc")]
+position = Vector2(296, 416)
+scale = Vector2(5, 5)
+
+[node name="Enemies" type="Node2D" parent="."]
+scale = Vector2(5, 5)
+
+[node name="Ellie" type="Sprite2D" parent="Enemies"]
+position = Vector2(186, 78)
+texture = ExtResource("4_fh7rg")
+
+[node name="Area2D" type="Area2D" parent="Enemies/Ellie"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemies/Ellie/Area2D"]
+shape = SubResource("RectangleShape2D_h0kxc")
+
+[node name="Georgie" type="Sprite2D" parent="Enemies"]
+position = Vector2(218, 85)
+texture = ExtResource("5_pll4o")
+
+[node name="Area2D" type="Area2D" parent="Enemies/Georgie"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemies/Georgie/Area2D"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_fh7rg")
+
+[node name="EnemyHandler" type="Node2D" parent="."]
+
+[node name="BattleUI" type="CanvasLayer" parent="." groups=["ui_layer"]]
+
+[node name="HandHBox" type="HBoxContainer" parent="BattleUI"]
+custom_minimum_size = Vector2(900, 168)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -120.0
+offset_right = 350.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="CardUI" parent="BattleUI/HandHBox" instance=ExtResource("6_fh7rg")]
+layout_mode = 2
+
+[node name="CardUI2" parent="BattleUI/HandHBox" instance=ExtResource("6_fh7rg")]
+layout_mode = 2
+
+[node name="CardUI3" parent="BattleUI/HandHBox" instance=ExtResource("6_fh7rg")]
+layout_mode = 2
+
+[node name="CardPileUI" type="CanvasLayer" parent="."]

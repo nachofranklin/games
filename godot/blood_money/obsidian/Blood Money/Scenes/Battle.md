@@ -14,11 +14,11 @@
 
 #### What the scene needs
 
-- [ ] background
-- [ ] card drop area
-- [ ] player
+- [x] background
+- [x] card drop area
+- [x] player
 - [ ] player handler
-- [ ] enemies
+- [x] enemies
 - [ ] enemy handler
 - [ ] a selected card aiming target
 - [ ] battle UI
@@ -44,13 +44,13 @@
 
 #### What images are needed
 
-- [ ] background - a fighting arena
-- [ ] player character
-- [ ] an enemy
-- [ ] deck, draw, discard, exhaust pile buttons
-- [ ] health - heart
-- [ ] block - shield
-- [ ] also need a font
+- [x] background - a fighting arena
+- [x] player character
+- [x] an enemy (will use el + g)
+- [x] deck, draw, discard, exhaust pile buttons
+- [x] health - heart
+- [x] block - shield
+- [x] also need a [font - Tiny5 by Stefan Schmidt](https://fonts.google.com/specimen/Tiny5/about?preview.size=14&categoryFilters=Appearance:%2FTheme%2FPixel)
 Optionals
 - [ ] energy
 - [ ] end turn button
