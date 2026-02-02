@@ -9,7 +9,7 @@
         "dimension": 66.4319248826291,
         "children": [
           {
-            "id": "ab0688ac984250f6",
+            "id": "ecd5535702c100d4",
             "type": "leaf",
             "state": {
               "type": "kanban",
@@ -209,12 +209,18 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "ab0688ac984250f6",
+  "active": "ecd5535702c100d4",
   "lastOpenFiles": [
-    "Scenes/CardUI.md",
-    "Scenes/CardVisuals.md",
-    "02 - Kanban - Blood Money.md",
+    "Scripts/Card Target Selector.md",
+    "Untitled.md",
+    "Scripts/Hand.md",
     "Scenes/Battle.md",
+    "Templates/Script Template.md",
+    "Templates/Card Template.md",
+    "Scenes/CardUI.md",
+    "02 - Kanban - Blood Money.md",
+    "Scripts",
+    "Scenes/CardVisuals.md",
     "Plan/Software.md",
     "Plan/Godot Settings.md",
     "Plan/Won't Build (yet).md",
@@ -226,7 +232,6 @@
     "Ideas.md",
     "Cards Summary.md",
     "00 - Blood Money Project.md",
-    "Templates/Card Template.md",
     "Templates/Scene Template.md",
     "Alternative Names.md",
     "Scenes",

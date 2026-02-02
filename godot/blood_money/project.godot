@@ -8,11 +8,20 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Blood Money"
-config/features=PackedStringArray("4.5", "Mobile")
+run/main_scene="uid://38o7jmgkpmbg"
+config/features=PackedStringArray("4.6", "Mobile")
 config/icon="uid://2w878ynej2ue"
+
+[autoload]
+
+Events="*uid://bi4rnessrxyd4"
 
 [display]
 
@@ -44,6 +53,7 @@ right_mouse={
 
 2d_physics/layer_1="card_target_selector"
 2d_physics/layer_2="card_drop_area"
+2d_physics/layer_3="enemies"
 
 [rendering]
 

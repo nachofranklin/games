@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://beoml50758i3e"]
+
+[ext_resource type="Script" uid="uid://cs42qanwyeyi7" path="res://scenes/battle/card_target_selector.gd" id="1_6npv1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_glaty"]
+size = Vector2(4, 4)
+
+[sub_resource type="Curve" id="Curve_14p67"]
+_limits = [0.2, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(0.9538461, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_14p67"]
+colors = PackedColorArray(0, 1, 1, 0.3, 1, 1, 1, 1)
+
+[node name="CardTargetSelector" type="Node2D" unique_id=964313413]
+script = ExtResource("1_6npv1")
+
+[node name="MousePointerArea2D" type="Area2D" parent="." unique_id=1853697573]
+collision_mask = 4
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MousePointerArea2D" unique_id=1603698900]
+shape = SubResource("RectangleShape2D_glaty")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1386874100]
+width = 20.0
+width_curve = SubResource("Curve_14p67")
+gradient = SubResource("Gradient_14p67")
+
+[connection signal="area_entered" from="MousePointerArea2D" to="." method="_on_mouse_pointer_area_2d_area_entered"]
+[connection signal="area_exited" from="MousePointerArea2D" to="." method="_on_mouse_pointer_area_2d_area_exited"]

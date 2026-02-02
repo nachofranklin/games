@@ -2,7 +2,7 @@ extends Node
 class_name CardState
 
 @warning_ignore('UNUSED_SIGNAL')
-signal transition_requested(from: CardState, to: State) # why is this not from state to state or from cardstate to cardstate? Why is it different?
+signal change_state(from: CardState, to: State) # why is this not from state to state or from cardstate to cardstate? Why is it different?
 
 enum State {BASE, HOVERED, CLICKED, DRAGGING, AIMING, RELEASED}
 

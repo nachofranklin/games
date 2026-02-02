@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bljn4kfekyqdc"]
+[gd_scene format=3 uid="uid://bljn4kfekyqdc"]
 
 [ext_resource type="Theme" uid="uid://dkwqc1id4uk4k" path="res://art/theme/cards_theme.tres" id="1_psaan"]
 [ext_resource type="Script" uid="uid://cqc0jw2ouqqll" path="res://scenes/cards/card_ui.gd" id="2_els2s"]
@@ -17,7 +17,7 @@ size = Vector2(126, 168)
 [sub_resource type="CircleShape2D" id="CircleShape2D_gomaj"]
 radius = 12.0
 
-[node name="CardUI" type="Control"]
+[node name="CardUI" type="Control" unique_id=149639997]
 custom_minimum_size = Vector2(126, 168)
 layout_mode = 3
 anchors_preset = 0
@@ -26,52 +26,53 @@ offset_bottom = 120.0
 theme = ExtResource("1_psaan")
 script = ExtResource("2_els2s")
 
-[node name="CardVisuals" parent="." instance=ExtResource("3_05fhy")]
+[node name="CardVisuals" parent="." unique_id=1062163879 instance=ExtResource("3_05fhy")]
 layout_mode = 0
 offset_right = 126.0
 offset_bottom = 168.0
 mouse_filter = 2
 mouse_behavior_recursive = 1
 
-[node name="CardArea" type="Area2D" parent="."]
-monitoring = false
+[node name="CardArea" type="Area2D" parent="." unique_id=2113618226]
+collision_mask = 2
+monitorable = false
 
-[node name="CardCS" type="CollisionShape2D" parent="CardArea"]
+[node name="CardCS" type="CollisionShape2D" parent="CardArea" unique_id=1443347949]
 position = Vector2(63, 84)
 shape = SubResource("RectangleShape2D_d10lw")
 
-[node name="ManaCS" type="CollisionShape2D" parent="CardArea"]
+[node name="ManaCS" type="CollisionShape2D" parent="CardArea" unique_id=1830284041]
 position = Vector2(6, 6)
 shape = SubResource("CircleShape2D_gomaj")
 
-[node name="CardStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="CardStateMachine" type="Node" parent="." unique_id=455121765 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_d10lw")
 initial_state = NodePath("BaseState")
 
-[node name="BaseState" type="Node" parent="CardStateMachine"]
+[node name="BaseState" type="Node" parent="CardStateMachine" unique_id=1026755205]
 script = ExtResource("5_s5ng1")
 
-[node name="HoveredState" type="Node" parent="CardStateMachine"]
+[node name="HoveredState" type="Node" parent="CardStateMachine" unique_id=296666509]
 script = ExtResource("6_bn1a1")
 state = 1
 
-[node name="ClickedState" type="Node" parent="CardStateMachine"]
+[node name="ClickedState" type="Node" parent="CardStateMachine" unique_id=1261892758]
 script = ExtResource("7_xvatb")
 state = 2
 
-[node name="DraggingState" type="Node" parent="CardStateMachine"]
+[node name="DraggingState" type="Node" parent="CardStateMachine" unique_id=505804073]
 script = ExtResource("8_oi4ts")
 state = 3
 
-[node name="AimingState" type="Node" parent="CardStateMachine"]
+[node name="AimingState" type="Node" parent="CardStateMachine" unique_id=2035108615]
 script = ExtResource("9_iyv3s")
 state = 4
 
-[node name="ReleasedState" type="Node" parent="CardStateMachine"]
+[node name="ReleasedState" type="Node" parent="CardStateMachine" unique_id=698266195]
 script = ExtResource("10_4y25s")
 state = 5
 
-[node name="StateLabel" type="Label" parent="."]
+[node name="StateLabel" type="Label" parent="." unique_id=1331214872]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,3 +87,5 @@ vertical_alignment = 1
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="area_entered" from="CardArea" to="." method="_on_card_area_area_entered"]
+[connection signal="area_exited" from="CardArea" to="." method="_on_card_area_area_exited"]

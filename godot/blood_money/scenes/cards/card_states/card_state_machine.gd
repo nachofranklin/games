@@ -11,7 +11,7 @@ func init(card: CardUI) -> void:
 	for child in get_children():
 		if child is CardState:
 			states[child.state] = child
-			child.transition_requested.connect(_on_transition_requested)
+			child.change_state.connect(_on_change_state)
 			child.card_ui = card
 	
 	if initial_state:
@@ -39,7 +39,7 @@ func on_mouse_exited() -> void:
 		current_state.on_mouse_exited()
 
 
-func _on_transition_requested(from: CardState, to: CardState.State) -> void:
+func _on_change_state(from: CardState, to: CardState.State) -> void:
 	if from != current_state:
 		return
 	

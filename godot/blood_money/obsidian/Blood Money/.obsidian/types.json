@@ -3,6 +3,8 @@
     "aliases": "aliases",
     "cssclasses": "multitext",
     "tags": "tags",
-    "energy_cost": "number"
+    "energy_cost": "number",
+    "starter_card": "checkbox",
+    "shop_card": "checkbox"
   }
 }
