@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://dj8r8wqq3wp2o"]
+
+[ext_resource type="Texture2D" uid="uid://dlnuqa5aa7j1q" path="res://art/ellie.png" id="1_4a83h"]
+[ext_resource type="Script" uid="uid://bqqyh5hde82y6" path="res://scenes/enemy/enemy.gd" id="1_tjssy"]
+[ext_resource type="Texture2D" uid="uid://d24v7w2yu8o1v" path="res://art/arrow.png" id="2_40wdo"]
+[ext_resource type="PackedScene" uid="uid://di4ug4hskvy57" path="res://scenes/ui/health_bar_ui.tscn" id="2_a3pup"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h0kxc"]
+size = Vector2(80, 160)
+
+[node name="Enemy" type="Node2D" unique_id=1611403296]
+script = ExtResource("1_tjssy")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2017023451]
+scale = Vector2(5, 5)
+texture = ExtResource("1_4a83h")
+
+[node name="Arrow" type="Sprite2D" parent="." unique_id=1230633461]
+visible = false
+position = Vector2(57, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("2_40wdo")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1360483883]
+light_mask = 4
+collision_layer = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1101356940]
+shape = SubResource("RectangleShape2D_h0kxc")
+
+[node name="HealthBarUI" parent="." unique_id=1722786344 instance=ExtResource("2_a3pup")]
+offset_left = -50.0
+offset_top = 86.0
+offset_right = 50.0
+offset_bottom = 91.0
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]

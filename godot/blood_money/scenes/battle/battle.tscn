@@ -3,7 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://b8vbh00bjbxry" path="res://art/To The Moon.png" id="1_7gynk"]
 [ext_resource type="Texture2D" uid="uid://0y27tqnbvla4" path="res://art/not made by me/fight_arena.png" id="1_ffvsa"]
 [ext_resource type="PackedScene" uid="uid://bee15sjrol4dm" path="res://scenes/player/player.tscn" id="3_h0kxc"]
-[ext_resource type="Texture2D" uid="uid://dlnuqa5aa7j1q" path="res://art/ellie.png" id="4_fh7rg"]
+[ext_resource type="PackedScene" uid="uid://dj8r8wqq3wp2o" path="res://scenes/enemy/enemy.tscn" id="4_oiw7q"]
+[ext_resource type="Resource" uid="uid://fsdqokvjdoms" path="res://enemies/ellie/ellie_enemy.tres" id="5_fisqk"]
 [ext_resource type="Texture2D" uid="uid://dl7bt2sjem7fp" path="res://art/georgie.png" id="5_pll4o"]
 [ext_resource type="PackedScene" uid="uid://bljn4kfekyqdc" path="res://scenes/cards/card_ui.tscn" id="6_fh7rg"]
 [ext_resource type="PackedScene" uid="uid://beoml50758i3e" path="res://scenes/battle/card_target_selector.tscn" id="6_oiw7q"]
@@ -13,9 +14,6 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
 size = Vector2(1280, 384)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_h0kxc"]
-size = Vector2(16, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fh7rg"]
 size = Vector2(16, 31)
@@ -43,26 +41,17 @@ monitoring = false
 position = Vector2(640, 192)
 shape = SubResource("RectangleShape2D_py4tk")
 
-[node name="Player" parent="." unique_id=236085812 instance=ExtResource("3_h0kxc")]
-position = Vector2(296, 416)
-scale = Vector2(5, 5)
+[node name="Player" parent="." unique_id=2104851029 instance=ExtResource("3_h0kxc")]
+position = Vector2(296, 400)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=864940338]
-scale = Vector2(5, 5)
 
-[node name="Ellie" type="Sprite2D" parent="Enemies" unique_id=899936122]
-position = Vector2(186, 78)
-texture = ExtResource("4_fh7rg")
-
-[node name="Area2D" type="Area2D" parent="Enemies/Ellie" unique_id=618620429]
-collision_layer = 4
-monitoring = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemies/Ellie/Area2D" unique_id=1041825098]
-shape = SubResource("RectangleShape2D_h0kxc")
+[node name="Ellie" parent="Enemies" unique_id=180170234 instance=ExtResource("4_oiw7q")]
+position = Vector2(960, 368)
+stats = ExtResource("5_fisqk")
 
 [node name="Georgie" type="Sprite2D" parent="Enemies" unique_id=1200224805]
-position = Vector2(218, 85)
+position = Vector2(1080, 416)
 texture = ExtResource("5_pll4o")
 
 [node name="Area2D" type="Area2D" parent="Enemies/Georgie" unique_id=1307077315]

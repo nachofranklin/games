@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Stats" format=3 uid="uid://dsnf4gf0p2jur"]
+
+[ext_resource type="Texture2D" uid="uid://dl7bt2sjem7fp" path="res://art/georgie.png" id="1_68wjm"]
+[ext_resource type="Script" uid="uid://bish4vsaq2un6" path="res://custom_resources/stats.gd" id="1_wo1xp"]
+
+[resource]
+script = ExtResource("1_wo1xp")
+max_health = 15
+art = ExtResource("1_68wjm")
+metadata/_custom_type_script = "uid://bish4vsaq2un6"

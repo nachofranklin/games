@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://di4ug4hskvy57"]
+
+[ext_resource type="StyleBox" uid="uid://um3caddlrvrv" path="res://art/theme/block_health_bar_background.tres" id="1_airt5"]
+[ext_resource type="Script" uid="uid://ceugh62aj2fqq" path="res://scenes/ui/health_bar_ui.gd" id="1_cvvog"]
+[ext_resource type="Theme" uid="uid://dnp7i0koggft4" path="res://art/theme/main_theme.tres" id="1_r431b"]
+[ext_resource type="Texture2D" uid="uid://bfiuwk7olitlm" path="res://art/shield.png" id="1_v12qd"]
+[ext_resource type="StyleBox" uid="uid://c7ba6lg38oxch" path="res://art/theme/block_health_bar.tres" id="2_cvvog"]
+
+[node name="HealthBarUI" type="Control" unique_id=1722786344]
+custom_minimum_size = Vector2(100, 5)
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+theme = ExtResource("1_r431b")
+script = ExtResource("1_cvvog")
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1163333138]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = ExtResource("1_airt5")
+theme_override_styles/fill = ExtResource("2_cvvog")
+max_value = 30.0
+step = 1.0
+value = 20.0
+show_percentage = false
+
+[node name="HBox" type="HBoxContainer" parent="HealthBar" unique_id=2045021341]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 2
+
+[node name="HealthLabel" type="Label" parent="HealthBar/HBox" unique_id=1714756362]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
+text = "123"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SlashLabel" type="Label" parent="HealthBar/HBox" unique_id=1659200330]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/outline_size = 4
+text = "/"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MaxHealthLabel" type="Label" parent="HealthBar/HBox" unique_id=555977314]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
+text = "456"
+vertical_alignment = 1
+
+[node name="BlockIcon" type="TextureRect" parent="." unique_id=1823247890]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_vertical = 2
+texture = ExtResource("1_v12qd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BlockAmount" type="Label" parent="BlockIcon" unique_id=420254843]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/outline_size = 4
+text = "999"
+horizontal_alignment = 1
+vertical_alignment = 1

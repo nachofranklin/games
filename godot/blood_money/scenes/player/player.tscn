@@ -1,8 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://bee15sjrol4dm"]
+[gd_scene format=3 uid="uid://bee15sjrol4dm"]
 
+[ext_resource type="Script" uid="uid://cjlwyoie232pn" path="res://scenes/player/player.gd" id="1_lvxji"]
 [ext_resource type="Texture2D" uid="uid://bppmyjlopi2v5" path="res://art/me.png" id="1_oqqms"]
+[ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="2_p47bc"]
+[ext_resource type="PackedScene" uid="uid://di4ug4hskvy57" path="res://scenes/ui/health_bar_ui.tscn" id="4_75vfm"]
 
-[node name="Player" type="Node2D"]
+[node name="Player" type="Node2D" unique_id=2104851029]
+script = ExtResource("1_lvxji")
+char_stats = ExtResource("2_p47bc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369120415]
+scale = Vector2(5, 5)
 texture = ExtResource("1_oqqms")
+
+[node name="HealthBarUI" parent="." unique_id=1722786344 instance=ExtResource("4_75vfm")]
+offset_left = -50.0
+offset_top = 87.0
+offset_right = 50.0
+offset_bottom = 92.0

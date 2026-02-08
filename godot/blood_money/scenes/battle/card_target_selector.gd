@@ -45,14 +45,13 @@ func _on_card_aim_started(card_ui: CardUI) -> void:
 	current_card = card_ui
 	targeting = true
 	mouse_pointer_area_2d.monitoring = true
-	#mouse_pointer_area_2d.monitorable = true # do i need this?
+	line_2d.gradient.colors = [Color(0,1,1,0.3), Color.WHITE]
 
 
 func _on_card_aim_ended(_card_ui: CardUI) -> void:
 	current_card = null
 	targeting = false
 	mouse_pointer_area_2d.monitoring = false
-	#mouse_pointer_area_2d.monitorable = false # do i need this?
 	line_2d.clear_points()
 	mouse_pointer_area_2d.position = Vector2.ZERO
 

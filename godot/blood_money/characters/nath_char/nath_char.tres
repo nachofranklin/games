@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CharacterStats" format=3 uid="uid://cgp50umdijyp5"]
+
+[ext_resource type="Script" uid="uid://dx6w63m3jrca8" path="res://custom_resources/character_stats.gd" id="1_7jj2y"]
+[ext_resource type="Texture2D" uid="uid://bppmyjlopi2v5" path="res://art/me.png" id="1_as007"]
+[ext_resource type="Resource" uid="uid://b8qrfqd6ubq26" path="res://characters/nath_char/starting_deck.tres" id="3_h330f"]
+
+[resource]
+script = ExtResource("1_7jj2y")
+name = "Nacho"
+primary_colour = Color(0.21129584, 0.4708969, 0.23636118, 1)
+base_cards_per_turn = 5
+base_mana_per_turn = 3
+starting_deck = ExtResource("3_h330f")
+max_health = 25
+art = ExtResource("1_as007")
+metadata/_custom_type_script = "uid://dx6w63m3jrca8"

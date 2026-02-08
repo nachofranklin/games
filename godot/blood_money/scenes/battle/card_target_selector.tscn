@@ -19,7 +19,6 @@ script = ExtResource("1_6npv1")
 [node name="MousePointerArea2D" type="Area2D" parent="." unique_id=1853697573]
 collision_mask = 4
 monitoring = false
-monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MousePointerArea2D" unique_id=1603698900]
 shape = SubResource("RectangleShape2D_glaty")
