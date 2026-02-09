@@ -5,7 +5,14 @@
 [resource]
 script = ExtResource("1_gi6ei")
 card_name = "strike"
+available_to = 1
+rarity = 1
+card_type = null
 target = 1
 energy_cost = 1
+exhausts = null
 starter_card = true
+shop_card = null
+short_description = "Deal %s damage"
+tooltip_text = null
 metadata/_custom_type_script = "uid://bf6hopalat1ng"

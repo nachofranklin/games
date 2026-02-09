@@ -4,17 +4,27 @@ class_name CardUI
 @warning_ignore('UNUSED_SIGNAL')
 signal reparent_requested(selected_card: CardUI)
 
-@export var card: Card
+@export var card: Card : set = _set_card
 
 @onready var card_area: Area2D = $CardArea
 @onready var state_label: Label = $StateLabel # delete
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
+@onready var card_visuals: CardVisuals = $CardVisuals
 #@onready var target_areas: Array[Node] = [] # should it be area2d instead of node? and why @onready?
 var target_areas: Array[Area2D] = []
 var tween: Tween
 
+
 func _ready() -> void:
 	card_state_machine.init(self)
+
+
+func _set_card(value: Card) -> void:
+	if not is_node_ready():
+		await ready
+	
+	card = value
+	card_visuals.update_visuals(value)
 
 
 func animate_to_position(new_position: Vector2, duration: float) -> void:

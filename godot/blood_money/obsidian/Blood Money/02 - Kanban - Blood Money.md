@@ -19,12 +19,12 @@ kanban-plugin: board
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
-- [ ] work on updating the card visuals to reflect the card resource
-- [ ] then make the cards actually do some damage or add block
 
 
 ## Active
 
+- [ ] work on updating the card visuals to reflect the card resource
+- [ ] then make the cards actually do some damage or add block
 
 
 ## Done

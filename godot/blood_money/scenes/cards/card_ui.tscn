@@ -26,13 +26,6 @@ offset_bottom = 120.0
 theme = ExtResource("1_psaan")
 script = ExtResource("2_els2s")
 
-[node name="CardVisuals" parent="." unique_id=1062163879 instance=ExtResource("3_05fhy")]
-layout_mode = 0
-offset_right = 126.0
-offset_bottom = 168.0
-mouse_filter = 2
-mouse_behavior_recursive = 1
-
 [node name="CardArea" type="Area2D" parent="." unique_id=2113618226]
 collision_mask = 2
 monitorable = false
@@ -71,6 +64,13 @@ state = 4
 [node name="ReleasedState" type="Node" parent="CardStateMachine" unique_id=698266195]
 script = ExtResource("10_4y25s")
 state = 5
+
+[node name="CardVisuals" parent="." unique_id=1062163879 instance=ExtResource("3_05fhy")]
+layout_mode = 0
+offset_right = 126.0
+offset_bottom = 168.0
+mouse_filter = 2
+mouse_behavior_recursive = 1
 
 [node name="StateLabel" type="Label" parent="." unique_id=1331214872]
 layout_mode = 1

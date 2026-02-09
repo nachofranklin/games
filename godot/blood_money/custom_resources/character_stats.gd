@@ -2,7 +2,7 @@ extends Stats
 class_name CharacterStats
 
 @export var name: String
-@export var primary_colour: Color
+@export var primary_colour: Color # update the card_colour in card_visuals.gd if this gets changed
 @export var base_cards_per_turn: int
 @export var base_mana_per_turn: int
 @export var starting_deck: CardPile

@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnr4myswklihm"]
+[gd_scene format=3 uid="uid://cnr4myswklihm"]
 
 [ext_resource type="Theme" uid="uid://dkwqc1id4uk4k" path="res://art/theme/cards_theme.tres" id="1_jffxk"]
+[ext_resource type="Script" uid="uid://bs0k8jhay3kxo" path="res://scenes/cards/card_visuals.gd" id="2_jffxk"]
 [ext_resource type="Texture2D" uid="uid://bwguxv40ihu6d" path="res://art/heart.png" id="3_5nhxd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iurty"]
@@ -14,7 +15,7 @@ corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
-shadow_size = 4
+shadow_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_psaan"]
 draw_center = false
@@ -54,15 +55,17 @@ corner_radius_top_right = 100
 corner_radius_bottom_right = 100
 corner_radius_bottom_left = 100
 
-[node name="CardVisuals" type="Control"]
+[node name="CardVisuals" type="Control" unique_id=824670564]
 custom_minimum_size = Vector2(126, 168)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 80.0
 offset_bottom = 120.0
 theme = ExtResource("1_jffxk")
+script = ExtResource("2_jffxk")
 
-[node name="BackgroundPanelContainer" type="PanelContainer" parent="."]
+[node name="BackgroundPanelContainer" type="PanelContainer" parent="." unique_id=892729804]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,29 +75,31 @@ grow_vertical = 2
 theme = ExtResource("1_jffxk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_iurty")
 
-[node name="ContentVBox" type="VBoxContainer" parent="BackgroundPanelContainer"]
+[node name="ContentVBox" type="VBoxContainer" parent="BackgroundPanelContainer" unique_id=1461718185]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="IconPanelContainer" type="PanelContainer" parent="BackgroundPanelContainer/ContentVBox"]
+[node name="IconPanelContainer" type="PanelContainer" parent="BackgroundPanelContainer/ContentVBox" unique_id=1727198616]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("1_jffxk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_psaan")
 
-[node name="Icon" type="TextureRect" parent="BackgroundPanelContainer/ContentVBox/IconPanelContainer"]
+[node name="Icon" type="TextureRect" parent="BackgroundPanelContainer/ContentVBox/IconPanelContainer" unique_id=503176734]
+unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("3_5nhxd")
 stretch_mode = 5
 
-[node name="TextPanel" type="Panel" parent="BackgroundPanelContainer/ContentVBox"]
+[node name="TextPanel" type="Panel" parent="BackgroundPanelContainer/ContentVBox" unique_id=1402481051]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("1_jffxk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_sl4ta")
 
-[node name="TextVBox" type="VBoxContainer" parent="BackgroundPanelContainer/ContentVBox/TextPanel"]
+[node name="TextVBox" type="VBoxContainer" parent="BackgroundPanelContainer/ContentVBox/TextPanel" unique_id=1890526045]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -106,7 +111,8 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 
-[node name="CardDescription" type="RichTextLabel" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox"]
+[node name="CardDescription" type="RichTextLabel" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox" unique_id=29188965]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -117,20 +123,22 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ExhaustsLabel" type="Label" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox"]
+[node name="ExhaustsLabel" type="Label" parent="BackgroundPanelContainer/ContentVBox/TextPanel/TextVBox" unique_id=1700196941]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Exhausts."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NamePanel" type="Panel" parent="BackgroundPanelContainer"]
+[node name="NamePanel" type="Panel" parent="BackgroundPanelContainer" unique_id=1256322438]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 size_flags_vertical = 0
 theme = ExtResource("1_jffxk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_sl4ta")
 
-[node name="CardNameLabel" type="Label" parent="BackgroundPanelContainer/NamePanel"]
+[node name="CardNameLabel" type="Label" parent="BackgroundPanelContainer/NamePanel" unique_id=1599393312]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -147,7 +155,7 @@ text = "Card Name"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="EnergyCost" type="Control" parent="."]
+[node name="EnergyCost" type="Control" parent="." unique_id=1037229766]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 1
 anchors_preset = 0
@@ -156,7 +164,8 @@ offset_top = -6.0
 offset_right = 18.0
 offset_bottom = 18.0
 
-[node name="EnergyBackground" type="Panel" parent="EnergyCost"]
+[node name="EnergyBackground" type="Panel" parent="EnergyCost" unique_id=362982570]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -166,13 +175,15 @@ grow_vertical = 2
 theme = ExtResource("1_jffxk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_348bg")
 
-[node name="EnergyLabel" type="Label" parent="EnergyCost"]
+[node name="EnergyLabel" type="Label" parent="EnergyCost" unique_id=1694453482]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 text = "3"
 horizontal_alignment = 1
