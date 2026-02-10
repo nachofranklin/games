@@ -39,12 +39,6 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_psaan"]
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.8784314, 0.85882354, 0.5411765, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -66,7 +60,13 @@ corner_radius_bottom_left = 2
 shadow_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vibtx"]
-bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+shadow_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jffxk"]
 draw_center = false
 border_width_left = 3
 border_width_top = 3
@@ -77,22 +77,18 @@ corner_radius_top_left = 100
 corner_radius_top_right = 100
 corner_radius_bottom_right = 100
 corner_radius_bottom_left = 100
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
 shadow_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0h3o5"]
-bg_color = Color(0, 0, 0, 1)
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.8784314, 0.85882354, 0.5411765, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 shadow_size = 2
-anti_aliasing = false
 
 [resource]
 default_font_size = 12
@@ -102,4 +98,5 @@ Panel/styles/text_panel = SubResource("StyleBoxFlat_sl4ta")
 PanelContainer/styles/att_pc = SubResource("StyleBoxFlat_psaan")
 PanelContainer/styles/bg_pc = SubResource("StyleBoxFlat_iurty")
 PanelContainer/styles/power_pc = SubResource("StyleBoxFlat_vibtx")
+PanelContainer/styles/power_pc2 = SubResource("StyleBoxFlat_jffxk")
 PanelContainer/styles/skill_pc = SubResource("StyleBoxFlat_0h3o5")

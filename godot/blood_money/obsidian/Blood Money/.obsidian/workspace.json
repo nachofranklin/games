@@ -12,21 +12,14 @@
             "id": "4c601a12ea57a783",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "02 - Kanban - Blood Money.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": [
-                    false,
-                    false,
-                    false,
-                    false
-                  ]
-                }
+                "file": "Scripts/card_visuals.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-trello",
-              "title": "02 - Kanban - Blood Money"
+              "icon": "lucide-file",
+              "title": "card_visuals"
             }
           }
         ]
@@ -211,9 +204,9 @@
   },
   "active": "4c601a12ea57a783",
   "lastOpenFiles": [
+    "02 - Kanban - Blood Money.md",
     "Scripts/card_visuals.md",
     "Scenes/CardVisuals.md",
-    "02 - Kanban - Blood Money.md",
     "Scenes/HealthBarUI.md",
     "Scripts/character_stats.md",
     "Scripts/stats.md",

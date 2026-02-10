@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://dkwqc1id4uk4k" path="res://art/theme/cards_theme.tres" id="1_jffxk"]
 [ext_resource type="Script" uid="uid://bs0k8jhay3kxo" path="res://scenes/cards/card_visuals.gd" id="2_jffxk"]
-[ext_resource type="Texture2D" uid="uid://bwguxv40ihu6d" path="res://art/heart.png" id="3_5nhxd"]
+[ext_resource type="Texture2D" uid="uid://cgkximcxb1eiu" path="res://art/card_art/bomb.png" id="3_jffxk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iurty"]
 bg_color = Color(0.64705884, 0.19607843, 0.20784314, 1)
@@ -17,18 +17,11 @@ corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 shadow_size = 2
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_psaan"]
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.8784314, 0.85882354, 0.5411765, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-corner_detail = 1
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vibtx"]
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
 shadow_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sl4ta"]
@@ -42,6 +35,23 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jffxk"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8784314, 0.85882354, 0.5411765, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+shadow_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_348bg"]
 bg_color = Color(0.64705884, 0.19607843, 0.20784314, 1)
@@ -81,17 +91,20 @@ theme_override_constants/separation = 0
 
 [node name="IconPanelContainer" type="PanelContainer" parent="BackgroundPanelContainer/ContentVBox" unique_id=1727198616]
 unique_name_in_owner = true
+clip_children = 2
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("1_jffxk")
-theme_override_styles/panel = SubResource("StyleBoxFlat_psaan")
+theme_override_styles/panel = SubResource("StyleBoxFlat_vibtx")
 
 [node name="Icon" type="TextureRect" parent="BackgroundPanelContainer/ContentVBox/IconPanelContainer" unique_id=503176734]
 unique_name_in_owner = true
+show_behind_parent = true
 layout_mode = 2
-texture = ExtResource("3_5nhxd")
-stretch_mode = 5
+texture = ExtResource("3_jffxk")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="TextPanel" type="Panel" parent="BackgroundPanelContainer/ContentVBox" unique_id=1402481051]
 layout_mode = 2
@@ -154,6 +167,18 @@ grow_vertical = 2
 text = "Card Name"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="IconBorder" type="PanelContainer" parent="." unique_id=1305536606]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 120.0
+offset_bottom = 84.0
+size_flags_vertical = 3
+theme = ExtResource("1_jffxk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_jffxk")
 
 [node name="EnergyCost" type="Control" parent="." unique_id=1037229766]
 custom_minimum_size = Vector2(24, 24)
