@@ -13,6 +13,7 @@ signal reparent_requested(selected_card: CardUI)
 #@onready var target_areas: Array[Node] = [] # should it be area2d instead of node? and why @onready?
 var target_areas: Array[Area2D] = []
 var tween: Tween
+var parent: Control
 
 
 func _ready() -> void:
@@ -51,9 +52,7 @@ func _on_mouse_exited() -> void:
 func _on_card_area_area_entered(area: Area2D) -> void:
 	if not target_areas.has(area):
 		target_areas.append(area)
-		print(target_areas)
 
 
 func _on_card_area_area_exited(area: Area2D) -> void:
 	target_areas.erase(area)
-	print(target_areas)

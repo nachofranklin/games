@@ -5,18 +5,16 @@
 [ext_resource type="PackedScene" uid="uid://bee15sjrol4dm" path="res://scenes/player/player.tscn" id="3_h0kxc"]
 [ext_resource type="PackedScene" uid="uid://dj8r8wqq3wp2o" path="res://scenes/enemy/enemy.tscn" id="4_oiw7q"]
 [ext_resource type="Resource" uid="uid://fsdqokvjdoms" path="res://enemies/ellie/ellie_enemy.tres" id="5_fisqk"]
-[ext_resource type="Texture2D" uid="uid://dl7bt2sjem7fp" path="res://art/georgie.png" id="5_pll4o"]
 [ext_resource type="PackedScene" uid="uid://bljn4kfekyqdc" path="res://scenes/cards/card_ui.tscn" id="6_fh7rg"]
+[ext_resource type="Resource" uid="uid://dsnf4gf0p2jur" path="res://enemies/georgie/georgie_enemy.tres" id="6_fisqk"]
 [ext_resource type="PackedScene" uid="uid://beoml50758i3e" path="res://scenes/battle/card_target_selector.tscn" id="6_oiw7q"]
 [ext_resource type="Script" uid="uid://bp5xsadogb1yx" path="res://scenes/battle/hand_h_box.gd" id="6_pll4o"]
 [ext_resource type="Resource" uid="uid://dpq1ussvy4alu" path="res://cards/strike.tres" id="8_agsc7"]
 [ext_resource type="Resource" uid="uid://baeu76s5dl7n0" path="res://cards/block.tres" id="9_oiw7q"]
+[ext_resource type="PackedScene" uid="uid://w4mm4brtdo5a" path="res://scenes/ui/mana_ui.tscn" id="12_mxe8n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
 size = Vector2(1280, 384)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fh7rg"]
-size = Vector2(16, 31)
 
 [node name="Battle" type="Node2D" unique_id=1111024949]
 
@@ -47,20 +45,12 @@ position = Vector2(296, 400)
 [node name="Enemies" type="Node2D" parent="." unique_id=864940338]
 
 [node name="Ellie" parent="Enemies" unique_id=180170234 instance=ExtResource("4_oiw7q")]
-position = Vector2(960, 368)
+position = Vector2(936, 360)
 stats = ExtResource("5_fisqk")
 
-[node name="Georgie" type="Sprite2D" parent="Enemies" unique_id=1200224805]
-position = Vector2(1080, 416)
-texture = ExtResource("5_pll4o")
-
-[node name="Area2D" type="Area2D" parent="Enemies/Georgie" unique_id=1307077315]
-collision_layer = 4
-monitoring = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemies/Georgie/Area2D" unique_id=59620824]
-position = Vector2(0, 0.5)
-shape = SubResource("RectangleShape2D_fh7rg")
+[node name="Georgie" parent="Enemies" unique_id=1611403296 instance=ExtResource("4_oiw7q")]
+position = Vector2(1096, 384)
+stats = ExtResource("6_fisqk")
 
 [node name="EnemyHandler" type="Node2D" parent="." unique_id=413413747]
 
@@ -95,4 +85,14 @@ card = ExtResource("9_oiw7q")
 layout_mode = 2
 card = ExtResource("8_agsc7")
 
+[node name="ManaUI" parent="BattleUI" unique_id=80269470 instance=ExtResource("12_mxe8n")]
+offset_left = 72.0
+offset_top = 544.0
+offset_right = 112.0
+offset_bottom = 584.0
+
 [node name="CardPileUI" type="CanvasLayer" parent="." unique_id=558942395]
+
+[node name="DELMiddleLine" type="Line2D" parent="." unique_id=557305507]
+visible = false
+points = PackedVector2Array(640, 0, 640, 192, 640, 504, 640, 720)

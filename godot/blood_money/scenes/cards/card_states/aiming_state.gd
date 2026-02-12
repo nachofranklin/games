@@ -4,8 +4,11 @@ extends CardState
 func enter() -> void:
 	card_ui.state_label.text = 'AIMING'
 	card_ui.target_areas.clear()
+	var hand_global_rect = card_ui.parent.get_global_rect()
+	var card_ui_global_rect = card_ui.get_global_rect()
+	var offset: Vector2 = Vector2(hand_global_rect.size.x / 2 - card_ui_global_rect.size.x / 2, -card_ui_global_rect.size.y / 3)
+	card_ui.animate_to_position(hand_global_rect.position + offset, 0.3)
 	card_ui.card_area.monitoring = false
-	# need to move the card to the center
 	Events.card_aim_started.emit(card_ui)
 
 

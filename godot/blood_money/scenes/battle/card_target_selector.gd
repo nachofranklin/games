@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 func _get_points() -> Array[Vector2]:
 	var points: Array[Vector2] = []
 	var start: Vector2 = current_card.global_position
-	start.x += current_card.size.x / 2
+	start.x += current_card.get_rect().size.x / 2
 	var end: Vector2 = get_local_mouse_position()
 	var distance: Vector2 = end - start
 	

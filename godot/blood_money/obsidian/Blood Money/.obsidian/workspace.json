@@ -21,8 +21,30 @@
               "icon": "lucide-file",
               "title": "card_visuals"
             }
+          },
+          {
+            "id": "b32cdececa030b7d",
+            "type": "leaf",
+            "state": {
+              "type": "kanban",
+              "state": {
+                "file": "02 - Kanban - Blood Money.md",
+                "kanbanViewState": {
+                  "kanban-plugin": "board",
+                  "list-collapse": [
+                    false,
+                    false,
+                    false,
+                    false
+                  ]
+                }
+              },
+              "icon": "lucide-trello",
+              "title": "02 - Kanban - Blood Money"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       },
       {
         "id": "a6c1fdd273ca0c8c",
@@ -202,10 +224,11 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "4c601a12ea57a783",
+  "active": "b32cdececa030b7d",
   "lastOpenFiles": [
-    "02 - Kanban - Blood Money.md",
+    "Scenes/ManaUI.md",
     "Scripts/card_visuals.md",
+    "02 - Kanban - Blood Money.md",
     "Scenes/CardVisuals.md",
     "Scenes/HealthBarUI.md",
     "Scripts/character_stats.md",
@@ -230,7 +253,6 @@
     "Plan/Core Systems.md",
     "Plan/Core Design.md",
     "Cards Summary.md",
-    "00 - Blood Money Project.md",
     "Scenes",
     "Cards",
     "Templates"

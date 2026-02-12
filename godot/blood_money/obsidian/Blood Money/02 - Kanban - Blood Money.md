@@ -6,16 +6,13 @@ kanban-plugin: board
 
 ## Bugs
 
+- [ ] manaCS doesn't seem to be registering as an area on the card
 
 
 ## Backlog
 
-- [ ] do art needed for cardVisuals scene
 - [ ] fan the hand in the battle scene
 - [ ] need to come up with a way to remember the card order to move it back to that position
-- [ ] manaCS doesn't seem to be registering as an area on the card
-- [ ] add a short desc and tooltip desc to card resource
-- [ ] make the card visuals reflect the card resource
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
@@ -30,6 +27,10 @@ kanban-plugin: board
 ## Done
 
 **Complete**
+- [x] do art needed for cardVisuals scene
+- [x] the card in the aiming state is not centering correctly
+- [x] add a short desc and tooltip desc to card resource
+- [x] make the card visuals reflect the card resource
 - [x] add a pointer and an indicator next to enemies for att card selecting targets
 - [x] finish the cardtargetselecter (watch tutorial)
 - [x] create a card resource
