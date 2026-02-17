@@ -19,7 +19,8 @@ var border_width: int = 3
 func update_visuals(card: Card) -> void:
 	_update_styleboxes(card)
 	icon.texture = card.art
-	card_description.text = KeywordDatabase.format_keywords(card.short_description) # still need to get the number amount of whatever the card does so that it's not just text that would need to be manually changed
+	var card_desc = card.get_description() # replaces the %s with whatever the correct value is
+	card_description.text = KeywordDatabase.format_keywords(card_desc) # highlights keywords in the correct colours
 	exhausts_label.visible = card.exhausts
 	card_name_label.text = card.card_name.to_upper()
 	energy_label.text = str(card.energy_cost)

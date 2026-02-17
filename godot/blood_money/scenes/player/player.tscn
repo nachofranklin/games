@@ -5,7 +5,7 @@
 [ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="2_p47bc"]
 [ext_resource type="PackedScene" uid="uid://di4ug4hskvy57" path="res://scenes/ui/health_bar_ui.tscn" id="4_75vfm"]
 
-[node name="Player" type="Node2D" unique_id=2104851029]
+[node name="Player" type="Node2D" unique_id=2104851029 groups=["player"]]
 script = ExtResource("1_lvxji")
 char_stats = ExtResource("2_p47bc")
 

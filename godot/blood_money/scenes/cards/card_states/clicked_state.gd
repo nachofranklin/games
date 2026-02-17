@@ -3,7 +3,6 @@ extends CardState
 
 func enter() -> void:
 	card_ui.state_label.text = 'CLICKED'
-	print('clicked')
 	card_ui.card_area.monitoring = true
 
 

@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://bp5xsadogb1yx" path="res://scenes/battle/hand_h_box.gd" id="6_pll4o"]
 [ext_resource type="Resource" uid="uid://dpq1ussvy4alu" path="res://cards/strike.tres" id="8_agsc7"]
 [ext_resource type="Resource" uid="uid://baeu76s5dl7n0" path="res://cards/block.tres" id="9_oiw7q"]
+[ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="11_icoan"]
 [ext_resource type="PackedScene" uid="uid://w4mm4brtdo5a" path="res://scenes/ui/mana_ui.tscn" id="12_mxe8n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
@@ -40,7 +41,8 @@ position = Vector2(640, 192)
 shape = SubResource("RectangleShape2D_py4tk")
 
 [node name="Player" parent="." unique_id=2104851029 instance=ExtResource("3_h0kxc")]
-position = Vector2(296, 400)
+position = Vector2(288, 368)
+stats = ExtResource("11_icoan")
 
 [node name="Enemies" type="Node2D" parent="." unique_id=864940338]
 
@@ -76,20 +78,24 @@ script = ExtResource("6_pll4o")
 [node name="CardUI" parent="BattleUI/HandHBox" unique_id=225014311 instance=ExtResource("6_fh7rg")]
 layout_mode = 2
 card = ExtResource("8_agsc7")
+char_stats = ExtResource("11_icoan")
 
 [node name="CardUI2" parent="BattleUI/HandHBox" unique_id=1402021550 instance=ExtResource("6_fh7rg")]
 layout_mode = 2
 card = ExtResource("9_oiw7q")
+char_stats = ExtResource("11_icoan")
 
 [node name="CardUI3" parent="BattleUI/HandHBox" unique_id=379111259 instance=ExtResource("6_fh7rg")]
 layout_mode = 2
 card = ExtResource("8_agsc7")
+char_stats = ExtResource("11_icoan")
 
 [node name="ManaUI" parent="BattleUI" unique_id=80269470 instance=ExtResource("12_mxe8n")]
 offset_left = 72.0
 offset_top = 544.0
 offset_right = 112.0
 offset_bottom = 584.0
+char_stats = ExtResource("11_icoan")
 
 [node name="CardPileUI" type="CanvasLayer" parent="." unique_id=558942395]
 

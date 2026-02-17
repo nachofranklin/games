@@ -9,7 +9,6 @@ func enter() -> void:
 		card_ui.reparent(ui_layer)
 	
 	card_ui.state_label.text = 'DRAGGING'
-	print('dragging')
 	offset = card_ui.global_position - card_ui.get_global_mouse_position()
 
 
@@ -19,7 +18,7 @@ func on_input(event: InputEvent) -> void:
 	var cancel = event.is_action_pressed('right_mouse')
 	var confirm = event.is_action_pressed('left_mouse')
 	
-	if mouse_motion and single_targeted and card_ui.target_areas.size() > 0: # card_ui.target_areas.size() > 0 means if the CardArea and CardDropArea overlap
+	if mouse_motion and single_targeted and card_ui.targets.size() > 0: # card_ui.targets.size() > 0 means if the CardArea and CardDropArea overlap
 		change_state.emit(self, CardState.State.AIMING)
 		return
 	

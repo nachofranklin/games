@@ -7,6 +7,7 @@ kanban-plugin: board
 ## Bugs
 
 - [ ] manaCS doesn't seem to be registering as an area on the card
+- [ ] players mana starts at 0
 
 
 ## Backlog
@@ -16,17 +17,21 @@ kanban-plugin: board
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
+- [ ] make it so that if i can't play a card it changes visually
+- [ ] need to add something in to check if the card is playable due to mana and playable for non mana reasons (eg if one card is currently selected, all other cards should be unavailable, or if a card is unplayable due to being an unplayable curse/status or perhaps the enemy has put a lock on cards)
+- [ ] then need to enforce not being able to play those cards if i can't play them
 
 
 ## Active
 
-- [ ] work on updating the card visuals to reflect the card resource
-- [ ] then make the cards actually do some damage or add block
 
 
 ## Done
 
 **Complete**
+- [x] work on updating the card visuals to reflect the card resource
+- [x] then make the cards actually do some damage or add block
+- [x] make the card desc correct
 - [x] do art needed for cardVisuals scene
 - [x] the card in the aiming state is not centering correctly
 - [x] add a short desc and tooltip desc to card resource

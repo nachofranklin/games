@@ -12,7 +12,6 @@ func enter() -> void:
 	card_ui.pivot_offset_ratio = Vector2(0, 0)
 	card_ui.reparent_requested.emit(card_ui)
 	card_ui.state_label.text = 'BASE'
-	print('base')
 
 
 func on_mouse_entered() -> void:

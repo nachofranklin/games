@@ -5,13 +5,14 @@ class_name CardUI
 signal reparent_requested(selected_card: CardUI)
 
 @export var card: Card : set = _set_card
+@export var char_stats: CharacterStats : set = _set_char_stats
 
 @onready var card_area: Area2D = $CardArea
 @onready var state_label: Label = $StateLabel # delete
 @onready var card_state_machine: CardStateMachine = $CardStateMachine as CardStateMachine
 @onready var card_visuals: CardVisuals = $CardVisuals
-#@onready var target_areas: Array[Node] = [] # should it be area2d instead of node? and why @onready?
-var target_areas: Array[Area2D] = []
+#@onready var targets: Array[Node] = [] # why @onready?
+var targets: Array[Node] = []
 var tween: Tween
 var parent: Control
 
@@ -26,6 +27,19 @@ func _set_card(value: Card) -> void:
 	
 	card = value
 	card_visuals.update_visuals(value)
+
+
+func _set_char_stats(value: CharacterStats) -> void:
+	if not is_node_ready():
+		await ready
+	
+	char_stats = value
+	char_stats.stats_changed.connect(_on_char_stats_changed)
+
+
+func play() -> void:
+	card.play(targets, char_stats)
+	queue_free()
 
 
 func animate_to_position(new_position: Vector2, duration: float) -> void:
@@ -49,10 +63,16 @@ func _on_mouse_exited() -> void:
 	card_state_machine.on_mouse_exited()
 
 
+func _on_char_stats_changed() -> void:
+	pass # this will be to check if i have enough mana to play a card
+
+
 func _on_card_area_area_entered(area: Area2D) -> void:
-	if not target_areas.has(area):
-		target_areas.append(area)
+	var target = area.get_parent()
+	if not targets.has(target):
+		targets.append(target)
 
 
 func _on_card_area_area_exited(area: Area2D) -> void:
-	target_areas.erase(area)
+	var target = area.get_parent()
+	targets.erase(target)

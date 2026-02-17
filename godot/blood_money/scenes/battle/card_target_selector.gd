@@ -60,8 +60,10 @@ func _on_mouse_pointer_area_2d_area_entered(area: Area2D) -> void:
 	if not current_card or not targeting:
 		return
 	
-	if not current_card.target_areas.has(area):
-		current_card.target_areas.append(area)
+	var target = area.get_parent()
+	
+	if not current_card.targets.has(target):
+		current_card.targets.append(target)
 		line_2d.gradient.colors = [Color(0,1,1,0.3), Color(0,1,1,1)]
 
 
@@ -69,8 +71,10 @@ func _on_mouse_pointer_area_2d_area_exited(area: Area2D) -> void:
 	if not current_card or not targeting:
 		return
 	
-	if current_card.target_areas.has(area):
-		current_card.target_areas.erase(area)
+	var target = area.get_parent()
+	
+	if current_card.targets.has(target):
+		current_card.targets.erase(target) 
 		line_2d.gradient.colors = [Color(0,1,1,0.3), Color.WHITE]
 
 

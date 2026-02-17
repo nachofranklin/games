@@ -3,7 +3,7 @@ extends CardState
 
 func enter() -> void:
 	card_ui.state_label.text = 'AIMING'
-	card_ui.target_areas.clear()
+	card_ui.targets.clear()
 	var hand_global_rect = card_ui.parent.get_global_rect()
 	var card_ui_global_rect = card_ui.get_global_rect()
 	var offset: Vector2 = Vector2(hand_global_rect.size.x / 2 - card_ui_global_rect.size.x / 2, -card_ui_global_rect.size.y / 3)

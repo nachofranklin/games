@@ -1,18 +1,16 @@
-[gd_resource type="Resource" script_class="Card" format=3 uid="uid://baeu76s5dl7n0"]
+[gd_resource type="Resource" format=3 uid="uid://baeu76s5dl7n0"]
 
 [ext_resource type="Texture2D" uid="uid://bejy8wc24s7la" path="res://art/card_art/shield_with_arrows.png" id="1_36grh"]
-[ext_resource type="Script" uid="uid://bf6hopalat1ng" path="res://custom_resources/card.gd" id="1_iykfl"]
+[ext_resource type="Script" uid="uid://dqprmspy5t7ha" path="res://cards/block.gd" id="2_36grh"]
 
 [resource]
-script = ExtResource("1_iykfl")
+script = ExtResource("2_36grh")
+block = 5
 card_name = "block"
 available_to = 1
 card_type = 1
 energy_cost = 1
-exhausts = null
 starter_card = true
-shop_card = null
 art = ExtResource("1_36grh")
 short_description = "Gain %s block"
-tooltip_text = null
 metadata/_custom_type_script = "uid://bf6hopalat1ng"

@@ -11,7 +11,7 @@
 - [ ] when clicked on it should show a full description in a tooltip
 - [ ] show what type of card it is
 - [x] show the card rarity
-- [ ] would also like the status effects / key words (like attack, block) to be colour coordinated automatically
+- [x] would also like the status effects / key words (like attack, block) to be colour coordinated automatically
 - [x] show if it exhausts
 
 #### What the scene needs
@@ -20,14 +20,14 @@
 	- [x] icon
 	- [x] name of card
 	- [x] basic description
-		- [ ] have key words colour coordinated
+		- [x] have key words colour coordinated
 	- [x] rarity indicator
 	- [x] type indicator (att, skill, power, curse, status)
 	- [x] energy cost
 		- [ ] perhaps turns red if can't afford?
 	- [x] if it exhausts or not
 	- [x] background
-		- [ ] possibly different colours based on character availability / shop specific / special / curse / status
+		- [x] possibly different colours based on character availability / shop specific / special / curse / status
 
 #### What images are needed
 

@@ -5,15 +5,15 @@
 
 #### What should happen
 
-- [ ] fully functioning card state machine
-- [ ] it should take the card details and pass it onto CardVisuals
+- [x] fully functioning card state machine
+- [x] it should take the card details and pass it onto CardVisuals
 
 #### What the scene needs
 
 - [x] card area
 	- [x] collision shape
 - [x] [[CardVisuals]]
-- [ ] state machine
+- [x] state machine
 
 #### What images are needed
 
