@@ -1,0 +1,6 @@
+- [[card_ui]] has a var targets: Array[Node]
+- it checks to see if a card is in the CardDropArea and will append the (parent of the?) node to targets, then card state changes to dragging
+- if it goes to the aiming state (only single_targeted cards trigger this) then targets is cleared
+- [[card_target_selector]] connects to the card_aim_started signal then appends (the parent node of) targets of enemies when hovered over them to the targets var
+- removes them if no longer hovered over them
+- when it comes to the get targets func in [[card]] it basically says if the card is single targeted then use the targets already provided, otherwise if Card.Target == self, all_enemies or everyone then apply the card's effects to the corresponding target

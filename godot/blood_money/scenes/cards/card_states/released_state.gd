@@ -16,3 +16,4 @@ func on_input(_event: InputEvent) -> void:
 		return
 	else:
 		change_state.emit(self, CardState.State.BASE)
+		card_ui.reparent_requested.emit(card_ui)

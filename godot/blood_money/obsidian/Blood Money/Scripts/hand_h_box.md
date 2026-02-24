@@ -11,8 +11,8 @@ Class Name: Hand
 
 #### How to do it
 
-- loop through each child (Card_UI) and connect the reparent_requested signal
+- loop through each child (Card_UI) and set the card_ui.parent to self and connect the reparent_requested signal
 - create a func for what the reparent signal should do
 	- take the child as a parameter
-	- add the card as a child
-	- if the card was already in the hand it needs a way to go back to the same pos
+	- add the card as a child - reparent
+	- if the card was already in the hand it needs a way to go back to the same pos - move_child

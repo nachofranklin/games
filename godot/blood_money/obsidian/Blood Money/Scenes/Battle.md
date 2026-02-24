@@ -22,7 +22,7 @@
 - [ ] enemy handler
 - [ ] a selected card aiming target
 - [ ] battle UI
-	- [ ] [[hand]]
+	- [ ] [[hand_h_box]]
 	- [ ] energy
 	- [ ] tooltip
 	- [ ] end turn button

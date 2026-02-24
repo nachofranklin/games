@@ -34,11 +34,7 @@ func get_description() -> String:
 func play(targets: Array[Node], char_stats: CharacterStats) -> void:
 	Events.card_played.emit(self)
 	char_stats.mana -= energy_cost
-	
-	if is_single_targeted():
-		apply_effects(targets)
-	else:
-		apply_effects(_get_targets(targets))
+	apply_effects(_get_targets(targets))
 
 
 func apply_effects(_targets: Array[Node]) -> void:
@@ -46,15 +42,17 @@ func apply_effects(_targets: Array[Node]) -> void:
 
 
 func _get_targets(targets: Array[Node]) -> Array[Node]:
-	# func is not used if the target is Target.SINGLE_ENEMY
+	# targets should either be the CardDropArea or if Card.Target == single_enemy: it will be an enemy
 	if not targets:
 		return []
 	
-	var tree := targets[0].get_tree()
+	var tree: SceneTree = targets[0].get_tree()
 	
 	match target:
 		Target.SELF:
 			return tree.get_nodes_in_group('player')
+		Target.SINGLE_ENEMY:
+			return targets # target already gathered by card_target_selector, after being initially cleared when entering aiming state
 		Target.ALL_ENEMIES:
 			return tree.get_nodes_in_group('enemies')
 		Target.EVERYONE:

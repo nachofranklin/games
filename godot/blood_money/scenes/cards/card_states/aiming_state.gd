@@ -17,8 +17,12 @@ func exit() -> void:
 
 
 func on_input(event: InputEvent) -> void:
-	if event.is_action_pressed('right_mouse'):
+	var cancel: bool = event.is_action_pressed('right_mouse')
+	var confirm: bool = event.is_action_pressed('left_mouse')
+	
+	if cancel:
 		change_state.emit(self, CardState.State.BASE)
-	elif event.is_action_pressed('left_mouse'):
+		card_ui.reparent_requested.emit(card_ui)
+	elif confirm:
 		get_viewport().set_input_as_handled() # look into what this actually does
 		change_state.emit(self, CardState.State.RELEASED)

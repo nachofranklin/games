@@ -8,18 +8,16 @@ kanban-plugin: board
 
 - [ ] manaCS doesn't seem to be registering as an area on the card
 - [ ] players mana starts at 0
+- [ ] when hovering over a card it should be brought to the front as currently the card to the right overlaps it
+- [ ] at the start of battle i'll need to update if the cards are playable or disabled as it currently doesn't check for that to begin with - i think this will be fine as when i implement resetting the mana at the start of battle that'll trigger the setter which will then update if it's playable or not, but need to check
 
 
 ## Backlog
 
 - [ ] fan the hand in the battle scene
-- [ ] need to come up with a way to remember the card order to move it back to that position
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
-- [ ] make it so that if i can't play a card it changes visually
-- [ ] need to add something in to check if the card is playable due to mana and playable for non mana reasons (eg if one card is currently selected, all other cards should be unavailable, or if a card is unplayable due to being an unplayable curse/status or perhaps the enemy has put a lock on cards)
-- [ ] then need to enforce not being able to play those cards if i can't play them
 
 
 ## Active
@@ -29,6 +27,11 @@ kanban-plugin: board
 ## Done
 
 **Complete**
+- [x] need to come up with a way to remember the card order to move it back to that position
+- [x] make it so that if i can't play a card it changes visually
+- [x] then need to enforce not being able to play those cards if i can't play them
+- [x] need to add something in to check if the card is playable due to mana and playable for non mana reasons (eg if one card is currently selected, all other cards should be unavailable, or if a card is unplayable due to being an unplayable curse/status or perhaps the enemy has put a lock on cards)
+- [x] if i take a non single targeted card into the CardDropArea then right click to not play it but pick it up again and left click it without it being in the CardDropArea it will still play it. So I need to clear the targets when right clicking
 - [x] work on updating the card visuals to reflect the card resource
 - [x] then make the cards actually do some damage or add block
 - [x] make the card desc correct

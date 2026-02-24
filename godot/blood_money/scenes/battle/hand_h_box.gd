@@ -11,3 +11,4 @@ func _ready() -> void:
 
 func _on_card_ui_reparent_requested(child: CardUI):
 	child.reparent(self)
+	move_child(child, child.original_index)

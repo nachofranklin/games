@@ -9,3 +9,7 @@ Settings to change in Godot - [[Godot Settings]]
 Alternative names - [[Alternative Names]]
 
 Cards - [[Cards Summary]]
+
+[[Playing cards]]
+
+[[Targeting]]
