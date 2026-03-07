@@ -46,8 +46,9 @@ func create_instance() -> CharacterStats:
 	instance.block = base_block
 	instance.reset_cards_per_turn()
 	instance.reset_mana()
-	instance.deck = starting_deck
-	instance.draw_pile = CardPile.new()
-	instance.discard_pile = CardPile.new()
-	instance.exhaust_pile = CardPile.new()
+	instance.deck = CardPile.new(CardPile.PileType.DECK)
+	instance.deck.cards = starting_deck.cards.duplicate(true)
+	instance.draw_pile = CardPile.new(CardPile.PileType.DRAW)
+	instance.discard_pile = CardPile.new(CardPile.PileType.DISCARD)
+	instance.exhaust_pile = CardPile.new(CardPile.PileType.EXHAUST)
 	return instance

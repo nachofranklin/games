@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://deiifnfmbo41x" path="res://scenes/ui/battle_ui.gd" id="10_6ofp8"]
 [ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="11_icoan"]
 [ext_resource type="PackedScene" uid="uid://w4mm4brtdo5a" path="res://scenes/ui/mana_ui.tscn" id="12_mxe8n"]
+[ext_resource type="PackedScene" uid="uid://df5i2cmr3kjvu" path="res://scenes/ui/card_pile_button.tscn" id="13_t1kk3"]
 [ext_resource type="PackedScene" uid="uid://dw7p3rsyt1bdr" path="res://scenes/battle/end_turn_button.tscn" id="14_kd6yx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
@@ -63,38 +64,60 @@ stats = ExtResource("6_fisqk")
 
 [node name="PlayerHandler" type="Node" parent="." unique_id=76512082 node_paths=PackedStringArray("hand")]
 script = ExtResource("9_n6gaa")
-hand = NodePath("../BattleUI/HandHBox")
+hand = NodePath("../BattleUI/BottomHBox/HandHBox")
 
 [node name="BattleUI" type="CanvasLayer" parent="." unique_id=1353794413 groups=["ui_layer"]]
 script = ExtResource("10_6ofp8")
 
-[node name="HandHBox" type="HBoxContainer" parent="BattleUI" unique_id=1531188882]
-custom_minimum_size = Vector2(900, 168)
-anchors_preset = 7
-anchor_left = 0.5
+[node name="BottomHBox" type="HBoxContainer" parent="BattleUI" unique_id=1986275795]
+anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -350.0
-offset_top = -120.0
-offset_right = 350.0
+offset_top = -168.0
 grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
+
+[node name="VBox1" type="VBoxContainer" parent="BattleUI/BottomHBox" unique_id=1054606145]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ManaUI" parent="BattleUI/BottomHBox/VBox1" unique_id=80269470 instance=ExtResource("12_mxe8n")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DrawPileButton" parent="BattleUI/BottomHBox/VBox1" unique_id=1705257101 instance=ExtResource("13_t1kk3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HandHBox" type="HBoxContainer" parent="BattleUI/BottomHBox" unique_id=1531188882]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+alignment = 1
 script = ExtResource("6_pll4o")
 
-[node name="ManaUI" parent="BattleUI" unique_id=80269470 instance=ExtResource("12_mxe8n")]
-offset_left = 72.0
-offset_top = 544.0
-offset_right = 112.0
-offset_bottom = 584.0
-char_stats = ExtResource("11_icoan")
+[node name="VBox2" type="VBoxContainer" parent="BattleUI/BottomHBox" unique_id=863483198]
+layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="EndTurnButton" parent="BattleUI" unique_id=933932708 instance=ExtResource("14_kd6yx")]
-offset_left = 1064.0
-offset_top = 568.0
-offset_right = 1214.0
-offset_bottom = 608.0
+[node name="EndTurnButton" parent="BattleUI/BottomHBox/VBox2" unique_id=933932708 instance=ExtResource("14_kd6yx")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DiscardExhaustHBox" type="HBoxContainer" parent="BattleUI/BottomHBox/VBox2" unique_id=1345012675]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DiscardPileButton" parent="BattleUI/BottomHBox/VBox2/DiscardExhaustHBox" unique_id=675051265 instance=ExtResource("13_t1kk3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ExhaustPileButton" parent="BattleUI/BottomHBox/VBox2/DiscardExhaustHBox" unique_id=185531298 instance=ExtResource("13_t1kk3")]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="CardPileUI" type="CanvasLayer" parent="." unique_id=558942395]
 

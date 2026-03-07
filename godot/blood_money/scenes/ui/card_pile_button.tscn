@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://df5i2cmr3kjvu"]
+
+[ext_resource type="Theme" uid="uid://dnp7i0koggft4" path="res://art/theme/main_theme.tres" id="1_nsexx"]
+[ext_resource type="Texture2D" uid="uid://bbif3qqdtd26j" path="res://art/question_mark.png" id="2_sk8hy"]
+[ext_resource type="Script" uid="uid://cffqsbfo2y6i6" path="res://scenes/ui/card_pile_button.gd" id="3_sk8hy"]
+
+[node name="CardPileButton" type="Button" unique_id=1705257101]
+custom_minimum_size = Vector2(40, 50)
+offset_right = 20.0
+offset_bottom = 25.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_nsexx")
+icon = ExtResource("2_sk8hy")
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("3_sk8hy")
+
+[node name="CounterLabel" type="Label" parent="." unique_id=550642463]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -11.0
+offset_top = -13.0
+offset_right = 10.0
+offset_bottom = 11.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "66"
+horizontal_alignment = 1
+vertical_alignment = 1

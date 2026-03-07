@@ -1,9 +1,26 @@
 extends Resource
 class_name CardPile
 
-signal card_pile_size_changed(new_amount)
+signal card_pile_size_changed(new_amount: int)
 
-@export var cards: Array[Card]
+enum PileType {DRAW, DISCARD, EXHAUST, DECK}
+
+const ICONS: Dictionary = {
+	PileType.DRAW: preload('res://art/question_mark.png'),
+	PileType.DISCARD: preload('res://art/rubbish_bin.png'),
+	PileType.EXHAUST: preload('res://art/fire.png'),
+	PileType.DECK: preload("res://art/heart.png")
+}
+
+@export var cards: Array[Card] = []
+
+var icon: CompressedTexture2D = null
+var pile_type: PileType
+
+
+func _init(type: PileType = PileType.DECK) -> void:
+	pile_type = type
+	icon = ICONS[type]
 
 
 func is_empty() -> bool:

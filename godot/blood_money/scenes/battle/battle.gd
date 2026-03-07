@@ -4,8 +4,8 @@ extends Node2D
 
 @onready var player_handler: PlayerHandler = $PlayerHandler
 @onready var battle_ui: BattleUI = $BattleUI
-@onready var hand_h_box: Hand = $BattleUI/HandHBox
-@onready var end_turn_button: Button = $BattleUI/EndTurnButton
+@onready var hand_h_box: Hand = %HandHBox
+@onready var end_turn_button: Button = %EndTurnButton
 @onready var player: Player = $Player
 
 var turn_number: int = 0
@@ -24,6 +24,7 @@ func _ready() -> void:
 
 
 func _start_battle(player_stats: CharacterStats) -> void:
+	#battle_ui.initialise_card_pile_ui()
 	turn_number = 0
 	# clear any children currently in hand h box
 	if hand_h_box.get_children().size() == 0:
@@ -33,7 +34,9 @@ func _start_battle(player_stats: CharacterStats) -> void:
 	# do an enemy_handler.start_battle func
 	player_handler.start_battle(player_stats)
 	# initialise win/loss conditions
+	battle_ui.initialise_card_pile_ui()
 	_start_players_turn()
+	#battle_ui.initialise_card_pile_ui()
 
 
 func _start_players_turn() -> void:

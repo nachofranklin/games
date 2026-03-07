@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c03x2ky7tj2xl"
-path="res://.godot/imported/deck_pile.png-d2d6a04915c2ce9983eea5ce9a389551.ctex"
+uid="uid://cfql3xnagj4wu"
+path="res://.godot/imported/rubbish_bin.png-5c44e93aa3291564617266c3d4afd42d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/deck_pile.png"
-dest_files=["res://.godot/imported/deck_pile.png-d2d6a04915c2ce9983eea5ce9a389551.ctex"]
+source_file="res://art/rubbish_bin.png"
+dest_files=["res://.godot/imported/rubbish_bin.png-5c44e93aa3291564617266c3d4afd42d.ctex"]
 
 [params]
 

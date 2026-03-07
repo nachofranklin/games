@@ -15,10 +15,11 @@ func _ready() -> void:
 
 func start_battle(char_stats: CharacterStats) -> void:
 	player_stats = char_stats
-	player_stats.draw_pile = player_stats.deck.duplicate(true)
+	player_stats.draw_pile = CardPile.new(CardPile.PileType.DRAW)
+	player_stats.discard_pile = CardPile.new(CardPile.PileType.DISCARD)
+	player_stats.exhaust_pile = CardPile.new(CardPile.PileType.EXHAUST)
+	player_stats.draw_pile.cards = player_stats.deck.cards.duplicate(true)
 	player_stats.draw_pile.shuffle()
-	player_stats.discard_pile = CardPile.new()
-	player_stats.exhaust_pile = CardPile.new()
 	# need to clear the hand in case there's anything still in it
 	# apply the effects of the start of battle relics
 
