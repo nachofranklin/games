@@ -1,5 +1,63 @@
 [gd_resource type="Theme" format=3 uid="uid://dnp7i0koggft4"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhnts"]
+bg_color = Color(0.85490197, 0.49803922, 0.2509804, 0.78431374)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ty484"]
+bg_color = Color(0.8546392, 0.49787948, 0.25089204, 0.99607843)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(1, 1, 1, 0.78431374)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_deuci"]
+bg_color = Color(0.8546392, 0.49787948, 0.25089204, 0.99607843)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0.85490197, 0.49803922, 0.2509804, 0.78431374)
+shadow_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bnqtm"]
+bg_color = Color(0.7713677, 0.43356174, 0.19289184, 0.99607843)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+shadow_color = Color(0, 0, 0, 0.78431374)
+shadow_size = 2
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j4mpv"]
 bg_color = Color(0.8546392, 0.49787948, 0.25089204, 0.99607843)
 border_width_left = 2
@@ -16,4 +74,9 @@ shadow_size = 2
 
 [resource]
 default_font_size = 12
+Button/font_sizes/font_size = 20
+Button/styles/disabled = SubResource("StyleBoxFlat_dhnts")
+Button/styles/hover = SubResource("StyleBoxFlat_ty484")
+Button/styles/normal = SubResource("StyleBoxFlat_deuci")
+Button/styles/pressed = SubResource("StyleBoxFlat_bnqtm")
 Panel/styles/panel = SubResource("StyleBoxFlat_j4mpv")

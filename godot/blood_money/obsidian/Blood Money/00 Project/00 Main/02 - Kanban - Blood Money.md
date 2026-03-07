@@ -18,10 +18,15 @@ kanban-plugin: board
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
+- [ ] create a battle init where the existing deck gets duplicated and set to the draw pile, then randomised, then all the new turn things happen
+- [ ] make it so that when end turn is clicked the cards in the hand go to the discard pile
+- [ ] add a tooltip for cards
+- [ ] a new turn func should remove any existing block, draw cards, set the mana, apply any start of turn relics/statuses
 
 
 ## Active
 
+- [ ] add end turn button
 
 
 ## Done
@@ -55,7 +60,7 @@ kanban-plugin: board
 - [x] failing that find a non pixel font
 - [x] learn more on themes
 - [x] make a start on building the battle scene for it
-- [x] get art for each thing needed in [[Battle]]
+- [x] get art for each thing needed in battle scene
 - [x] create/find some art
 - [x] fill in the plan
 - [x] add an alternative names note

@@ -16,7 +16,7 @@ var targets: Array[Node] = []
 var tween: Tween
 var parent: Control
 var playable: bool = true : set = _set_playable # based on available mana
-var disabled: bool = false # all other availability things (if another card is selected, if enemy stops you playing attack cards, etc)
+var disabled: bool = true # all other availability things (if another card is selected, if enemy stops you playing attack cards, etc)
 var original_index: int
 
 

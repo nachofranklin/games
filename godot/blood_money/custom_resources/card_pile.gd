@@ -6,8 +6,8 @@ signal card_pile_size_changed(new_amount)
 @export var cards: Array[Card]
 
 
-#func is_empty() -> bool:
-	#return cards.is_empty()
+func is_empty() -> bool:
+	return cards.is_empty()
 
 
 func draw_card() -> Card: # drawing one off the top
@@ -31,5 +31,5 @@ func clear() -> void:
 	card_pile_size_changed.emit(cards.size())
 
 
-#func shuffle() -> void:
-	#cards.shuffle()
+func shuffle() -> void:
+	cards.shuffle()

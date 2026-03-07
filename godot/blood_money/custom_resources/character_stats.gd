@@ -8,7 +8,7 @@ class_name CharacterStats
 @export var starting_deck: CardPile
 
 var deck: CardPile
-var hand: CardPile # should this be a CardPile?
+#var hand: CardPile # should this be a CardPile?
 var draw_pile: CardPile
 var discard_pile: CardPile
 var exhaust_pile: CardPile

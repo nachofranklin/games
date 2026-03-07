@@ -1,15 +1,17 @@
-Markdown Cheat Sheet - [[01 - Markdown Cheat Sheet]]
+[[01 - Markdown Cheat Sheet]]
 
-Kanban board - [[02 - Kanban - Blood Money]]
+[[02 - Kanban - Blood Money]]
 
-Plan - [[Plan]]
+[[Plan]]
 
-Settings to change in Godot - [[Godot Settings]]
+[[Godot Settings]]
 
-Alternative names - [[Alternative Names]]
+[[Alternative Names]]
 
-Cards - [[Cards Summary]]
+[[Cards Summary]]
 
 [[Playing cards]]
 
 [[Targeting]]
+
+[[Battle Start]]

@@ -1,23 +1,26 @@
 [gd_scene format=3 uid="uid://38o7jmgkpmbg"]
 
+[ext_resource type="Script" uid="uid://dr56xf2faeus1" path="res://scenes/battle/battle.gd" id="1_6ofp8"]
 [ext_resource type="Texture2D" uid="uid://b8vbh00bjbxry" path="res://art/To The Moon.png" id="1_7gynk"]
 [ext_resource type="Texture2D" uid="uid://0y27tqnbvla4" path="res://art/not made by me/fight_arena.png" id="1_ffvsa"]
 [ext_resource type="PackedScene" uid="uid://bee15sjrol4dm" path="res://scenes/player/player.tscn" id="3_h0kxc"]
 [ext_resource type="PackedScene" uid="uid://dj8r8wqq3wp2o" path="res://scenes/enemy/enemy.tscn" id="4_oiw7q"]
 [ext_resource type="Resource" uid="uid://fsdqokvjdoms" path="res://enemies/ellie/ellie_enemy.tres" id="5_fisqk"]
-[ext_resource type="PackedScene" uid="uid://bljn4kfekyqdc" path="res://scenes/cards/card_ui.tscn" id="6_fh7rg"]
 [ext_resource type="Resource" uid="uid://dsnf4gf0p2jur" path="res://enemies/georgie/georgie_enemy.tres" id="6_fisqk"]
 [ext_resource type="PackedScene" uid="uid://beoml50758i3e" path="res://scenes/battle/card_target_selector.tscn" id="6_oiw7q"]
 [ext_resource type="Script" uid="uid://bp5xsadogb1yx" path="res://scenes/battle/hand_h_box.gd" id="6_pll4o"]
-[ext_resource type="Resource" uid="uid://dpq1ussvy4alu" path="res://cards/strike.tres" id="8_agsc7"]
-[ext_resource type="Resource" uid="uid://baeu76s5dl7n0" path="res://cards/block.tres" id="9_oiw7q"]
+[ext_resource type="Script" uid="uid://de4dl0di3bowa" path="res://scenes/player/player_handler.gd" id="9_n6gaa"]
+[ext_resource type="Script" uid="uid://deiifnfmbo41x" path="res://scenes/ui/battle_ui.gd" id="10_6ofp8"]
 [ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="11_icoan"]
 [ext_resource type="PackedScene" uid="uid://w4mm4brtdo5a" path="res://scenes/ui/mana_ui.tscn" id="12_mxe8n"]
+[ext_resource type="PackedScene" uid="uid://dw7p3rsyt1bdr" path="res://scenes/battle/end_turn_button.tscn" id="14_kd6yx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_py4tk"]
 size = Vector2(1280, 384)
 
 [node name="Battle" type="Node2D" unique_id=1111024949]
+script = ExtResource("1_6ofp8")
+char_stats = ExtResource("11_icoan")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1755922434]
 visible = false
@@ -58,7 +61,12 @@ stats = ExtResource("6_fisqk")
 
 [node name="CardTargetSelector" parent="." unique_id=964313413 instance=ExtResource("6_oiw7q")]
 
+[node name="PlayerHandler" type="Node" parent="." unique_id=76512082 node_paths=PackedStringArray("hand")]
+script = ExtResource("9_n6gaa")
+hand = NodePath("../BattleUI/HandHBox")
+
 [node name="BattleUI" type="CanvasLayer" parent="." unique_id=1353794413 groups=["ui_layer"]]
+script = ExtResource("10_6ofp8")
 
 [node name="HandHBox" type="HBoxContainer" parent="BattleUI" unique_id=1531188882]
 custom_minimum_size = Vector2(900, 168)
@@ -75,27 +83,18 @@ grow_vertical = 0
 alignment = 1
 script = ExtResource("6_pll4o")
 
-[node name="CardUI" parent="BattleUI/HandHBox" unique_id=225014311 instance=ExtResource("6_fh7rg")]
-layout_mode = 2
-card = ExtResource("8_agsc7")
-char_stats = ExtResource("11_icoan")
-
-[node name="CardUI2" parent="BattleUI/HandHBox" unique_id=1402021550 instance=ExtResource("6_fh7rg")]
-layout_mode = 2
-card = ExtResource("9_oiw7q")
-char_stats = ExtResource("11_icoan")
-
-[node name="CardUI3" parent="BattleUI/HandHBox" unique_id=379111259 instance=ExtResource("6_fh7rg")]
-layout_mode = 2
-card = ExtResource("8_agsc7")
-char_stats = ExtResource("11_icoan")
-
 [node name="ManaUI" parent="BattleUI" unique_id=80269470 instance=ExtResource("12_mxe8n")]
 offset_left = 72.0
 offset_top = 544.0
 offset_right = 112.0
 offset_bottom = 584.0
 char_stats = ExtResource("11_icoan")
+
+[node name="EndTurnButton" parent="BattleUI" unique_id=933932708 instance=ExtResource("14_kd6yx")]
+offset_left = 1064.0
+offset_top = 568.0
+offset_right = 1214.0
+offset_bottom = 608.0
 
 [node name="CardPileUI" type="CanvasLayer" parent="." unique_id=558942395]
 

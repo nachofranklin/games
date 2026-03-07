@@ -11,7 +11,7 @@ Linked to [[CardPile]] scene.
 - Add a card
 - Remove a card
 - Remove all cards (clear) - not pointless as while .clear() already exists, we need to emit the change in size signal after
-- Shuffle - pointless as .shuffle() already exists
+- Shuffle - pointless as .shuffle() already exists, but saves me writing whatever_card_pile.cards.shuffle()
 - Every time the card pile size changes it needs to emit a signal so that we can update the visuals
 
 #### How to do it
