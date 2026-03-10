@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=7 format=3 uid="uid://ct8u880b0h3no"]
+[gd_resource type="Theme" format=3 uid="uid://ct8u880b0h3no"]
 
 [ext_resource type="StyleBox" uid="uid://dallcoqprsr7d" path="res://scenes/card_ui/card_hover_stylebox.tres" id="1_0omi4"]
 [ext_resource type="FontFile" uid="uid://dskmdk146n4rq" path="res://art/pixel_rpg.ttf" id="1_470mv"]

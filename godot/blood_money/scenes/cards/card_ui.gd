@@ -64,6 +64,11 @@ func animate_to_position(new_position: Vector2, duration: float) -> void:
 	tween.tween_property(self, 'global_position', new_position, duration)
 
 
+func reset_position_and_rotation() -> void:
+	position = Vector2(0, 0)
+	rotation_degrees = 0
+
+
 func _input(event: InputEvent) -> void:
 	card_state_machine.on_input(event)
 

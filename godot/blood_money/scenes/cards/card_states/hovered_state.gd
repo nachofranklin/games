@@ -3,7 +3,7 @@ extends CardState
 
 func enter() -> void:
 	card_ui.state_label.text = 'HOVERED'
-	card_ui.pivot_offset_ratio = Vector2(0.5, 1)
+	#card_ui.pivot_offset_ratio = Vector2(0.5, 1)
 	card_ui.scale = Vector2(1.25, 1.25)
 
 

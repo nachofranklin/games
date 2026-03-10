@@ -2,12 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cjlwyoie232pn" path="res://scenes/player/player.gd" id="1_lvxji"]
 [ext_resource type="Texture2D" uid="uid://bppmyjlopi2v5" path="res://art/me.png" id="1_oqqms"]
-[ext_resource type="Resource" uid="uid://cgp50umdijyp5" path="res://characters/nath_char/nath_char.tres" id="2_p47bc"]
 [ext_resource type="PackedScene" uid="uid://di4ug4hskvy57" path="res://scenes/ui/health_bar_ui.tscn" id="4_75vfm"]
 
 [node name="Player" type="Node2D" unique_id=2104851029 groups=["player"]]
 script = ExtResource("1_lvxji")
-char_stats = ExtResource("2_p47bc")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369120415]
 scale = Vector2(5, 5)

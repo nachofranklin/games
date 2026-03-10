@@ -9,7 +9,7 @@ func enter() -> void:
 		card_ui.tween.kill()
 	
 	card_ui.scale = Vector2(1, 1)
-	card_ui.pivot_offset_ratio = Vector2(0, 0)
+	#card_ui.pivot_offset_ratio = Vector2(0, 0)
 	card_ui.state_label.text = 'BASE'
 
 

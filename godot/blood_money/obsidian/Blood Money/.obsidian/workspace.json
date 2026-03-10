@@ -9,17 +9,24 @@
         "dimension": 66.4319248826291,
         "children": [
           {
-            "id": "bf309626af5a2426",
+            "id": "8ee44abd43fc715c",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "kanban",
               "state": {
-                "file": "00 Project/Other/Battle Start.md",
-                "mode": "source",
-                "source": false
+                "file": "00 Project/00 Main/02 - Kanban - Blood Money.md",
+                "kanbanViewState": {
+                  "kanban-plugin": "board",
+                  "list-collapse": [
+                    false,
+                    false,
+                    false,
+                    false
+                  ]
+                }
               },
-              "icon": "lucide-file",
-              "title": "Battle Start"
+              "icon": "lucide-trello",
+              "title": "02 - Kanban - Blood Money"
             }
           }
         ]
@@ -202,10 +209,12 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "bf309626af5a2426",
+  "active": "8ee44abd43fc715c",
   "lastOpenFiles": [
-    "Scripts/Custom Resources/card_pile.md",
+    "00 Project/Other/Fanning Cards.md",
+    "00 Project/Other/Playing Cards.md",
     "00 Project/Other/Battle Start.md",
+    "Scripts/Custom Resources/card_pile.md",
     "Scripts/Custom Resources/character_stats.md",
     "Scripts/hand_h_box.md",
     "00 Project/00 Main/00 - Blood Money Project.md",
@@ -225,12 +234,10 @@
     "Scripts/Custom Resources/card.md",
     "00 Project/Other/Alternative Names.md",
     "Cards/block.md",
-    "00 Project/Other/Playing cards.md",
     "Scripts/Effects/block_effect.md",
     "Scripts/Custom Resources/effect.md",
     "00 Project/Other/Targeting.md",
     "Scenes/CardUI.md",
-    "Scripts/Effects/damage_effect.md",
     "Scripts/Effects",
     "Scripts/Custom Resources",
     "00 Project/00 Main",

@@ -9,29 +9,29 @@ kanban-plugin: board
 - [ ] manaCS doesn't seem to be registering as an area on the card
 - [ ] players mana starts at 0
 - [ ] when hovering over a card it should be brought to the front as currently the card to the right overlaps it
-- [ ] at the start of battle i'll need to update if the cards are playable or disabled as it currently doesn't check for that to begin with - i think this will be fine as when i implement resetting the mana at the start of battle that'll trigger the setter which will then update if it's playable or not, but need to check
 
 
 ## Backlog
 
-- [ ] fan the hand in the battle scene
 - [ ] need to make it so that you can click and hold and drag/aim and release or click, drag/aim and click again to release
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
-- [ ] create a battle init where the existing deck gets duplicated and set to the draw pile, then randomised, then all the new turn things happen
-- [ ] make it so that when end turn is clicked the cards in the hand go to the discard pile
 - [ ] add a tooltip for cards
-- [ ] a new turn func should remove any existing block, draw cards, set the mana, apply any start of turn relics/statuses
 
 
 ## Active
 
-- [ ] add end turn button
 
 
 ## Done
 
 **Complete**
+- [x] fan the hand in the battle scene
+- [x] at the start of battle i'll need to update if the cards are playable or disabled as it currently doesn't check for that to begin with - i think this will be fine as when i implement resetting the mana at the start of battle that'll trigger the setter which will then update if it's playable or not, but need to check
+- [x] make it so that when end turn is clicked the cards in the hand go to the discard pile
+- [x] create a battle init where the existing deck gets duplicated and set to the draw pile, then randomised, then all the new turn things happen
+- [x] a new turn func should remove any existing block, draw cards, set the mana, apply any start of turn relics/statuses
+- [x] add end turn button
 - [x] need to come up with a way to remember the card order to move it back to that position
 - [x] make it so that if i can't play a card it changes visually
 - [x] then need to enforce not being able to play those cards if i can't play them

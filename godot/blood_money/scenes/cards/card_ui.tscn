@@ -23,6 +23,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 80.0
 offset_bottom = 120.0
+pivot_offset_ratio = Vector2(0.5, 1)
 theme = ExtResource("1_psaan")
 script = ExtResource("2_els2s")
 

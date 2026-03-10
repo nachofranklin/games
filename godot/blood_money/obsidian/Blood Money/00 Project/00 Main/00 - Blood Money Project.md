@@ -10,7 +10,7 @@
 
 [[Cards Summary]]
 
-[[Playing cards]]
+[[Playing Cards]]
 
 [[Targeting]]
 
