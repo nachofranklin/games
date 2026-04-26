@@ -1,5 +1,5 @@
 Game
-	Board - visual representation, click handling
+	[[Board]] - visual representation, click handling
 	PieceManager
 	GameState - move validation, check/checkmate/stalemate, turn logic
 	PlayerHandler

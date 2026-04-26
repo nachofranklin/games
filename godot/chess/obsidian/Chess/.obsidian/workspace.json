@@ -8,35 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "daad51be8811e620",
+            "id": "74227190b8741c7f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "High-Level Plan.md",
+                "file": "What i don't plan to include.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "High-Level Plan"
-            }
-          },
-          {
-            "id": "117ddf5cb28d4668",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Structure.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Structure"
+              "title": "What i don't plan to include"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       },
       {
         "id": "26e8e248899e6374",
@@ -125,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Structure.md",
+                "file": "What i don't plan to include.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -135,7 +120,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Structure"
+              "title": "Backlinks for What i don't plan to include"
             }
           },
           {
@@ -144,12 +129,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Structure.md",
+                "file": "What i don't plan to include.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Structure"
+              "title": "Outgoing links from What i don't plan to include"
             }
           },
           {
@@ -187,13 +172,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Structure.md",
+                "file": "What i don't plan to include.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Structure"
+              "title": "Outline of What i don't plan to include"
             }
           }
         ]
@@ -215,9 +200,13 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "117ddf5cb28d4668",
+  "active": "74227190b8741c7f",
   "lastOpenFiles": [
+    "What i'd like to include.md",
+    "What i don't plan to include.md",
     "High-Level Plan.md",
+    "Board.md",
+    "Tile.md",
     "Structure.md",
     "Welcome.md"
   ]

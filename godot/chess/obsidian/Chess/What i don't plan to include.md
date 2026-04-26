@@ -1,0 +1,2 @@
+- clock/stop timer
+- fancy stuff like changing board size or starting position of pieces

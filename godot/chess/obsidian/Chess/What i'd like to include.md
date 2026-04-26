@@ -1,0 +1,6 @@
+- show the pieces taken and a corresponding score of who's up/down
+- ability to change things like board colours, piece colours, etc
+- visual something to show possible places to move
+- visually show the currently selected piece/board square
+- castling
+- en passent
