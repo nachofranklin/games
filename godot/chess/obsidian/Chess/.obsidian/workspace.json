@@ -1,58 +1,49 @@
 {
   "main": {
-    "id": "91a404bb5a10ab18",
+    "id": "bd0917b31faf00a9",
     "type": "split",
     "children": [
       {
-        "id": "5c1b78299357062c",
+        "id": "384acd9349cfff84",
         "type": "tabs",
-        "dimension": 66.4319248826291,
         "children": [
           {
-            "id": "8ee44abd43fc715c",
-            "type": "leaf",
-            "state": {
-              "type": "kanban",
-              "state": {
-                "file": "00 Project/00 Main/02 - Kanban - Blood Money.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": [
-                    false,
-                    false,
-                    false,
-                    false
-                  ]
-                }
-              },
-              "icon": "lucide-trello",
-              "title": "02 - Kanban - Blood Money"
-            }
-          },
-          {
-            "id": "3efe6cfb96c2cf7b",
+            "id": "daad51be8811e620",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Scenes/CardPileView.md",
+                "file": "High-Level Plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CardPileView"
+              "title": "High-Level Plan"
+            }
+          },
+          {
+            "id": "117ddf5cb28d4668",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Structure.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Structure"
             }
           }
         ],
         "currentTab": 1
       },
       {
-        "id": "a6c1fdd273ca0c8c",
+        "id": "26e8e248899e6374",
         "type": "tabs",
-        "dimension": 33.56807511737089,
         "children": [
           {
-            "id": "9d7b9a687660a249",
+            "id": "cdb99d8f9bb35525",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -67,15 +58,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "7eda368bf4c81c5e",
+    "id": "c1a87fad67985129",
     "type": "split",
     "children": [
       {
-        "id": "db4a22194e95f6ad",
+        "id": "b79e3bbadd8015fe",
         "type": "tabs",
         "children": [
           {
-            "id": "31e30cb39975be4b",
+            "id": "dd1e2c5c8869cfb6",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -88,7 +79,7 @@
             }
           },
           {
-            "id": "7d282ff0f82dfc8a",
+            "id": "45d8bc7ecda228e5",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -105,7 +96,7 @@
             }
           },
           {
-            "id": "a564fb78c2f9ccde",
+            "id": "6613f7be69d7823a",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -121,20 +112,20 @@
     "width": 300
   },
   "right": {
-    "id": "6608d85436bfba23",
+    "id": "3653e0f60fed46b0",
     "type": "split",
     "children": [
       {
-        "id": "826e914d466b3307",
+        "id": "48ab4a8d31f16f3b",
         "type": "tabs",
         "children": [
           {
-            "id": "8e197947bdcb3fc1",
+            "id": "7a6d63e5c09144f7",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Welcome.md",
+                "file": "Structure.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -144,25 +135,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Welcome"
+              "title": "Backlinks for Structure"
             }
           },
           {
-            "id": "05aa9756b22a8951",
+            "id": "8d16bf2514a5fba8",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Welcome.md",
+                "file": "Structure.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Welcome"
+              "title": "Outgoing links from Structure"
             }
           },
           {
-            "id": "b4328737930809cb",
+            "id": "ef4f14df795d990b",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -177,7 +168,7 @@
             }
           },
           {
-            "id": "3ab242c1c991d42e",
+            "id": "4f9365a79c6a0aa2",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -191,18 +182,18 @@
             }
           },
           {
-            "id": "f082b3d693129f93",
+            "id": "ca70442d091f2179",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Welcome.md",
+                "file": "Structure.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Welcome"
+              "title": "Outline of Structure"
             }
           }
         ]
@@ -224,43 +215,10 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "3efe6cfb96c2cf7b",
+  "active": "117ddf5cb28d4668",
   "lastOpenFiles": [
-    "00 Project/00 Main/02 - Kanban - Blood Money.md",
-    "Scenes/CardPileView.md",
-    "00 Project/Other/Fanning Cards.md",
-    "00 Project/Other/Playing Cards.md",
-    "00 Project/Other/Battle Start.md",
-    "Scripts/Custom Resources/card_pile.md",
-    "Scripts/Custom Resources/character_stats.md",
-    "Scripts/hand_h_box.md",
-    "00 Project/00 Main/00 - Blood Money Project.md",
-    "Scenes/Battle.md",
-    "Scripts/card_ui.md",
-    "Scripts/Card State Machine/dragging_state.md",
-    "Scripts/Card State Machine/released_state.md",
-    "Scripts/Card State Machine/aiming_state.md",
-    "Scripts/Card State Machine/base_state.md",
-    "Scripts/Card State Machine/hovered_state.md",
-    "Scripts/Card State Machine/clicked_state.md",
-    "Scripts/Card State Machine/card_state.md",
-    "Scripts/Card State Machine",
-    "00 Project/Other/Cards Summary.md",
-    "Cards/attack.md",
-    "Scripts/Custom Resources/card.md",
-    "00 Project/Other/Alternative Names.md",
-    "Cards/block.md",
-    "Scripts/Effects/block_effect.md",
-    "Scripts/Custom Resources/effect.md",
-    "00 Project/Other/Targeting.md",
-    "Scripts/Effects",
-    "Scripts/Custom Resources",
-    "00 Project/00 Main",
-    "00 Project/Other",
-    "00 Project",
-    "Scripts",
-    "Scenes",
-    "Cards",
-    "Templates"
+    "High-Level Plan.md",
+    "Structure.md",
+    "Welcome.md"
   ]
 }

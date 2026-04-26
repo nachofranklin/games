@@ -1,0 +1,112 @@
+[gd_scene format=3 uid="uid://dtn4qpt8f1br6"]
+
+[ext_resource type="PackedScene" uid="uid://bljn4kfekyqdc" path="res://scenes/cards/card_ui.tscn" id="1_iolsb"]
+
+[node name="CardPileView" type="Control" unique_id=193585137]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="." unique_id=518603709]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.4862745)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=433210179]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1684605272]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1699523600]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "CardPile Pile"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1636065680]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1897610746]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=2147422245]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 45
+theme_override_constants/v_separation = 45
+columns = 7
+
+[node name="CardUI" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=149639997 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI2" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=867658849 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI3" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1662923015 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI4" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1354557447 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI5" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1277895828 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI6" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=300529872 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI7" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1002869568 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI8" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1671751404 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI9" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1798004853 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI10" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1869188189 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI11" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1750701525 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI12" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1319167051 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI13" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1520328840 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI14" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=747410917 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI15" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=575728252 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI16" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1681722769 instance=ExtResource("1_iolsb")]
+layout_mode = 2
+
+[node name="CardUI17" parent="MarginContainer/VBoxContainer/ScrollContainer/MarginContainer/GridContainer" unique_id=1091599567 instance=ExtResource("1_iolsb")]
+layout_mode = 2

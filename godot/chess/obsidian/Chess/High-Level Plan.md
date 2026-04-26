@@ -1,0 +1,7 @@
+- make a base chess game
+- the base game can be saved in public github
+- create a pieces class
+- create a board
+- maybe make it so that you can customise things like having a bigger board and custom placement of starting positions
+- make an ai using minimax
+- make a scene for all the starting game stuff, eg white/black/random, standard board/custom board, ai difficulty level, if playing against cpu or another person, choosing piece colours

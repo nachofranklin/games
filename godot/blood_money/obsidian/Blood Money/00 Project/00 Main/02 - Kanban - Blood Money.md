@@ -17,10 +17,18 @@ kanban-plugin: board
 - [ ] so will probably need to introduce some kind of delay so that it doesn't try to do both incorrectly immediately
 - [ ] set the card_target_selector gradient to the players primary colour
 - [ ] add a tooltip for cards
+- [ ] make the rarity border on the cards a bit wider
+- [ ] create an enemy handler
+- [ ] make a status effect script
+- [ ] make some statuses
+- [ ] make some cards with statuses
+- [ ] make a statuses scene which shows a list of all statuses a player/enemy has
+- [ ] make a tooltip for the statuses
 
 
 ## Active
 
+- [ ] make a card pile viewer
 
 
 ## Done
