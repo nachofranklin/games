@@ -6,19 +6,20 @@
       {
         "id": "384acd9349cfff84",
         "type": "tabs",
+        "dimension": 62.20657276995305,
         "children": [
           {
-            "id": "74227190b8741c7f",
+            "id": "e8fbdf339f964514",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "What i don't plan to include.md",
+                "file": "Board Setup.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "What i don't plan to include"
+              "title": "Board Setup"
             }
           }
         ]
@@ -26,6 +27,7 @@
       {
         "id": "26e8e248899e6374",
         "type": "tabs",
+        "dimension": 37.79342723004695,
         "children": [
           {
             "id": "cdb99d8f9bb35525",
@@ -200,14 +202,17 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "74227190b8741c7f",
+  "active": "e8fbdf339f964514",
   "lastOpenFiles": [
-    "What i'd like to include.md",
-    "What i don't plan to include.md",
+    "Piece (Scene).md",
+    "Board Setup.md",
+    "Piece Resource.md",
+    "Structure.md",
     "High-Level Plan.md",
     "Board.md",
+    "What i don't plan to include.md",
+    "What i'd like to include.md",
     "Tile.md",
-    "Structure.md",
     "Welcome.md"
   ]
 }

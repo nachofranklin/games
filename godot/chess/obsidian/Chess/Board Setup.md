@@ -1,0 +1,1 @@
+func that returns the standard chess board starting positions, returns a list of dictionaries with the resource and board pos of each piece

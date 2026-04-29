@@ -1,0 +1,13 @@
+[gd_resource type="Resource" format=3 uid="uid://ufgi8vvicor6"]
+
+[ext_resource type="Script" uid="uid://miws0ckglfmp" path="res://pieces/pawn.gd" id="1_t2qst"]
+[ext_resource type="Texture2D" uid="uid://1fvve6xdhvj8" path="res://art/black_pawn.png" id="2_vmlpp"]
+
+[resource]
+script = ExtResource("1_t2qst")
+name = "Pawn"
+directions = Array[Vector2i]([Vector2i(0, 1)])
+score_value = 1
+piece_colour = 1
+sprite = ExtResource("2_vmlpp")
+metadata/_custom_type_script = "uid://5c1elefyy6rr"

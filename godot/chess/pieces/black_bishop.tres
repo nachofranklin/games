@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PieceResource" format=3 uid="uid://bkyagfqmo11m8"]
+
+[ext_resource type="Script" uid="uid://5c1elefyy6rr" path="res://custom_resources/piece_resource.gd" id="1_oidlr"]
+[ext_resource type="Texture2D" uid="uid://c1vs6gio6g5vr" path="res://art/black_bishop.png" id="2_oidlr"]
+
+[resource]
+script = ExtResource("1_oidlr")
+name = "Bishop"
+directions = Array[Vector2i]([Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)])
+score_value = 3
+piece_colour = 1
+sprite = ExtResource("2_oidlr")
+metadata/_custom_type_script = "uid://5c1elefyy6rr"

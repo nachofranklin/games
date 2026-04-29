@@ -2,6 +2,9 @@ extends Node2D
 class_name Board
 
 const TILE_SCENE = preload('res://scenes/tile.tscn')
+const WHITE_ROOK = preload('res://pieces/white_rook.tres')
+const WHITE_KING = preload('res://pieces/white_king.tres')
+const WHITE_PAWN = preload('res://pieces/white_pawn.tres')
 
 @export var board_width: int = 8
 @export var board_height: int = 8
@@ -18,6 +21,7 @@ func _ready() -> void:
 	_generate_board()
 	Events.tile_clicked.connect(_on_tile_clicked)
 	last_tile_selected = null
+	_test_piece_moves()
 
 
 func _generate_board() -> void:
@@ -42,7 +46,6 @@ func _generate_board() -> void:
 
 
 func _on_tile_clicked(pos) -> void:
-	print(last_tile_selected)
 	var tile: Tile = grid[pos.y][pos.x]
 	
 	# 1) select a tile and the last tile was null
@@ -58,4 +61,25 @@ func _on_tile_clicked(pos) -> void:
 		tile.tile_selected()
 		last_tile_selected.tile_unselected()
 		last_tile_selected = tile
-	print(last_tile_selected)
+
+
+func _test_piece_moves() -> void:
+	var board_state = []
+	for row in board_height:
+		var r = []
+		for col in board_width:
+			r.append(null)
+		board_state.append(r)
+	
+	var test_piece = WHITE_PAWN.duplicate()
+	test_piece.grid_pos = Vector2i(2, 2) # middle of board
+	board_state[2][2] = test_piece
+	var rook2 = WHITE_ROOK.duplicate()
+	rook2.piece_colour = PieceResource.PieceColour.BLACK
+	rook2.grid_pos = Vector2i(1, 1) # (x, y)
+	board_state[1][1] = rook2 # [y][x]
+	
+	# Print raw moves
+	var moves = test_piece.get_raw_moves(board_state)
+	print("test_piece moves: ", moves)
+	print("Move count: ", moves.size())
