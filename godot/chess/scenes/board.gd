@@ -2,26 +2,31 @@ extends Node2D
 class_name Board
 
 const TILE_SCENE = preload('res://scenes/tile.tscn')
-const WHITE_ROOK = preload('res://pieces/white_rook.tres')
-const WHITE_KING = preload('res://pieces/white_king.tres')
-const WHITE_PAWN = preload('res://pieces/white_pawn.tres')
 
 @export var board_width: int = 8
 @export var board_height: int = 8
-@export var tile_size: float = 40.0 # i'll want to work this out dynamically when i know where i'll place the board in game scene so that it calculates the sizes needed for height available/rows and width/cols and then takes the smallest of the two to be the tile size
+@export var available_size: Vector2 = Vector2(600, 600)
 @export var light_square_colour: Color = Color(1.0, 1.0, 1.0, 1.0)
 @export var dark_square_colour: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var selected_colour: Color = Color(0.498, 0.659, 1.0, 0.843)
 
 var grid: Array = []
+var tile_size: float
 var last_tile_selected: Tile = null
 
 
 func _ready() -> void:
+	_calculate_tile_size()
 	_generate_board()
+	#_centre_board() # how best to centre the node?
 	Events.tile_clicked.connect(_on_tile_clicked)
 	last_tile_selected = null
-	_test_piece_moves()
+
+
+func _calculate_tile_size() -> void:
+	var max_tile_width = available_size.x / board_width
+	var max_tile_height = available_size.y / board_height
+	tile_size = min(max_tile_width, max_tile_height)
 
 
 func _generate_board() -> void:
@@ -45,9 +50,15 @@ func _generate_board() -> void:
 		grid.append(row_array)
 
 
-func _on_tile_clicked(pos) -> void:
-	var tile: Tile = grid[pos.y][pos.x]
-	
+func _centre_board() -> void: # assumes the node is centred rather than at 0,0
+	var total_width = board_width * tile_size
+	var total_height = board_height * tile_size
+	position -=Vector2(total_width / 2.0, total_height / 2.0)
+
+
+func _on_tile_clicked(grid_pos) -> void: # need the board state too
+	var tile: Tile = grid[grid_pos.y][grid_pos.x]
+	# for showing possible moves when tile is clicked happens in piece_manager. This is just to show the selected tile
 	# 1) select a tile and the last tile was null
 	# 2) select a tile and the last tile == selected tile
 	# 3) select a tile and the last tile != selected tile
@@ -63,23 +74,5 @@ func _on_tile_clicked(pos) -> void:
 		last_tile_selected = tile
 
 
-func _test_piece_moves() -> void:
-	var board_state = []
-	for row in board_height:
-		var r = []
-		for col in board_width:
-			r.append(null)
-		board_state.append(r)
-	
-	var test_piece = WHITE_PAWN.duplicate()
-	test_piece.grid_pos = Vector2i(2, 2) # middle of board
-	board_state[2][2] = test_piece
-	var rook2 = WHITE_ROOK.duplicate()
-	rook2.piece_colour = PieceResource.PieceColour.BLACK
-	rook2.grid_pos = Vector2i(1, 1) # (x, y)
-	board_state[1][1] = rook2 # [y][x]
-	
-	# Print raw moves
-	var moves = test_piece.get_raw_moves(board_state)
-	print("test_piece moves: ", moves)
-	print("Move count: ", moves.size())
+func grid_to_world(grid_pos: Vector2i) -> Vector2:
+	return position + Vector2(grid_pos.x + 0.5, grid_pos.y + 0.5) * tile_size # + 0.5 centres the grid pos

@@ -15,7 +15,7 @@ const WHITE_KING: Resource = preload('res://pieces/white_king.tres')
 const BLACK_KING: Resource = preload('res://pieces/black_king.tres')
 
 
-func get_standard_layout() -> Array[Dictionary]:
+static func get_standard_layout() -> Array:
 	var layout = []
 	
 	# pawns
@@ -23,23 +23,23 @@ func get_standard_layout() -> Array[Dictionary]:
 		layout.append({resource = WHITE_PAWN, pos = Vector2i(col, 6)})
 		layout.append({resource = BLACK_PAWN, pos = Vector2i(col, 1)})
 	
-	# knights
-	layout.append({resource = WHITE_KNIGHT, pos = Vector2i(2, 7)})
-	layout.append({resource = WHITE_KNIGHT, pos = Vector2i(5, 7)})
-	layout.append({resource = BLACK_KNIGHT, pos = Vector2i(2, 0)})
-	layout.append({resource = BLACK_KNIGHT, pos = Vector2i(5, 0)})
-	
-	# bishops
-	layout.append({resource = WHITE_BISHOP, pos = Vector2i(1, 7)})
-	layout.append({resource = WHITE_BISHOP, pos = Vector2i(6, 7)})
-	layout.append({resource = BLACK_BISHOP, pos = Vector2i(1, 0)})
-	layout.append({resource = BLACK_BISHOP, pos = Vector2i(6, 0)})
-	
 	# rooks
 	layout.append({resource = WHITE_ROOK, pos = Vector2i(0, 7)})
 	layout.append({resource = WHITE_ROOK, pos = Vector2i(7, 7)})
 	layout.append({resource = BLACK_ROOK, pos = Vector2i(0, 0)})
 	layout.append({resource = BLACK_ROOK, pos = Vector2i(7, 0)})
+	
+	# knights
+	layout.append({resource = WHITE_KNIGHT, pos = Vector2i(1, 7)})
+	layout.append({resource = WHITE_KNIGHT, pos = Vector2i(6, 7)})
+	layout.append({resource = BLACK_KNIGHT, pos = Vector2i(1, 0)})
+	layout.append({resource = BLACK_KNIGHT, pos = Vector2i(6, 0)})
+	
+	# bishops
+	layout.append({resource = WHITE_BISHOP, pos = Vector2i(2, 7)})
+	layout.append({resource = WHITE_BISHOP, pos = Vector2i(5, 7)})
+	layout.append({resource = BLACK_BISHOP, pos = Vector2i(2, 0)})
+	layout.append({resource = BLACK_BISHOP, pos = Vector2i(5, 0)})
 	
 	# queens
 	layout.append({resource = WHITE_QUEEN, pos = Vector2i(3, 7)})

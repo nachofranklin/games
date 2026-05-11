@@ -15,6 +15,7 @@ setup piece (resource, pos, world_pos)
 moving a piece (new pos, world pos)
 - sets the grid pos
 - sets the world pos
+- updates has_never_moved to false
 
 
 should i be setting the size here too or is that in game state?

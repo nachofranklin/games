@@ -2,19 +2,20 @@
 extends Resource
 class_name PieceResource
 
+enum PieceName {PAWN, ROOK, BISHOP, KNIGHT, QUEEN, KING}
 enum PieceColour {WHITE, BLACK}
 
-@export var name: String
+@export var piece_name: PieceName
 @export var directions: Array[Vector2i]
 @export var score_value: int
 @export var piece_colour: PieceColour
-@export var sprite: Texture2D
+@export var sprite: CompressedTexture2D
 
-var grid_pos: Vector2i
+#var grid_pos: Vector2i # piece res shouldn't know it's pos but it can be passed that info
 var has_never_moved: bool = true
 
 
-func get_raw_moves(board_state: Array) -> Array[Vector2i]:
+func get_raw_moves(board_state: Array, grid_pos: Vector2i) -> Array[Vector2i]:
 	# this works for infinitely sliding pieces (bishop, rook, queen)
 	# needs to be over written for pawn, knight, king
 	var moves: Array[Vector2i] = []
@@ -23,13 +24,13 @@ func get_raw_moves(board_state: Array) -> Array[Vector2i]:
 		var multiplier: int = 1
 		while true:
 			var new_pos = grid_pos + dir * multiplier
-			if not is_in_bounds(new_pos, board_state):
+			if not _is_in_bounds(new_pos, board_state):
 				break
 			
-			var occupier = board_state[new_pos.y][new_pos.x]
+			var occupier: Piece = board_state[new_pos.y][new_pos.x]
 			if occupier == null:
 				moves.append(new_pos)
-			elif is_enemy(occupier):
+			elif _is_enemy(occupier):
 				moves.append(new_pos)
 				break
 			else:
@@ -39,18 +40,9 @@ func get_raw_moves(board_state: Array) -> Array[Vector2i]:
 	return moves
 
 
-func is_enemy(other_piece: PieceResource) -> bool:
-	return other_piece.piece_colour != piece_colour
+func _is_enemy(other_piece: Piece) -> bool:
+	return other_piece.piece_resource.piece_colour != piece_colour
 
 
-func is_in_bounds(new_pos: Vector2i, board_state: Array) -> bool:
+func _is_in_bounds(new_pos: Vector2i, board_state: Array) -> bool:
 	return new_pos.y >= 0 and new_pos.y < board_state.size() and new_pos.x >= 0 and new_pos.x < board_state.size()
-
-
-func is_king_safe(new_pos:Vector2i, board_state: Array) -> bool:
-	# this probably needs to be in game state rather than piece
-	# 1. Simulate the move on a temporary board copy
-	# 2. Check if our king is in check on that copy
-	# 3. Undo / discard the copy
-	# 4. Return true only if king is safe
-	return true

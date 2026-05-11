@@ -2,9 +2,11 @@
 
 [ext_resource type="Script" uid="uid://c4wwkt40h1kb3" path="res://scenes/piece.gd" id="1_s58gp"]
 [ext_resource type="Resource" uid="uid://bsryht8gm2h0m" path="res://pieces/white_bishop.tres" id="2_s58gp"]
+[ext_resource type="Texture2D" uid="uid://8a0ltpf868r" path="res://art/white_knight.png" id="3_h2rng"]
 
 [node name="Piece" type="Node2D" unique_id=1487597819]
 script = ExtResource("1_s58gp")
 piece_resource = ExtResource("2_s58gp")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2086374374]
+texture = ExtResource("3_h2rng")

@@ -8,7 +8,9 @@ var base_colour: Color = Color(1.0, 1.0, 1.0, 1.0)
 var selected_colour: Color = Color(0.498, 0.659, 1.0, 0.843)
 var selected: bool = false
 
-@onready var color_rect: ColorRect = $ColorRect
+@onready var tile_color_rect: ColorRect = %TileColorRect
+@onready var enemy_highlight: Sprite2D = %EnemyHighlight
+@onready var moveable_square_highlight: Sprite2D = %MoveableSquareHighlight
 
 
 func set_tile_values(pos: Vector2i, size: float, colour: Color, highlighted_colour: Color) -> void:
@@ -19,8 +21,9 @@ func set_tile_values(pos: Vector2i, size: float, colour: Color, highlighted_colo
 
 
 func _ready() -> void:
-	color_rect.size = Vector2(tile_size, tile_size)
-	color_rect.color = base_colour
+	var scale_factor: float = tile_size / 100.0
+	scale = Vector2(scale_factor, scale_factor)
+	tile_color_rect.color = base_colour
 
 
 func _on_color_rect_gui_input(event: InputEvent) -> void:
@@ -31,9 +34,21 @@ func _on_color_rect_gui_input(event: InputEvent) -> void:
 
 func tile_selected() -> void:
 	selected = true
-	color_rect.color = selected_colour
+	tile_color_rect.color = selected_colour
 
 
 func tile_unselected() -> void:
 	selected = false
-	color_rect.color = base_colour
+	tile_color_rect.color = base_colour
+
+
+func highlight_tile(is_empty_tile: bool) -> void:
+	if is_empty_tile:
+		moveable_square_highlight.show()
+	elif not is_empty_tile:
+		enemy_highlight.show()
+
+
+func reset_highlighted_tile() -> void:
+	moveable_square_highlight.hide()
+	enemy_highlight.hide()

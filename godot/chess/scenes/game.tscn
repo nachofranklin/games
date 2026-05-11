@@ -1,7 +1,16 @@
 [gd_scene format=3 uid="uid://iaj3yoe8woad"]
 
 [ext_resource type="PackedScene" uid="uid://dv16bier6dpn8" path="res://scenes/board.tscn" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://d1qmgjc7g11xf" path="res://scenes/piece_manager.tscn" id="2_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://di385p2b1hn2e" path="res://scenes/game_state.tscn" id="3_lbhrr"]
 
 [node name="Game" type="Node2D" unique_id=1190906485]
 
 [node name="Board" parent="." unique_id=594662889 instance=ExtResource("1_uwrxv")]
+
+[node name="PieceManager" parent="." unique_id=1438703158 node_paths=PackedStringArray("board", "game_state") instance=ExtResource("2_lnu2h")]
+board = NodePath("../Board")
+game_state = NodePath("../GameState")
+
+[node name="GameState" parent="." unique_id=1293000139 node_paths=PackedStringArray("board") instance=ExtResource("3_lbhrr")]
+board = NodePath("../Board")

@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_dka6a")
-name = "King"
+piece_name = 5
 directions = Array[Vector2i]([Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)])
 piece_colour = 1
 sprite = ExtResource("2_dka6a")

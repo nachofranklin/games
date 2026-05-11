@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Board Setup.md",
+                "file": "High-Level Plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Board Setup"
+              "title": "High-Level Plan"
             }
           }
         ]
@@ -205,14 +205,14 @@
   "active": "e8fbdf339f964514",
   "lastOpenFiles": [
     "Piece (Scene).md",
+    "Board.md",
     "Board Setup.md",
     "Piece Resource.md",
+    "What i don't plan to include.md",
+    "Tile.md",
     "Structure.md",
     "High-Level Plan.md",
-    "Board.md",
-    "What i don't plan to include.md",
     "What i'd like to include.md",
-    "Tile.md",
     "Welcome.md"
   ]
 }

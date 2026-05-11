@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="Piece" format=3 uid="uid://bsryht8gm2h0m"]
+[gd_resource type="Resource" script_class="PieceResource" format=3 uid="uid://bsryht8gm2h0m"]
 
 [ext_resource type="Script" uid="uid://5c1elefyy6rr" path="res://custom_resources/piece_resource.gd" id="1_hwkhp"]
 [ext_resource type="Texture2D" uid="uid://c5ukh2hobwwu8" path="res://art/white_bishop.png" id="2_guhm2"]
 
 [resource]
 script = ExtResource("1_hwkhp")
-name = "Bishop"
+piece_name = 2
 directions = Array[Vector2i]([Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)])
 score_value = 3
 sprite = ExtResource("2_guhm2")

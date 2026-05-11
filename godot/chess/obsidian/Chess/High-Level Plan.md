@@ -5,3 +5,16 @@
 - maybe make it so that you can customise things like having a bigger board and custom placement of starting positions
 - make an ai using minimax
 - make a scene for all the starting game stuff, eg white/black/random, standard board/custom board, ai difficulty level, if playing against cpu or another person, choosing piece colours
+
+
+#### Parts
+- game
+	- characters
+		- player
+		- cpu
+	- piece manager
+		- pieces
+	- board
+		- tiles
+		- board setup
+	- game state
