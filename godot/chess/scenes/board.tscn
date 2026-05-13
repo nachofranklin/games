@@ -4,5 +4,5 @@
 
 [node name="Board" type="Node2D" unique_id=594662889]
 script = ExtResource("1_bw3vb")
-light_square_colour = Color(0.79252034, 0.99999994, 0.8426877, 1)
-dark_square_colour = Color(0.3934225, 0.75120515, 0.4017747, 1)
+light_square_colour = Color(0.7921569, 1, 0.84313726, 1)
+dark_square_colour = Color(0.39215687, 0.7529412, 0.4, 1)

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PlayerResource" format=3 uid="uid://bptca5aev28or"]
+
+[ext_resource type="Script" uid="uid://doqjybj537lxr" path="res://custom_resources/player_resource.gd" id="1_px0ac"]
+
+[resource]
+script = ExtResource("1_px0ac")
+player_name = "Black"
+piece_colour = 1
+metadata/_custom_type_script = "uid://doqjybj537lxr"

@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://di385p2b1hn2e"]
 
 [ext_resource type="Script" uid="uid://icafkijm8yvo" path="res://scenes/game_state.gd" id="1_321hb"]
+[ext_resource type="Resource" uid="uid://itpxi5aqftln" path="res://players/white.tres" id="2_a1qx6"]
+[ext_resource type="Resource" uid="uid://bptca5aev28or" path="res://players/black.tres" id="3_gu6ud"]
 
 [node name="GameState" type="Node2D" unique_id=1293000139]
 script = ExtResource("1_321hb")
+player_white = ExtResource("2_a1qx6")
+player_black = ExtResource("3_gu6ud")

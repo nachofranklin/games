@@ -10,11 +10,11 @@ var board_state: Array = []
 
 
 func _ready() -> void:
-	initialise(BoardSetup.get_standard_layout()) # this should be happening in game not here
+	#initialise_pieces(BoardSetup.get_standard_layout()) # testing purposes
 	Events.piece_taken.connect(_on_piece_taken)
 
 
-func initialise(layout: Array) -> void:
+func initialise_pieces(layout: Array) -> void:
 	_create_empty_board_state()
 	for dict in layout:
 		_spawn_piece(dict.resource, dict.pos)

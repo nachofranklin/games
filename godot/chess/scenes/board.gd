@@ -6,8 +6,8 @@ const TILE_SCENE = preload('res://scenes/tile.tscn')
 @export var board_width: int = 8
 @export var board_height: int = 8
 @export var available_size: Vector2 = Vector2(600, 600)
-@export var light_square_colour: Color = Color(1.0, 1.0, 1.0, 1.0)
-@export var dark_square_colour: Color = Color(0.0, 0.0, 0.0, 1.0)
+@export var light_square_colour: Color = Color(0.792, 1.0, 0.843)
+@export var dark_square_colour: Color = Color(0.392, 0.753, 0.4)
 @export var selected_colour: Color = Color(0.498, 0.659, 1.0, 0.843)
 
 var grid: Array = []
@@ -16,11 +16,15 @@ var last_tile_selected: Tile = null
 
 
 func _ready() -> void:
+	#initialise_board() # testing purposes
+	Events.tile_clicked.connect(_on_tile_clicked)
+	last_tile_selected = null
+
+
+func initialise_board() -> void:
 	_calculate_tile_size()
 	_generate_board()
 	#_centre_board() # how best to centre the node?
-	Events.tile_clicked.connect(_on_tile_clicked)
-	last_tile_selected = null
 
 
 func _calculate_tile_size() -> void:

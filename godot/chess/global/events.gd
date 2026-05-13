@@ -7,3 +7,7 @@ signal tile_clicked(grid_pos: Vector2i)
 # Game state-related events
 @warning_ignore('UNUSED_SIGNAL')
 signal piece_taken(piece: Piece)
+@warning_ignore('UNUSED_SIGNAL')
+signal turn_ended()
+@warning_ignore('UNUSED_SIGNAL')
+signal turn_started(player: PlayerResource)
