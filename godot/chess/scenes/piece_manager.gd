@@ -11,6 +11,7 @@ var board_state: Array = []
 
 func _ready() -> void:
 	initialise(BoardSetup.get_standard_layout()) # this should be happening in game not here
+	Events.piece_taken.connect(_on_piece_taken)
 
 
 func initialise(layout: Array) -> void:
@@ -32,5 +33,11 @@ func _create_empty_board_state() -> void:
 func _spawn_piece(resource: PieceResource, pos: Vector2i) -> void:
 	var piece: Piece = PIECE_SCENE.instantiate()
 	add_child(piece)
-	piece.setup_piece(resource, pos, board.grid_to_world(pos), board.tile_size)
+	piece.setup_piece(resource.duplicate(), pos, board.grid_to_world(pos), board.tile_size)
 	board_state[pos.y][pos.x] = piece
+
+
+func _on_piece_taken(piece: Piece) -> void:
+	piece.queue_free()
+	# add the piece to the taken pieces area above/below the board
+	# adjust the players score

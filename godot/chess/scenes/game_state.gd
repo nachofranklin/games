@@ -30,11 +30,23 @@ func _on_tile_clicked(grid_pos: Vector2i) -> void:
 		_deselect()
 	else:
 		if grid_pos in highlighted_tiles:
-			#_move_piece(last_selected_piece, grid_pos)
+			_move_piece(last_selected_piece, grid_pos)
 			_deselect()
 		else:
 			_deselect()
 			_try_select(clicked_piece)
+
+
+func _move_piece(piece: Piece, new_grid_pos: Vector2i) -> void:
+	var current_occupant: Piece = board_state[new_grid_pos.y][new_grid_pos.x]
+	if current_occupant != null:
+		Events.piece_taken.emit(current_occupant)
+	board_state[piece.grid_pos.y][piece.grid_pos.x] = null
+	board_state[new_grid_pos.y][new_grid_pos.x] = piece
+	piece.move_to(new_grid_pos, board.grid_to_world(new_grid_pos))
+	board.last_tile_selected.tile_unselected()
+	board.last_tile_selected = null
+	# need to end turn and switch to the other player to have their go
 
 
 func _try_select(piece: Piece) -> void:
@@ -69,7 +81,7 @@ func _get_valid_moves(piece: Piece) -> Array[Vector2i]:
 	# 2) if moving a piece leaves you in check afterwards
 	# update - both things are, move piece, is my king now in check or not, so it's the same func, no need to over complicate it by essentially writing it out twice
 	
-	for move in raw_moves:
+	for move: Vector2i in raw_moves:
 		if _is_own_king_safe(piece, move):
 			valid_moves.append(move)
 	
@@ -99,12 +111,17 @@ func _is_own_king_safe(piece: Piece, new_pos: Vector2i) -> bool:
 
 
 func _get_own_kings_pos(sim_board_state: Array, colour: PieceResource.PieceColour) -> Vector2i:
+	var y: int = 0
 	for row in sim_board_state:
+		var x: int = 0
 		for piece: Piece in row:
 			if piece == null:
+				x += 1
 				continue
 			if piece.piece_resource.piece_name == PieceResource.PieceName.KING and piece.piece_resource.piece_colour == colour:
-				return piece.grid_pos
+				return Vector2i(x, y)
+			x += 1
+		y += 1
 	
 	print('no king on the board?')
 	return Vector2i(-1, -1) # there should always be a king on the board so this should never happen

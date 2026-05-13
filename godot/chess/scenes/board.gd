@@ -56,19 +56,19 @@ func _centre_board() -> void: # assumes the node is centred rather than at 0,0
 	position -=Vector2(total_width / 2.0, total_height / 2.0)
 
 
-func _on_tile_clicked(grid_pos) -> void: # need the board state too
+func _on_tile_clicked(grid_pos) -> void:
 	var tile: Tile = grid[grid_pos.y][grid_pos.x]
 	# for showing possible moves when tile is clicked happens in piece_manager. This is just to show the selected tile
 	# 1) select a tile and the last tile was null
 	# 2) select a tile and the last tile == selected tile
 	# 3) select a tile and the last tile != selected tile
-	if last_tile_selected == null:
+	if last_tile_selected == null: # if there was no previously selected tile
 		tile.tile_selected()
 		last_tile_selected = tile
-	elif last_tile_selected == tile:
+	elif last_tile_selected == tile: # if you click the same tile again
 		tile.tile_unselected()
 		last_tile_selected = null
-	elif last_tile_selected != tile:
+	elif last_tile_selected != tile: # if the new tile is different to the old tile
 		tile.tile_selected()
 		last_tile_selected.tile_unselected()
 		last_tile_selected = tile
