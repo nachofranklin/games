@@ -38,6 +38,7 @@ func _spawn_piece(resource: PieceResource, pos: Vector2i) -> void:
 
 
 func _on_piece_taken(piece: Piece) -> void:
+	board_state[piece.grid_pos.y][piece.grid_pos.x] = null
 	piece.queue_free()
 	# add the piece to the taken pieces area above/below the board
 	# adjust the players score

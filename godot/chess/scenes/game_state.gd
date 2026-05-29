@@ -11,6 +11,7 @@ var current_player: PlayerResource
 var board_state: Array = []
 var last_selected_piece: Piece = null
 var highlighted_tiles: Array[Vector2i] = []
+var pawn_just_moved_2_up: Piece = null
 
 
 func _ready() -> void:
@@ -49,10 +50,21 @@ func _move_piece(piece: Piece, new_grid_pos: Vector2i) -> void:
 	var current_occupant: Piece = board_state[new_grid_pos.y][new_grid_pos.x]
 	if current_occupant != null:
 		Events.piece_taken.emit(current_occupant)
+	# or if en passant happened...
+	if piece.piece_resource.piece_name == PieceResource.PieceName.PAWN:
+		if pawn_just_moved_2_up != null:
+			if piece.grid_pos.y == pawn_just_moved_2_up.grid_pos.y: # current pos.y
+				if new_grid_pos.x == pawn_just_moved_2_up.grid_pos.x: # new pos.x
+					Events.piece_taken.emit(pawn_just_moved_2_up)
 	
 	if piece.piece_resource.piece_name == PieceResource.PieceName.KING:
 		if absi(piece.grid_pos.x - new_grid_pos.x) == 2: # if castling
 			_castle_the_rook(piece, new_grid_pos)
+	
+	if piece.piece_resource.piece_name == PieceResource.PieceName.PAWN and absi(piece.grid_pos.y - new_grid_pos.y) == 2: # if pawn moved up 2
+		pawn_just_moved_2_up = piece
+	else:
+		pawn_just_moved_2_up = null
 	
 	board_state[piece.grid_pos.y][piece.grid_pos.x] = null
 	board_state[new_grid_pos.y][new_grid_pos.x] = piece
@@ -120,6 +132,7 @@ func _get_valid_moves(piece: Piece) -> Array[Vector2i]:
 	
 	# check for castling and en passant and append to raw moves
 	raw_moves += _get_castling_moves(piece)
+	raw_moves += _get_en_passant_moves(piece)
 	
 	for move: Vector2i in raw_moves:
 		if _is_own_king_safe(piece, move):
@@ -155,6 +168,20 @@ func _get_castling_moves(king: Piece) -> Array[Vector2i]:
 							castling_moves.append(kings_new_pos)
 	
 	return castling_moves
+
+
+func _get_en_passant_moves(pawn: Piece) -> Array[Vector2i]:
+	var en_passant_moves: Array[Vector2i] = []
+	
+	if pawn.piece_resource.piece_name == PieceResource.PieceName.PAWN:
+		if pawn_just_moved_2_up != null:
+			if pawn.grid_pos.y == pawn_just_moved_2_up.grid_pos.y:
+				if absi(pawn.grid_pos.x - pawn_just_moved_2_up.grid_pos.x) == 1:
+					for dir: Vector2i in pawn.piece_resource.directions: # only 1 dir
+						var pawns_new_pos: Vector2i = pawn_just_moved_2_up.grid_pos + dir
+						en_passant_moves.append(pawns_new_pos)
+	
+	return en_passant_moves
 
 
 func _is_empty_between(pos1: Vector2i, pos2: Vector2i) -> bool:
