@@ -12,6 +12,7 @@ var board_state: Array = []
 func _ready() -> void:
 	#initialise_pieces(BoardSetup.get_standard_layout()) # testing purposes
 	Events.piece_taken.connect(_on_piece_taken)
+	Events.pawn_promoted.connect(_on_pawn_promoted)
 
 
 func initialise_pieces(layout: Array) -> void:
@@ -42,3 +43,9 @@ func _on_piece_taken(piece: Piece) -> void:
 	piece.queue_free()
 	# add the piece to the taken pieces area above/below the board
 	# adjust the players score
+
+
+func _on_pawn_promoted(pawn: Piece, new_piece: Resource) -> void:
+	var pos: Vector2i = pawn.grid_pos
+	_on_piece_taken(pawn)
+	_spawn_piece(new_piece, pos)

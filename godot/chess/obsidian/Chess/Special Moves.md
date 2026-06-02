@@ -48,3 +48,16 @@ then trigger piece taken
 
 #### Pawn Promotion
 
+if white/black pawn reaches the top/bottom of the board (y=0 or y=len(board_state)?) then i emit the pawn promotion selection signal - probably want this to happen at the end of the move piece func
+on pawn promotion selection, make the selection scene visible
+get the pawn's colour
+add the button options with the correct colour to choose from
+on button being pressed, set the board state of the pawns pos to now be a new instance of whatever piece was selected (piece manager's spawn piece)
+also need to remove the pawn first (piece manager's on piece taken - although this could have unintended consequences of counting it as being taken for scoring when it's not)
+
+summary - 2 new signals, 1 at the end of move piece in game state that emits if the pawn reaches the end. This connects to promotion selection where the scene becomes visible and the button images are updated to be black/white depending on the pawn colour. If you click one of the 4 button options it hides the scene and emits the second signal with the pawn and the chosen piece (as a resource). Piece manager connects to this signal, saves the pos of the pawn then deletes it and spawns the new piece which was selected
+
+Need to change it so that i can't click on anything else other than selecting the new piece
+Also maybe add in a hide/show button so the player can look at the board to decide what piece they want
+Still need to fix the centring issues
+Might need to slightly adjust the turn ending to allow for the player to choose their new piece before the opp can take their go

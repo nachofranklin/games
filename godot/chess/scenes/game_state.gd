@@ -71,6 +71,11 @@ func _move_piece(piece: Piece, new_grid_pos: Vector2i) -> void:
 	piece.move_to(new_grid_pos, board.grid_to_world(new_grid_pos))
 	board.last_tile_selected.tile_unselected()
 	board.last_tile_selected = null
+	
+	# if pawn promotion...
+	if piece.piece_resource.piece_name == PieceResource.PieceName.PAWN:
+		if piece.grid_pos.y == 0 or piece.grid_pos.y == len(board_state) - 1:
+			Events.pawn_promotion_selection.emit(piece)
 	# need to end turn and switch to the other player to have their go
 
 
