@@ -57,7 +57,7 @@ also need to remove the pawn first (piece manager's on piece taken - although th
 
 summary - 2 new signals, 1 at the end of move piece in game state that emits if the pawn reaches the end. This connects to promotion selection where the scene becomes visible and the button images are updated to be black/white depending on the pawn colour. If you click one of the 4 button options it hides the scene and emits the second signal with the pawn and the chosen piece (as a resource). Piece manager connects to this signal, saves the pos of the pawn then deletes it and spawns the new piece which was selected
 
-Need to change it so that i can't click on anything else other than selecting the new piece
-Also maybe add in a hide/show button so the player can look at the board to decide what piece they want
-Still need to fix the centring issues
-Might need to slightly adjust the turn ending to allow for the player to choose their new piece before the opp can take their go
+- Need to change it so that i can't click on anything else other than selecting the new piece - done
+- Also maybe add in a hide/show button so the player can look at the board to decide what piece they want - STILL NEED TO DO THIS!!!!!!!!
+- Still need to fix the centring issues - done
+- Might need to slightly adjust the turn ending to allow for the player to choose their new piece before the opp can take their go - done added a var to check if awaiting promotion

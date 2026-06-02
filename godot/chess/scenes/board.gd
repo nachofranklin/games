@@ -24,7 +24,7 @@ func _ready() -> void:
 func initialise_board() -> void:
 	_calculate_tile_size()
 	_generate_board()
-	#_centre_board() # how best to centre the node?
+	_centre_board() # how best to centre the node?
 
 
 func _calculate_tile_size() -> void:

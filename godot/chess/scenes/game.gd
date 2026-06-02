@@ -7,6 +7,7 @@ class_name Game
 
 
 func _ready() -> void:
+	position = get_viewport_rect().size/2 # centres everything
 	_initialise_game()
 
 

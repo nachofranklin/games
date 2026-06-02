@@ -12,6 +12,7 @@ var board_state: Array = []
 var last_selected_piece: Piece = null
 var highlighted_tiles: Array[Vector2i] = []
 var pawn_just_moved_2_up: Piece = null
+var awaiting_promotion: bool = false
 
 
 func _ready() -> void:
@@ -32,18 +33,20 @@ func setup_board(initial_board_state: Array) -> void:
 func _on_tile_clicked(grid_pos: Vector2i) -> void:
 	var clicked_piece: Piece = board_state[grid_pos.y][grid_pos.x]
 	
-	if last_selected_piece == null:
-		_try_select(clicked_piece)
-	elif last_selected_piece.grid_pos == grid_pos:
-		_deselect()
-	else:
-		if grid_pos in highlighted_tiles:
-			_move_piece(last_selected_piece, grid_pos)
-			_deselect()
-			Events.turn_ended.emit()
-		else:
-			_deselect()
+	if awaiting_promotion == false:
+		if last_selected_piece == null:
 			_try_select(clicked_piece)
+		elif last_selected_piece.grid_pos == grid_pos:
+			_deselect()
+		else:
+			if grid_pos in highlighted_tiles:
+				_move_piece(last_selected_piece, grid_pos)
+				_deselect()
+				if awaiting_promotion == false:
+					Events.turn_ended.emit() # if true then i'll end the turn after the promotion has happened
+			else:
+				_deselect()
+				_try_select(clicked_piece)
 
 
 func _move_piece(piece: Piece, new_grid_pos: Vector2i) -> void:
@@ -75,8 +78,8 @@ func _move_piece(piece: Piece, new_grid_pos: Vector2i) -> void:
 	# if pawn promotion...
 	if piece.piece_resource.piece_name == PieceResource.PieceName.PAWN:
 		if piece.grid_pos.y == 0 or piece.grid_pos.y == len(board_state) - 1:
+			awaiting_promotion = true
 			Events.pawn_promotion_selection.emit(piece)
-	# need to end turn and switch to the other player to have their go
 
 
 func _castle_the_rook(king: Piece, new_grid_pos: Vector2i) -> void:

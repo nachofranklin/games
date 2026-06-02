@@ -49,3 +49,5 @@ func _on_pawn_promoted(pawn: Piece, new_piece: Resource) -> void:
 	var pos: Vector2i = pawn.grid_pos
 	_on_piece_taken(pawn)
 	_spawn_piece(new_piece, pos)
+	game_state.awaiting_promotion = false
+	Events.turn_ended.emit()
