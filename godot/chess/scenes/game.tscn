@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d1qmgjc7g11xf" path="res://scenes/piece_manager.tscn" id="2_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://di385p2b1hn2e" path="res://scenes/game_state.tscn" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://c0hoscotfmb74" path="res://scenes/promotion_selection.tscn" id="5_iywne"]
+[ext_resource type="PackedScene" uid="uid://520qhwrbckgv" path="res://scenes/taken_pieces.tscn" id="5_p57ef"]
 
 [node name="Game" type="Node2D" unique_id=1190906485 node_paths=PackedStringArray("board", "piece_manager", "game_state")]
 script = ExtResource("1_lbhrr")
@@ -21,12 +22,30 @@ game_state = NodePath("../GameState")
 [node name="GameState" parent="." unique_id=1293000139 node_paths=PackedStringArray("board") instance=ExtResource("3_lbhrr")]
 board = NodePath("../Board")
 
-[node name="PromotionSelection" parent="." unique_id=52021783 instance=ExtResource("5_iywne")]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=614330811]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=1073855340]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TakenPiecesWhite" parent="CanvasLayer/VBoxContainer" unique_id=1965464631 node_paths=PackedStringArray("board") instance=ExtResource("5_p57ef")]
+layout_mode = 2
+board = NodePath("../../../Board")
+
+[node name="BoardSpace" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=304090430]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="TakenPiecesBlack" parent="CanvasLayer/VBoxContainer" unique_id=2063150291 node_paths=PackedStringArray("board") instance=ExtResource("5_p57ef")]
+layout_mode = 2
+colour_of_taken_pieces = 1
+board = NodePath("../../../Board")
+
+[node name="PromotionSelection" parent="CanvasLayer" unique_id=52021783 instance=ExtResource("5_iywne")]
 visible = false
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-grow_horizontal = 1
-grow_vertical = 1

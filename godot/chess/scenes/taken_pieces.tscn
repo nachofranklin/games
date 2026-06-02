@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://520qhwrbckgv"]
+
+[ext_resource type="Script" uid="uid://37l70c8tgw8w" path="res://scenes/taken_pieces.gd" id="1_7my0j"]
+[ext_resource type="Texture2D" uid="uid://bv32trgge4oh3" path="res://art/white_queen.png" id="1_m324y"]
+
+[node name="TakenPieces" type="HBoxContainer" unique_id=1965464631]
+custom_minimum_size = Vector2(0, 60)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7my0j")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=600292995]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 100
+
+[node name="Pieces" type="Control" parent="MarginContainer" unique_id=858429741]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/Pieces" unique_id=1410234119]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+texture = ExtResource("1_m324y")
+
+[node name="TextureRect2" type="TextureRect" parent="MarginContainer/Pieces" unique_id=805317077]
+layout_mode = 0
+offset_left = 132.0
+offset_right = 260.0
+offset_bottom = 128.0
+texture = ExtResource("1_m324y")
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=205343593]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+4"

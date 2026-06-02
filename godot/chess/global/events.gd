@@ -17,3 +17,8 @@ signal turn_started(player: PlayerResource)
 signal pawn_promotion_selection(piece: Piece)
 @warning_ignore('UNUSED_SIGNAL')
 signal pawn_promoted(pawn: Piece, new_piece: Resource)
+
+
+# Game-related events
+@warning_ignore('UNUSED_SIGNAL')
+signal game_initialised(tile_size: float, board_width: int)

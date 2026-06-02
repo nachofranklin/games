@@ -27,6 +27,10 @@ func initialise_board() -> void:
 	_centre_board() # how best to centre the node?
 
 
+func get_available_size(available_space: Vector2) -> void:
+	available_size = available_space
+
+
 func _calculate_tile_size() -> void:
 	var max_tile_width = available_size.x / board_width
 	var max_tile_height = available_size.y / board_height
