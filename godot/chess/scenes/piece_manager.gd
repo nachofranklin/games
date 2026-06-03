@@ -41,13 +41,29 @@ func _spawn_piece(resource: PieceResource, pos: Vector2i) -> void:
 func _on_piece_taken(piece: Piece) -> void:
 	board_state[piece.grid_pos.y][piece.grid_pos.x] = null
 	piece.queue_free()
-	# add the piece to the taken pieces area above/below the board
-	# adjust the players score
+	Events.score_updated.emit(calculate_score_difference())
 
 
 func _on_pawn_promoted(pawn: Piece, new_piece: Resource) -> void:
 	var pos: Vector2i = pawn.grid_pos
-	_on_piece_taken(pawn)
+	Events.piece_taken.emit(pawn)
 	_spawn_piece(new_piece, pos)
+	Events.score_updated.emit(calculate_score_difference())
 	game_state.awaiting_promotion = false
 	Events.turn_ended.emit()
+
+
+func calculate_score_difference() -> int:
+	var white_score: int = 0
+	var black_score: int = 0
+	
+	for row in board_state:
+		for piece: Piece in row:
+			if piece == null:
+				continue
+			if piece.piece_resource.piece_colour == PieceResource.PieceColour.WHITE:
+				white_score += piece.piece_resource.score_value
+			elif piece.piece_resource.piece_colour == PieceResource.PieceColour.BLACK:
+				black_score += piece.piece_resource.score_value
+	
+	return white_score - black_score

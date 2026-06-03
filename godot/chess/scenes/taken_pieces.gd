@@ -11,12 +11,13 @@ const PIECE_ORDER = {
 
 @export var colour_of_taken_pieces: PieceResource.PieceColour
 @export var board: Board
-@export var overlap_offset: float = 12.0
+@export var overlap_offset: float = 14.0
 @export var group_gap: float = 20.0
 @export var scale_ratio: float = 0.7
 
 var piece_size: Vector2
 var taken_pieces: Array[PieceResource] = []
+var score: int = 0
 
 @onready var margin_container: MarginContainer = %MarginContainer
 @onready var pieces: Control = %Pieces
@@ -24,15 +25,16 @@ var taken_pieces: Array[PieceResource] = []
 
 
 func _ready() -> void:
-	_clear_display()
+	_clear_pieces()
+	_update_score()
 	Events.game_initialised.connect(_on_game_initialised)
 	Events.piece_taken.connect(_on_piece_taken)
+	Events.score_updated.connect(_on_score_updated)
 
 
-func _clear_display() -> void:
+func _clear_pieces() -> void:
 	for child: TextureRect in pieces.get_children():
 		child.queue_free()
-	score_label.text = ""
 
 
 func _on_game_initialised(tile_size: float, board_width: int) -> void:
@@ -50,9 +52,8 @@ func _on_piece_taken(piece: Piece) -> void:
 	if colour_of_taken_pieces == piece.piece_resource.piece_colour:
 		taken_pieces.append(piece.piece_resource)
 		_sort_taken_pieces()
-		_rebuild_display()
-		# update score
-		score_label.text = '+10'
+		_rebuild_pieces()
+		# score done on a score updated signal to include updates for pawn promotions
 
 
 func _sort_taken_pieces() -> void:
@@ -62,8 +63,8 @@ func _sort_taken_pieces() -> void:
 		return PIECE_ORDER[a.piece_name] < PIECE_ORDER[b.piece_name])
 
 
-func _rebuild_display() -> void: # ideally make the y pos better too
-	_clear_display()
+func _rebuild_pieces() -> void: # ideally make the y pos better too
+	_clear_pieces()
 	
 	if taken_pieces.is_empty():
 		return
@@ -91,6 +92,17 @@ func _rebuild_display() -> void: # ideally make the y pos better too
 	pieces.custom_minimum_size = Vector2(x_pos, 0) + piece_size
 
 
-#func _update_score() -> void:
-	# this should probably be done in piece manager or game state and then emit the score every move
-	# will need to iterate through every piece on the board to get the score as pawn promotion could mess up score of just taken pieces
+func _update_score() -> void:
+	score_label.text = '+' + str(abs(score))
+	
+	if score > 0 and colour_of_taken_pieces == PieceResource.PieceColour.BLACK:
+		score_label.show()
+	elif score < 0 and colour_of_taken_pieces == PieceResource.PieceColour.WHITE:
+		score_label.show()
+	else:
+		score_label.hide()
+
+
+func _on_score_updated(difference: int) -> void:
+	score = difference
+	_update_score()

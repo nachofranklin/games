@@ -11,6 +11,8 @@ signal piece_taken(piece: Piece)
 signal turn_ended()
 @warning_ignore('UNUSED_SIGNAL')
 signal turn_started(player: PlayerResource)
+@warning_ignore('UNUSED_SIGNAL')
+signal score_updated(difference: int)
 
 # Pawn promotion-related events
 @warning_ignore('UNUSED_SIGNAL')
