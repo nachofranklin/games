@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://520qhwrbckgv"]
 
 [ext_resource type="Script" uid="uid://37l70c8tgw8w" path="res://scenes/taken_pieces.gd" id="1_7my0j"]
-[ext_resource type="Texture2D" uid="uid://bv32trgge4oh3" path="res://art/white_queen.png" id="1_m324y"]
+[ext_resource type="Texture2D" uid="uid://bv32trgge4oh3" path="res://art/pieces/white_queen.png" id="1_m324y"]
 
 [node name="TakenPieces" type="HBoxContainer" unique_id=1965464631]
 custom_minimum_size = Vector2(0, 60)

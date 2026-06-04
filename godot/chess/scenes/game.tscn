@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://bxm12jhkkg8hx" path="res://scenes/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dv16bier6dpn8" path="res://scenes/board.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://d1qmgjc7g11xf" path="res://scenes/piece_manager.tscn" id="2_lnu2h"]
+[ext_resource type="Texture2D" uid="uid://c7c476ou3exh" path="res://art/board_backgrounds/colourful sky chess background.png" id="2_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://csor4i0kvvayi" path="res://art/board_backgrounds/To The Moon.png" id="3_gee14"]
 [ext_resource type="PackedScene" uid="uid://di385p2b1hn2e" path="res://scenes/game_state.tscn" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://c0hoscotfmb74" path="res://scenes/promotion_selection.tscn" id="5_iywne"]
 [ext_resource type="PackedScene" uid="uid://520qhwrbckgv" path="res://scenes/taken_pieces.tscn" id="5_p57ef"]
@@ -12,6 +14,17 @@ script = ExtResource("1_lbhrr")
 board = NodePath("Board")
 piece_manager = NodePath("PieceManager")
 game_state = NodePath("GameState")
+
+[node name="Background" type="Node2D" parent="." unique_id=1666100945]
+
+[node name="ColourfulSkyChess" type="Sprite2D" parent="Background" unique_id=1044240754]
+scale = Vector2(1.7, 1.7)
+texture = ExtResource("2_u5sy4")
+
+[node name="ToTheMoon" type="Sprite2D" parent="Background" unique_id=801467121]
+visible = false
+scale = Vector2(2.3, 2.3)
+texture = ExtResource("3_gee14")
 
 [node name="Board" parent="." unique_id=594662889 instance=ExtResource("1_uwrxv")]
 

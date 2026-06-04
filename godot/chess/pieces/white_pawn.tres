@@ -1,11 +1,11 @@
 [gd_resource type="Resource" format=3 uid="uid://dvp4ivbtprebr"]
 
 [ext_resource type="Script" uid="uid://miws0ckglfmp" path="res://pieces/pawn.gd" id="1_e55mh"]
-[ext_resource type="Texture2D" uid="uid://bg0jy3ugrhtk4" path="res://art/white_pawn.png" id="2_nmj0y"]
+[ext_resource type="Texture2D" uid="uid://bg0jy3ugrhtk4" path="res://art/pieces/white_pawn.png" id="2_e55mh"]
 
 [resource]
 script = ExtResource("1_e55mh")
 directions = Array[Vector2i]([Vector2i(0, -1)])
 score_value = 1
-sprite = ExtResource("2_nmj0y")
+sprite = ExtResource("2_e55mh")
 metadata/_custom_type_script = "uid://5c1elefyy6rr"

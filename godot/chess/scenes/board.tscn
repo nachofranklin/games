@@ -1,8 +1,38 @@
 [gd_scene format=3 uid="uid://dv16bier6dpn8"]
 
 [ext_resource type="Script" uid="uid://cdyjir3kst8ls" path="res://scenes/board.gd" id="1_bw3vb"]
+[ext_resource type="Script" uid="uid://c4qvftvebosn4" path="res://scenes/board_background.gd" id="2_nglv8"]
+[ext_resource type="Texture2D" uid="uid://cvqr45b5pavhd" path="res://art/board_backgrounds/Oak grain black and white.png" id="3_dun80"]
+[ext_resource type="Texture2D" uid="uid://bcss5olx44i1g" path="res://art/board_backgrounds/mcfc badge.png" id="4_c3r7o"]
+[ext_resource type="Texture2D" uid="uid://b0bfficgdqni4" path="res://art/board_backgrounds/marble.png" id="5_dun80"]
+[ext_resource type="Texture2D" uid="uid://b1lwwxf1tkjtk" path="res://art/board_backgrounds/oak grain.png" id="6_c3r7o"]
+[ext_resource type="Texture2D" uid="uid://csor4i0kvvayi" path="res://art/board_backgrounds/To The Moon.png" id="7_c3r7o"]
 
 [node name="Board" type="Node2D" unique_id=594662889]
 script = ExtResource("1_bw3vb")
-light_square_colour = Color(0.7921569, 1, 0.84313726, 1)
-dark_square_colour = Color(0.39215687, 0.7529412, 0.4, 1)
+light_square_colour = Color(0.7921569, 1, 0.84313726, 0.627451)
+dark_square_colour = Color(0.39215687, 0.7529412, 0.4, 0.78431374)
+
+[node name="BoardBackground" type="Node2D" parent="." unique_id=1790205573 node_paths=PackedStringArray("selected_background")]
+script = ExtResource("2_nglv8")
+selected_background = NodePath("ToTheMoon")
+
+[node name="OakGrainBW" type="Sprite2D" parent="BoardBackground" unique_id=2010329530]
+texture = ExtResource("3_dun80")
+centered = false
+
+[node name="MCFCBadge" type="Sprite2D" parent="BoardBackground" unique_id=1361177041]
+texture = ExtResource("4_c3r7o")
+centered = false
+
+[node name="Marble" type="Sprite2D" parent="BoardBackground" unique_id=1251098647]
+texture = ExtResource("5_dun80")
+centered = false
+
+[node name="OakGrain" type="Sprite2D" parent="BoardBackground" unique_id=1045798723]
+texture = ExtResource("6_c3r7o")
+centered = false
+
+[node name="ToTheMoon" type="Sprite2D" parent="BoardBackground" unique_id=346069134]
+texture = ExtResource("7_c3r7o")
+centered = false

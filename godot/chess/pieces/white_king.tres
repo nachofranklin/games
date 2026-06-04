@@ -1,11 +1,11 @@
 [gd_resource type="Resource" format=3 uid="uid://665qu3af5quv"]
 
 [ext_resource type="Script" uid="uid://r3thciutrpga" path="res://pieces/king.gd" id="1_jbw04"]
-[ext_resource type="Texture2D" uid="uid://ysheoxvw873b" path="res://art/white_king.png" id="2_6tm7b"]
+[ext_resource type="Texture2D" uid="uid://ysheoxvw873b" path="res://art/pieces/white_king.png" id="2_jbw04"]
 
 [resource]
 script = ExtResource("1_jbw04")
 piece_name = 5
 directions = Array[Vector2i]([Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)])
-sprite = ExtResource("2_6tm7b")
+sprite = ExtResource("2_jbw04")
 metadata/_custom_type_script = "uid://5c1elefyy6rr"

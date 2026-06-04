@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ysheoxvw873b"
-path="res://.godot/imported/white_king.png-1ab7ae99bf564ade9a365484e1cbad9c.ctex"
+uid="uid://b1lwwxf1tkjtk"
+path="res://.godot/imported/oak grain.png-ed9de1126b45cf9bddaafa77b9698aa4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/white_king.png"
-dest_files=["res://.godot/imported/white_king.png-1ab7ae99bf564ade9a365484e1cbad9c.ctex"]
+source_file="res://art/board_backgrounds/oak grain.png"
+dest_files=["res://.godot/imported/oak grain.png-ed9de1126b45cf9bddaafa77b9698aa4.ctex"]
 
 [params]
 

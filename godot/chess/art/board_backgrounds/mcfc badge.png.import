@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bguupds1v4xx8"
-path="res://.godot/imported/black_knight.png-84846d8a87e05d39688fef6764302f62.ctex"
+uid="uid://bcss5olx44i1g"
+path="res://.godot/imported/mcfc badge.png-12c6809c2057c42ab048c10f7019746c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/black_knight.png"
-dest_files=["res://.godot/imported/black_knight.png-84846d8a87e05d39688fef6764302f62.ctex"]
+source_file="res://art/board_backgrounds/mcfc badge.png"
+dest_files=["res://.godot/imported/mcfc badge.png-12c6809c2057c42ab048c10f7019746c.ctex"]
 
 [params]
 

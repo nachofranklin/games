@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg0jy3ugrhtk4"
-path="res://.godot/imported/white_pawn.png-41a0985526d892a07721cfa5b6359706.ctex"
+uid="uid://cvqr45b5pavhd"
+path="res://.godot/imported/Oak grain black and white.png-baf51d8cc039ceb6ceca4738d1a31d27.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/white_pawn.png"
-dest_files=["res://.godot/imported/white_pawn.png-41a0985526d892a07721cfa5b6359706.ctex"]
+source_file="res://art/board_backgrounds/Oak grain black and white.png"
+dest_files=["res://.godot/imported/Oak grain black and white.png-baf51d8cc039ceb6ceca4738d1a31d27.ctex"]
 
 [params]
 

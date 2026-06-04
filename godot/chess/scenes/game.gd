@@ -20,4 +20,4 @@ func _initialise_game() -> void:
 	var layout: Array = BoardSetup.get_standard_layout()
 	piece_manager.initialise_pieces(layout)
 	game_state.initialise_game_state()
-	Events.game_initialised.emit(board.tile_size, board.board_width)
+	Events.game_initialised.emit(board.tile_size, board.board_width, board.board_height)

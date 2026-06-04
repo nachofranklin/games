@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1vs6gio6g5vr"
-path="res://.godot/imported/black_bishop.png-0087b4ea8ae453d99bc68e73edecee34.ctex"
+uid="uid://v5xgeg1ik8o3"
+path="res://.godot/imported/black_rook.png-3eaee2bb4060936ef3b54c54ed7e28c9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/black_bishop.png"
-dest_files=["res://.godot/imported/black_bishop.png-0087b4ea8ae453d99bc68e73edecee34.ctex"]
+source_file="res://art/pieces/black_rook.png"
+dest_files=["res://.godot/imported/black_rook.png-3eaee2bb4060936ef3b54c54ed7e28c9.ctex"]
 
 [params]
 

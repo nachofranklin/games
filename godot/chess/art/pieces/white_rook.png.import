@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nakb7g3schqr"
-path="res://.godot/imported/black_queen.png-fc8e1afa19039379e464d3ec35c36124.ctex"
+uid="uid://b0jlasbfrqnwm"
+path="res://.godot/imported/white_rook.png-62642489c20329fa91162e3d0f2785aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/black_queen.png"
-dest_files=["res://.godot/imported/black_queen.png-fc8e1afa19039379e464d3ec35c36124.ctex"]
+source_file="res://art/pieces/white_rook.png"
+dest_files=["res://.godot/imported/white_rook.png-62642489c20329fa91162e3d0f2785aa.ctex"]
 
 [params]
 

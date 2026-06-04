@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="PieceResource" format=3 uid="uid://bnhd5ftbpreah"]
 
 [ext_resource type="Script" uid="uid://5c1elefyy6rr" path="res://custom_resources/piece_resource.gd" id="1_ysrqo"]
-[ext_resource type="Texture2D" uid="uid://v5xgeg1ik8o3" path="res://art/black_rook.png" id="2_ysrqo"]
+[ext_resource type="Texture2D" uid="uid://v5xgeg1ik8o3" path="res://art/pieces/black_rook.png" id="2_ysrqo"]
 
 [resource]
 script = ExtResource("1_ysrqo")

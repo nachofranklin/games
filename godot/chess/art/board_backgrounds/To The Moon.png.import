@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1fvve6xdhvj8"
-path="res://.godot/imported/black_pawn.png-2f023f78431f07d9ac41ae7fc2677bf3.ctex"
+uid="uid://csor4i0kvvayi"
+path="res://.godot/imported/To The Moon.png-f78ea8d985ab5875056bd81ca9b3ef4a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/black_pawn.png"
-dest_files=["res://.godot/imported/black_pawn.png-2f023f78431f07d9ac41ae7fc2677bf3.ctex"]
+source_file="res://art/board_backgrounds/To The Moon.png"
+dest_files=["res://.godot/imported/To The Moon.png-f78ea8d985ab5875056bd81ca9b3ef4a.ctex"]
 
 [params]
 

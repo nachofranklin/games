@@ -37,7 +37,7 @@ func _clear_pieces() -> void:
 		child.queue_free()
 
 
-func _on_game_initialised(tile_size: float, board_width: int) -> void:
+func _on_game_initialised(tile_size: float, board_width: int, _board_height: int) -> void:
 	_get_piece_size()
 	var board_pixel_width: float = tile_size * board_width
 	var left_margin: float = (get_viewport_rect().size.x - board_pixel_width) / 2
